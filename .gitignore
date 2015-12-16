@@ -1,0 +1,54 @@
+#VS stuff
+*.sdf
+*.tlog
+*.opensdf
+*.ipch
+**/UnitTest/Debug/*.*
+**/UnitTest/Release/*.*
+**/UnitTest/x64/Debug/*.*
+**/UnitTest/x64/Release/*.*
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Dependencies
+*.d
+
+# intermediates
+*.s
+*.i
+*.ii
+*.disasm
+
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+*.map
+
+#
+**/nbproject/*.bash
+**/nbproject/private
+# Generated Makefiles
+
+**/nbproject/Makefile-*
+nbproject/Makefile-*
+
+
