@@ -3,5 +3,8 @@ Alternate firmware for disting
 
 *coming soon*
 
-[Notes on the repository structure](./repository_structure.md)
+[Notes on the repository structure](docs/repository_structure.md)
+
+![test image](docs/synth.jpeg)
+
 
