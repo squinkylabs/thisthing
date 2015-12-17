@@ -13,6 +13,7 @@ Please read the instructions for installation carefully. They will tell you exac
 
 Important links:
 [Instructions for Installing the firmware](docs/flashing_disting.pdf)
+
 [The downloadable releases are here](https://github.com/squinkylabs/thisthing/releases)
 
 
