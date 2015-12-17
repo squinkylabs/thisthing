@@ -5,6 +5,6 @@ Alternate firmware for disting
 
 [Notes on the repository structure](docs/repository_structure.md)
 
-![test image](docs/synth.jpeg | width=100)
+![test image](docs/synth.jpeg=100x)
 
 
