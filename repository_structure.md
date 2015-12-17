@@ -1,4 +1,4 @@
-# thisthing
-Alternate firmware for disting
+# Repository Structure
 
-*coming soon*
+common: C++ code for all the algorithms. This code is cross-platform, pic32 and windows.
+
