@@ -11,9 +11,9 @@ You will need
 
 Please read the instructions for installation carefully. They will tell you exactly what tools and software you need, and how to safely install ThisThing.
 
+Important links:
 [Instructions for Installing the firmware](docs/flashing_disting.pdf)
-
-[The releases are here](https://github.com/squinkylabs/thisthing/releases)
+[The downloadable releases are here](https://github.com/squinkylabs/thisthing/releases)
 
 
 ## Information for coders
