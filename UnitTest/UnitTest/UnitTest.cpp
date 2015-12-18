@@ -23,6 +23,7 @@ extern void QuantizerTests();
 extern void AdderTests();
 extern void Calibrate();
 extern void Ala152Test();
+extern void SwitchTests();
 
 int i_global;
 extern "C" void Led_setTempSelectorOverride(int value, int mode) {}
@@ -30,7 +31,7 @@ extern "C" void Led_setTempSelectorOverride(int value, int mode) {}
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-#if 1
+#if 0
 	printf("starting unit tests\n");
 	FixedPointTest();
 	LinearInterpTests();
@@ -53,6 +54,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	CounterTests();
 	QuantizerTests();
 	AdderTests();
+	SwitchTests();
 #else
 	printf("skipping most tests\n");
 	//LookupTableTest();
@@ -66,13 +68,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	//QuantizerTests();
 	//LinearInterpTests();
 	//DACVoltageTest();
-	AdderTests();
+	//AdderTests();
 	
 	//SlopeDetectorTests();
 	//SlopeDetectorTests2();
 	//TestLFO();
 
 	//Ala152Test();
+	SwitchTests();
 
 #endif
 	printf("leaving unit tests\n");
