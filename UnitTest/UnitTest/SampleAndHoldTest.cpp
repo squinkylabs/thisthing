@@ -293,7 +293,7 @@ bool testMod(DModule& mod, CVIN cvin, CVOUT cvout, bool isTrackAndHold, CKIN cki
 	return didFire;
 }
 
-void resetModule(DModule& mod)
+static void resetModule(DModule& mod)
 {
 	int a;
 	int x = DACVoltage::xcodeForMV(10000);
