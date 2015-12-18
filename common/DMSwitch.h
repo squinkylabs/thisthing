@@ -1,6 +1,7 @@
 #ifndef INCLUDE_DMSWITCH
 #define INCLUDE_DMSWITCH
 
+#include "Quantizer.h"
 #include "GateTrigger.h"
 #include "DModule.h"
 
@@ -33,6 +34,7 @@ public:
 			default:
 				assert(0);
 			}
+			Led_setTempSelectorOverride(_state, 1);
 		}
 
 		switch(_state)
@@ -49,11 +51,16 @@ public:
 		default:
 			assert(0);
 		}
-		b = 0;
+
+		_qt.go(a);
+		const int midi = _qt.getMIDI();
+		b = _state ? _qt.midi2CV(midi) : 0;
 	}
 private:
 	GateTrigger _gt;
 	int			_state; // 0: nothing 1: x, 2: y
+	ChromaticQuantizer _qt;
+	
 
 	void doReset()
 	{

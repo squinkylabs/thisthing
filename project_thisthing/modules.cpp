@@ -26,6 +26,7 @@
 #include "DMAdders.h"
 #include "DMTuningRef.h"
 #include "DMTrackAndHoldAla152.h"
+#include "DMSwitch.h"
 
 // externs
 extern "C" void assert_fail(int code);
@@ -103,7 +104,8 @@ DModule * modules[16] = {
     new DMSemitoneAdderSubtractor(),
  
     // 4D
-    new DMTuningReference()
+   // new DMTuningReference()
+    new DMSwitch()
 };
 /* runs module until it is time to switch.
  * takes input from the globals set up by disting main

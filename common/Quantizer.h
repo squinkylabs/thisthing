@@ -3,6 +3,9 @@
 
 #include "DACVoltage.h"
 
+/* quantized continuous voltage to a midi note number,
+ * and the oposite
+ */
 class ChromaticQuantizer
 {
 public:

@@ -26,7 +26,13 @@ extern void Ala152Test();
 extern void SwitchTests();
 
 int i_global;
-extern "C" void Led_setTempSelectorOverride(int value, int mode) {}
+int led_test;
+int led_mode;
+extern "C" void Led_setTempSelectorOverride(int value, int mode)
+{
+	led_test = value;
+	led_mode = mode;
+}
 
 
 int _tmain(int argc, _TCHAR* argv[])
