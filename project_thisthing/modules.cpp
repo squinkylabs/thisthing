@@ -32,12 +32,9 @@
 extern "C" void assert_fail(int code);
 extern "C" void Led_clock();
 extern "C" void Led_setSelector(int selector);
-extern "C" void getCalibratedInput(int * inLeft, int * inRight, int * inPot );
-extern "C" void calibrateAndPutOutput(int left, int right);
 
 
-// forward declarations
-void processZ(ZState * outState, int zValue);
+
 
 // This is for runtime performance debugging
 typedef struct
@@ -52,12 +49,128 @@ volatile TimeMetrics tm;
 static bool resetModulesFlag = false;
 
 
+/* Z processing state machine */
+
+static int lastOfficialZValue = 0;
+static int zstate = 0;  // 0 = just reset, waiting for big change
+                        // 1 = normal increasing pot state
+                        // 2 = normal decreasing pot state
+const int zBigDelta = 1024 / 20;
+const int zLittleDelta = 4;
+const int zMediumDelta = zLittleDelta * 2;
+
+/* CALIBRATION VARS
+ */
+
+extern int A_cal[2];
+extern long long Br_cal[2];
+extern int D_cal[2];
+extern long long Er_cal[2];
+extern int bpot;
+extern int apot;
+
+const int MAX24 = 0x7fffff;
+const int MIN24 = 0xff800000;
+
+
+
+/** LETS TRY USING MACROS INSTEAD OF FUNCTIONS
+ */
+#define _USEMACROS
+#ifdef  _USEMACROS
+
+//void processZ(ZState * outState, int zValue)
+#define processZ(outState, zValue) \
+{ \
+    bool changed = false; \
+    switch(zstate) \
+    { \
+        case 0: \
+            if (zValue > (lastOfficialZValue+zBigDelta)) \
+            { \
+                changed = true; \
+                zstate = 1; \
+            } \
+            else if (zValue < (lastOfficialZValue-zBigDelta)) \
+            { \
+                changed = true; \
+                zstate = 2; \
+            } \
+            break; \
+        case 1: \
+            if ( zValue > (lastOfficialZValue+zLittleDelta)) \
+            { \
+                changed = true; \
+            } \
+            else if ( zValue < (lastOfficialZValue-zMediumDelta)) \
+            { \
+                changed = true; \
+                zstate = 2; \
+            } \
+            break; \
+        case 2: \
+            if ( zValue < (lastOfficialZValue-zLittleDelta)) \
+            { \
+                changed = true; \
+            } \
+            else if ( zValue > (lastOfficialZValue+zMediumDelta)) \
+            { \
+                changed = true; \
+                zstate = 1; \
+            } \
+            break; \
+        default: \
+            xassert(false, 227); \
+    } \
+    if (changed) \
+    { \
+        lastOfficialZValue = zValue; \
+    } \
+    outState->changed = changed; \
+    outState->value = lastOfficialZValue; \
+}
+
+//extern "C" void getCalibratedInput(int * inLeft, int * inRight, int * inPot );
+#define getCalibratedInput(inLeft, inRight, inPot) \
+{ \
+    *inLeft = ((inL - A_cal[0]) * Br_cal[0]) >> 24; \
+    *inRight = ((inR - A_cal[1]) * Br_cal[1]) >> 24; \
+    int y = ((apot * pot) >> 16) + bpot; \
+    if (y < 0) y=0; \
+    if (y > 0x3ff) y = 0x3ff; \
+    *inPot = y; \
+}
+
+#define calibrateAndPutOutput(left, right) \
+{ \
+    int toutL =  (((left  -D_cal[0]) * Er_cal[0]) >> 24); \
+    if (toutL < MIN24) toutL = MIN24; \
+    if (toutL > MAX24) toutL = MAX24; \
+    outL = toutL; \
+    int toutR = (((right - D_cal[1]) * Er_cal[1]) >> 24); \
+    if (toutR < MIN24) toutR = MIN24; \
+    if (toutR > MAX24) toutR = MAX24; \
+    outR = toutR; \
+}
+
+#endif
+
+#ifndef  _USEMACROS
+// forward declarations
+void processZ(ZState * outState, int zValue);
+extern "C" void getCalibratedInput(int * inLeft, int * inRight, int * inPot );
+extern "C" void calibrateAndPutOutput(int left, int right);
+
+#endif
+
+
 
 
 DModule * modules[16] = {
     
     // 1A
-    new DMSampleAndHoldDual(), 
+   // new DMSampleAndHoldDual(), 
+    new DMZero(),
 
     
     // 1B
@@ -113,7 +226,7 @@ DModule * modules[16] = {
 
 // don't define BENCHMARK for normal operation
 //#define BENCHMARK 2 // 1 = run bench normally, 2 = no z, 3 = z every 10 samples
-#define BENCHMULT 1
+#define BENCHMULT 4
 
 
 #if BENCHMARK
@@ -141,7 +254,9 @@ static inline void runModuleOnce()
         int rawOutL, rawOutR;   // sent output to temp
         int calibratedInL, calibratedInR, calibratedZ;
             
-        ZState z(calibratedZ, true);   
+        ZState z;
+        ZState * pz = &z;
+        processZ(pz, calibratedZ);
         getCalibratedInput(&calibratedInL, &calibratedInR, &calibratedZ);
          //calibratedInL=0; calibratedInR=0; calibratedZ=0;
         modules[selector]->go(false, calibratedInL, calibratedInR, z, rawOutL, rawOutR);
@@ -164,7 +279,8 @@ static inline void runModuleOnce()
            // calR = calibratedInR;
           //  ZState z(calibratedZ, true);    // TODO: detect pot change
             ZState z;
-            processZ(&z, calibratedZ);
+            ZState *pz = &z;
+            processZ(pz, calibratedZ);
             
             if (resetModulesFlag)
                 z.changed = false;
@@ -220,18 +336,8 @@ extern "C" void runModules()
 }
 
 
-/* Z processing state machine */
 
-static int lastOfficialZValue = 0;
-
-static int zstate = 0;  // 0 = just reset, waiting for big change
-                        // 1 = normal increasing pot state
-                        // 2 = normal decreasing pot state
-
-const int zBigDelta = 1024 / 20;
-const int zLittleDelta = 4;
-const int zMediumDelta = zLittleDelta * 2;
-
+#ifndef  _USEMACROS
 void processZ(ZState * outState, int zValue)
 {
     bool changed = false;
@@ -287,6 +393,7 @@ void processZ(ZState * outState, int zValue)
     outState->changed = changed;
     outState->value = lastOfficialZValue;        // TODO: detect change
 }
+#endif
 
 
 void doReset()

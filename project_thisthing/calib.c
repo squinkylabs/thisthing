@@ -96,10 +96,10 @@ int findRom()
 /* Global variables to hold the calibrations constants
  */
 
-static int A_cal[2];
-static long long Br_cal[2];
-static int D_cal[2];
-static long long Er_cal[2];
+int A_cal[2];
+long long Br_cal[2];
+int D_cal[2];
+long long Er_cal[2];
 
 const int romOffsetInputGnd =0;
 const int romOffsetOutputZero =1;
