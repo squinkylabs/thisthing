@@ -305,7 +305,7 @@ void ConfigureCodec()
     // Initialize the data buffer
     I2C_FORMAT_7_BIT_ADDRESS(SlaveAddress, 0x46, I2C_WRITE);
     i2cData[0] = SlaveAddress.byte;
-
+#if 0 // I added this
     i2cData[1] = 0x40;              // register 64
     i2cData[2] = 0x40;              // reset mode control registers
     SendPacket( i2cData, 3 );
@@ -314,6 +314,7 @@ void ConfigureCodec()
     i2cData[2] = 0x80;              // reset system
     SendPacket( i2cData, 3 );
     
+#endif
     i2cData[1] = 0x40;              // register 64
     i2cData[2] = 0xC0;              // turn off power save
     SendPacket( i2cData, 3 );

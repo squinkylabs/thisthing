@@ -37,6 +37,11 @@ SOFTWARE.
 // Primary Osc w/PLL (XT+,HS+,EC+PLL)
 // WDT OFF
 // Other options are don't care
+
+// THESE ARE ORIGINAL (OS) SETTINGS
+//#pragma config FPLLMUL = MUL_20, FPLLIDIV = DIV_2, FPLLODIV = DIV_2, FWDTEN = OFF
+//#pragma config POSCMOD = OFF, FNOSC = FRCPLL, FPBDIV = DIV_1, FSOSCEN = OFF
+
 #pragma config FPLLMUL = MUL_20, FPLLIDIV = DIV_2, FPLLODIV = DIV_2, FWDTEN = OFF
 #pragma config POSCMOD = OFF, FNOSC = FRCPLL, FPBDIV = DIV_1, FSOSCEN = OFF
 
@@ -238,11 +243,22 @@ extern int initCal();
  */
 int main(int argc, char** argv)
 {
-    UINT spi_con1 = 0, spi_con2 = 0;
+   
 
-    Nop();
+   // Nop();
     // basic system config
+    
     SYSTEMConfig( SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE );
+    //SYSTEMConfig( SYS_FREQ, 0 );
+    //SYSTEMConfigPerformance( SYS_FREQ);
+#ifdef _PCACHE
+    a b c
+#endif
+    //int xxyy = mCheGetCon();
+    //        int xxyy = CHECON;
+    
+     UINT spi_con1 = 0, spi_con2 = 0;
+     
     INTEnableSystemMultiVectoredInt();
 
     // button on the PCB
@@ -375,7 +391,9 @@ int main(int argc, char** argv)
 //void __interrupt(_SPI_1_VECTOR, IPL3SOFT) SPI1InterruptHandler(void)
 
 // this is OK since SRS doesn't work with ipl3, soft is more efficient than auto
-void __ISR(_SPI_1_VECTOR, IPL3SOFT) SPI1InterruptHandler(void)
+// (this is the way I always use)
+//void __ISR(_SPI_1_VECTOR, IPL3SOFT) SPI1InterruptHandler(void)
+void __ISR(_SPI_1_VECTOR, ipl3) SPI1InterruptHandler(void)
 
 {
     _d.isr_ct++;

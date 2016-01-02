@@ -76,7 +76,7 @@ const int MIN24 = 0xff800000;
 
 /** LETS TRY USING MACROS INSTEAD OF FUNCTIONS
  */
-#define _USEMACROS
+//#define _USEMACROS
 #ifdef  _USEMACROS
 
 //void processZ(ZState * outState, int zValue)
@@ -226,7 +226,7 @@ DModule * modules[16] = {
 
 // don't define BENCHMARK for normal operation
 //#define BENCHMARK 2 // 1 = run bench normally, 2 = no z, 3 = z every 10 samples
-#define BENCHMULT 4
+#define BENCHMULT 2
 
 
 #if BENCHMARK
@@ -258,7 +258,7 @@ static inline void runModuleOnce()
         ZState * pz = &z;
         processZ(pz, calibratedZ);
         getCalibratedInput(&calibratedInL, &calibratedInR, &calibratedZ);
-         //calibratedInL=0; calibratedInR=0; calibratedZ=0;
+          //calibratedInL=0; calibratedInR=0; calibratedZ=0;
         modules[selector]->go(false, calibratedInL, calibratedInR, z, rawOutL, rawOutR);
         calibrateAndPutOutput(rawOutL, rawOutR);  // TODO: pass real values 
     }
@@ -295,7 +295,7 @@ static inline void runModuleOnce()
 #endif
 
 extern volatile int resetState;
-
+#if 1
 extern "C" void runModules()
 {
     DECLARATIONS();
@@ -334,6 +334,7 @@ extern "C" void runModules()
         LOOP_END();
     }
 }
+#endif
 
 
 
@@ -413,6 +414,23 @@ extern "C" void Modules_setNewSelector(int selector)
 
 
 
+//void delayLoop( int count );
+#if 0
+int _bigLoopCount=0;
+extern "C" void runModules()
+{
+
+    //int xxyy = CHECON;
+    //int wait = CHECON & 0x7;
+    int flash = FLASH_SPEED_HZ;
+    Nop();
+    while(1)
+    {
+     _bigLoopCount++;
+     delayLoop(1000);
+    }
+}
+#endif
 
 
 
