@@ -18,7 +18,7 @@ void sd0()
 #if (_VERBOSE > 0)
 	printf("sd0\n");
 #endif
-	SlopeDetector sd(20, 1000, 70000, true);
+	SlopeDetector sd(20, 1000, Constants::DISTING_SAMPLE_RATE, true);
 	assert( !sd.getPositiveSlope());
 	assert( !sd.getNegativeSlope());
 	assert( !sd.getBothSlope());
@@ -32,7 +32,7 @@ void sd1()
 #if (_VERBOSE > 0)
 	printf("sd1\n");
 #endif
-	SlopeDetector sd(20, 1000, 70000, true);					// 20 mv thresh
+	SlopeDetector sd(20, 1000, Constants::DISTING_SAMPLE_RATE, true);					// 20 mv thresh
 	int input = DACVoltage::xcodeForMV(1000);		// huge step
 	sd.go(input);
 	assert( sd.getPositiveSlope() );
@@ -46,7 +46,7 @@ void sd2()
 #if (_VERBOSE > 0)
 	printf("sd2\n");
 #endif
-	SlopeDetector sd(20, 1000, 70000, true);					//210 mv thresh
+	SlopeDetector sd(20, 1000, Constants::DISTING_SAMPLE_RATE, true);					//210 mv thresh
 	int input = DACVoltage::xcodeForMV(10);		// small step
 	sd.go(input);
 	assert( !sd.getPositiveSlope() );
@@ -61,7 +61,7 @@ void sd3()
 #if (_VERBOSE > 0)
 	printf("sd3\n");
 #endif
-	SlopeDetector sd(20, 1000, 70000, true);					// 20 mv thresh
+	SlopeDetector sd(20, 1000, Constants::DISTING_SAMPLE_RATE, true);					// 20 mv thresh
 	int input = DACVoltage::xcodeForMV(1000);		// huge step
 	sd.go(-input);
 	assert( !sd.getPositiveSlope() );
@@ -141,7 +141,6 @@ void testSeq(I_Test& sd, Note * seq, int sampleRate, const char * msg)
 		}
 	}
 
-	//for( ; seq->durationMS!=0; ++seq)
 	for (int step=0; seq[step].durationMS != 0; ++step)
 	{
 
@@ -149,15 +148,13 @@ void testSeq(I_Test& sd, Note * seq, int sampleRate, const char * msg)
 		int input = DACVoltage::xcodeForMV(mv);	
 
 #if (_VERBOSE > 1)
-		printf("top of loop in testSeq step = %d input = %d pitch = %d mv=%d\n", step, input, seq[step].midiPitch, mv);
+		printf("top of loop in testSeq step = %d input = %d pitch = %d millis=%d mv=%d sampleRAte = %d\n", step, input, seq[step].midiPitch, seq[step].durationMS, mv, sampleRate);
 #endif
-		
 		
 		// numer of samples in which we must detect 
 		int samples = (seq[step].durationMS * sampleRate) / 1000;
-
-
-		// becuase of gibbs filter, we may need a few to detect high
+		
+		// because of gibbs filter, we may need a few to detect high
 		int output=false;
 		for (int i=0; i< Constants::SLOPE_TEST_DELAY; ++i)		// was 20
 		{
@@ -176,7 +173,7 @@ void testSeq(I_Test& sd, Note * seq, int sampleRate, const char * msg)
 		// make sure we detected the change
 		if (!output)
 		{
-			printf("failing due to missed input[%d] %s\n", step, msg);
+			printf("failing due to missed input[%d] %s (after %d iterations)\n", step, msg, Constants::SLOPE_TEST_DELAY);
 		}
 		assert(output);
 
@@ -208,8 +205,9 @@ void sd4()
 #if (_VERBOSE > 0)
 	printf("sd4\n");
 #endif
-	int sampleRate = 70000;
+	int sampleRate = Constants::DISTING_SAMPLE_RATE;
 	SlopeDetector _sd(20, 1000, sampleRate, true);					// 20 mv thresh
+	//SlopeDetector _sd(41, 4000, sampleRate, true);					// (like the DM version)
 	SDWrap sd(_sd);
 	testSeq(sd, chromatic, sampleRate, "chrom, 1");
 }
@@ -220,7 +218,7 @@ void sdm4()
 #if (_VERBOSE > 0)
 	printf("sd4m\n");
 #endif
-	int sampleRate = 70000;
+	int sampleRate = Constants::DISTING_SAMPLE_RATE;
 	DMSlopeDetectorDual _sd;					// 20 mv thresh
 	SDMWrap sd(_sd);
 	//printf("smd4 using wrong stim\n");
@@ -233,7 +231,7 @@ void sd5()
 #if (_VERBOSE > 0)
 	printf("sd5\n");
 #endif
-	int sampleRate = 70000;
+	int sampleRate = Constants::DISTING_SAMPLE_RATE;
 	SlopeDetector _sd(20, 1000, sampleRate, true);					// 20 mv thresh
 	SDWrap sd(_sd);
 	testSeq(sd, trill, sampleRate, "trill 1");
@@ -245,7 +243,7 @@ void sd6()
 #if (_VERBOSE > 0)
 	printf("sd6\n");
 #endif
-	int sampleRate = 70000;
+	int sampleRate = Constants::DISTING_SAMPLE_RATE;
 	SlopeDetector _sd(20, 1000, sampleRate, true);					// 20 mv thresh
 	SDWrap sd(_sd);
 	testSeq(sd, leap, sampleRate, "leap 1");
@@ -259,7 +257,7 @@ void sd7()
 #if (_VERBOSE > 0)
 	printf("sd7\n");
 #endif
-	int sampleRate = 70000;
+	int sampleRate = Constants::DISTING_SAMPLE_RATE;
 	SlopeDetector _sd(20, 600 * 1000, sampleRate, true);					// 20 mv thresh
 	SDWrap sd(_sd);
 	testSeq(sd, trill, sampleRate, "trill 159");
@@ -273,7 +271,7 @@ void sd8()
 #if (_VERBOSE > 0)
 	printf("sd8\n");
 #endif
-	int sampleRate = 70000;
+	int sampleRate = Constants::DISTING_SAMPLE_RATE;
 	SlopeDetector _sd(20, 180 * 1000, sampleRate, true);					// 20 mv thresh
 	SDWrap sd(_sd);
 	testSeq(sd, leap, sampleRate, "leap 159");
@@ -289,7 +287,7 @@ void sd9()
 #if (_VERBOSE > 0)
 	printf("sd9\n");
 #endif
-	int sampleRate = 70000;
+	int sampleRate = Constants::DISTING_SAMPLE_RATE;
 	SlopeDetector _sd(20, 15 * 1000, sampleRate, true);					// 20 mv thresh
 	SDWrap sd(_sd);
 	testSeq(sd, leapfast, sampleRate, "leap 159");
@@ -302,7 +300,7 @@ void sdm9()
 #if (_VERBOSE > 0)
 	printf("sdm9\n");
 #endif
-	int sampleRate = 70000;
+	int sampleRate = Constants::DISTING_SAMPLE_RATE;
 //	SlopeDetector _sd(20, 18 * 1000, sampleRate, true);					// 20 mv thresh
 	DMSlopeDetectorDual _sd;
 	SDMWrap sd(_sd);
@@ -390,7 +388,7 @@ void SlopeDetectorTests()
 
 void hack()
 {
-	int sampleRate = 70000;
+	int sampleRate = Constants::DISTING_SAMPLE_RATE;
 	SlopeDetector sd1(20, 159*1000, sampleRate, true);					// 20 mv thresh
 	SlopeDetector sd2(20, 159*1000, sampleRate, true);					// 20 mv thresh
 

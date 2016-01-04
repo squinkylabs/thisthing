@@ -31,7 +31,7 @@ void sdTest(int step, bool expectDetect, int tcUS, int modMinUS, int modMaxUS, i
 	
 	// first, non-module case
 	{
-		SlopeDetector _sd(20, tcUS, 70000, true);
+		SlopeDetector _sd(20, tcUS, Constants::DISTING_SAMPLE_RATE, true);
 		SDWrap sd(_sd);
 		bool trig = doesTrigger(sd, step, 70000);
 		if (trig != expectDetect)
@@ -59,7 +59,7 @@ void sdTest(int step, bool expectDetect, int tcUS, int modMinUS, int modMaxUS, i
 void sd2_1()
 {
 	printf("sd2_1\n");
-	const int step = DACVoltage::xcodeForMV(1);	
+	const int step = DACVoltage::xcodeForMV(1) * Constants::SAMPLE_RATE_DIVISOR;	// make step bigger at reduced sr	
 	const int tc = 1000;
 	sdTest(step, true, tc, tc, 10 * tc, 0);
 }
@@ -71,7 +71,7 @@ void sd2_2()
 {
 	printf("sd2_2\n");
 	//const int step = 1;		// tinny step
-	const int step = DACVoltage::xcodeForMV(1) / 4;	 // todo: tighten tolerence between mod and non-mode
+	const int step = Constants::SAMPLE_RATE_DIVISOR * DACVoltage::xcodeForMV(1) / 4;	 // todo: tighten tolerence between mod and non-mode
 	const int tc = 1000;
 	sdTest(step, false, tc, tc, 10 * tc, 0);
 }
@@ -81,7 +81,7 @@ void sd2_2()
 void sd2_3()
 {
 	printf("sd2_3\n");
-	const int step = DACVoltage::xcodeForMV(1) / 10;	
+	const int step =  Constants::SAMPLE_RATE_DIVISOR *DACVoltage::xcodeForMV(1) / 10;	
 	const int tc = 1000 * 10;
 	sdTest(step, true, tc, tc, 10 * tc, 0);
 }
@@ -90,7 +90,7 @@ void sd2_3()
 void sd2_3b()
 {
 	printf("sd3_b\n");
-	const int step = DACVoltage::xcodeForMV(1) / 10;	
+	const int step =   Constants::SAMPLE_RATE_DIVISOR * DACVoltage::xcodeForMV(1) / 10;	
 	const int tc = 1000 * 10;
 	sdTest(step, true, tc, tc / 10, tc, 0x3ff);
 }
@@ -100,7 +100,7 @@ void sd2_3b()
 void sd2_4()
 {
 	printf("sd2_4\n");
-	const int step = DACVoltage::xcodeForMV(1) / 40;	
+	const int step = Constants::SAMPLE_RATE_DIVISOR *DACVoltage::xcodeForMV(1) / 40;	
 	const int tc = 1000 * 10;
 	sdTest(step, false, tc, tc, 10 * tc, 0);
 }
@@ -110,7 +110,7 @@ void sd2_4()
 void sd2_4b()
 {
 	printf("sd2_4b\n");
-	const int step = DACVoltage::xcodeForMV(1) / 40;	
+	const int step = Constants::SAMPLE_RATE_DIVISOR *DACVoltage::xcodeForMV(1) / 40;	
 	const int tc = 1000 * 10;
 	sdTest(step, false, tc, tc/4, tc, 0x3ff);
 }
@@ -259,4 +259,5 @@ void SlopeDetectorTests2()
 	//printf("sd2_6 test skipped becuase slope detector tests don't know about LPF\n");
 	sd2_6();
 	
+
 }

@@ -37,7 +37,7 @@ extern "C" void Led_setTempSelectorOverride(int value, int mode)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-#if 0
+#if 1
 	printf("starting unit tests\n");
 	FixedPointTest();
 	LinearInterpTests();
@@ -68,7 +68,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	//SlopeDetectorModuleTests();
 	//CounterTests();
-	//GateTriggerTests();
+	GateTriggerTests();
 	//SampleAndHoldTest();
 	//DelayTest();
 	//QuantizerTests();
@@ -76,12 +76,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	//DACVoltageTest();
 	//AdderTests();
 	
-	//SlopeDetectorTests();
+	SlopeDetectorTests();
 	//SlopeDetectorTests2();
 	//TestLFO();
 
 	//Ala152Test();
-	SwitchTests();
+	//SwitchTests();
 
 #endif
 	printf("leaving unit tests\n");

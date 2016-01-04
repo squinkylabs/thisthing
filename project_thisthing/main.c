@@ -376,8 +376,73 @@ int main(int argc, char** argv)
 
 // this is OK since SRS doesn't work with ipl3, soft is more efficient than auto
 void __ISR(_SPI_1_VECTOR, IPL3SOFT) SPI1InterruptHandler(void)
-
 {
+    // normal seq: first TX interrupt is right, next is left.
+    // first rx interrupt is left, next is right
+    // half rate:
+    // tx0: rigth, tx1: left/advance time, tx2: right, tx3: left, don't advance
+    // rx0: read left, rx1: read right, rx2: read defnul, rx3: read devnul
+  
+    if ( IFS1bits.SPI1TXIF )
+    {
+       // static int toggleData = 0;
+        static int txstate = 0;
+        switch (txstate)
+        {
+            case 0:
+                SPI1BUF = outR;
+                txstate = 1;
+                break;
+            case 1:
+                 SPI1BUF = outL;
+                 txstate = 2;
+                 ++time;
+                break;
+            case 2:
+                SPI1BUF = outR;
+                txstate = 3;
+                break;
+            case 3:
+                 SPI1BUF = outL;
+                 txstate = 0;
+                 break;
+                
+        }
+        IFS1bits.SPI1TXIF = 0;
+    }
+    if ( IFS1bits.SPI1RXIF )
+    {
+        //static BOOL toggleData = TRUE;
+        static int rxstate=0;
+
+        int raw = SPI1BUF;
+        switch(rxstate)
+        {
+            case 0:
+                raw = ( raw << 8 ) >> 8;
+                inL = raw;
+                rxstate = 1;
+                break;
+            case 1:
+                raw = ( raw << 8 ) >> 8;
+                inR = raw;
+                rxstate = 2;
+                break;
+            case 2:
+                rxstate = 3;
+                break;
+            case 3:
+                rxstate = 0;
+                break;
+        }
+        IFS1bits.SPI1RXIF = 0;
+    }
+}
+
+#if 0 // orig
+{
+    // normal seq: first TX interrupt is right, next is left.
+    // first rx interrupt is left, next is right
     _d.isr_ct++;
     if ( IFS1bits.SPI1TXIF )
     {
@@ -402,5 +467,6 @@ void __ISR(_SPI_1_VECTOR, IPL3SOFT) SPI1InterruptHandler(void)
         IFS1bits.SPI1RXIF = 0;
     }
 }
+#endif
 #endif
 

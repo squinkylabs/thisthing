@@ -353,10 +353,22 @@ void to0()
 			break;
 		++duration;
 	}
-	printf("duration = %d\n", duration);
-	assert(duration > 385);
-	assert(duration < 395);	
+
+	const int micros = (duration * 1000 * 1000) / Constants::DISTING_SAMPLE_RATE;
+	//printf("duration = %d micros = %d\n", duration, micros);
+	assert(micros > 4900);
+	assert(micros < 5100);	
 }
+
+// test that we work immediately on startup - no reset delay
+void to1()
+{
+	const int ghigh = DACVoltage::xcodeForGateHi();
+	TriggerOutput t;
+	t.go(true);
+	assert(t.get() ==ghigh);
+}
+
 
 
 void testAfterReset(GateTrigger& g, bool useZ)
@@ -479,6 +491,7 @@ void GateTriggerTests()
 	cg4();
 	cg5();
 	to0();
+	to1();
 	grst1();
 	grst2();
 

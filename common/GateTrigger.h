@@ -22,9 +22,20 @@ public:
 					_reset(true)
 	{
 	}
+	// version of the ctor that bypasses the reset logic
+	// use this when using GateTrigger as something other than an input to gate convertrer.
+	GateTrigger(bool scaleForZ, int magicCode) :  _sc( DACVoltage::codeForMV(scaleForZ, 2000),
+						 DACVoltage::codeForMV(scaleForZ, 3000)),
+					_gate(false),
+					_trigger(false),
+					_reset(false)
+	{
+		assert(magicCode == 111);
+	}
 	void go(int v)
 	{
 		const bool newGate = _sc.go(v);
+		//printf("in GateTrigger.go(%d), newG = %d _ reset=%d\n", v, newGate, _reset);
 		if (_reset)
 		{
 			if (newGate)		// in reset state need to wait for low

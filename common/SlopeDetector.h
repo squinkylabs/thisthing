@@ -15,8 +15,8 @@ public:
 		_sampleRate(sampleRate),
 		_pos(false), _neg(false), _both(false)
 	{
-#if defined(_MSC_VER) && (VERBOSE > 1)
-		printf("ctor of sd, tcUS = %d\n", tcUS);
+#if defined(_MSC_VER) && (_VERBOSE > 1)
+		printf("ctor of sd, tcUS = %d thresh=%d sr=%d\n", tcUS, thresholdMillivolts, sampleRate);
 #endif
 		assert(tcIsUS);
 		assert(tcUS > 0);
@@ -44,6 +44,9 @@ public:
 		_pos =  ((input - _threshold) > _filter.get());
 		_neg = ((input + _threshold) < _filter.get());
 		_both = _pos || _neg;
+#if defined(_MSC_VER) && 0
+		printf("in sd.go(%d), pos=%d neg=%d\n", input, _pos, _neg);
+#endif
 			
 	}
 	bool getPositiveSlope() const { return _pos; }

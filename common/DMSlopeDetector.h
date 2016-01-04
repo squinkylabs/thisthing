@@ -28,8 +28,8 @@ public:
 	// just for legacy tests
 
 	DMSlopeDetectorDual(int tcUS) : 
-		_sd1(quarterToneMV, tcUS, 70000, true),
-		_sd2(quarterToneMV, tcUS, 70000, true)
+		_sd1(quarterToneMV, tcUS, Constants::DISTING_SAMPLE_RATE, true),
+		_sd2(quarterToneMV, tcUS, Constants::DISTING_SAMPLE_RATE, true)
 	{
 
 		_inputFilterx.set(1 , Constants::GIBBS_CUTOFF_RATIO);		// set it really high
@@ -39,8 +39,8 @@ public:
 
 	// 4 millisecond TC
 	DMSlopeDetectorDual() : 
-		_sd1(quarterToneMV, 4000, 70000, true),
-		_sd2(quarterToneMV, 4000, 70000, true)
+		_sd1(quarterToneMV, 4000, Constants::DISTING_SAMPLE_RATE, true),
+		_sd2(quarterToneMV, 4000, Constants::DISTING_SAMPLE_RATE, true)
 	{
 		
 		_inputFilterx.set(1 , Constants::GIBBS_CUTOFF_RATIO);		// set it really high
@@ -62,8 +62,6 @@ public:
 		b = _out2.get();
 	}
 private:
-	typedef ExpPotFilterLookup::fp fp;
-	// (int thresholdMillivolts, int tcMs, int sampleRate)
 	SlopeDetector _sd1;
 	SlopeDetector _sd2;
 	TriggerOutput _out1;
@@ -92,7 +90,7 @@ public:
 
 	// 4 millisecond TC
 	DMRiseAndFallDetector() : 
-		_sd(quarterToneMV, 4000, 70000, true)
+		_sd(quarterToneMV, 4000, Constants::DISTING_SAMPLE_RATE, true)
 	{
 		_inputFilter.set(1 , Constants::GIBBS_CUTOFF_RATIO);		// set it really high
 	}
@@ -135,7 +133,7 @@ public:
 	static const int quarterToneMV = 1000 / 24;
 	DMDualFunctionQuantizerHelper() : 
 		_trig(true),
-		_sd(quarterToneMV, 4000, 70000, true)
+		_sd(quarterToneMV, 4000, Constants::DISTING_SAMPLE_RATE, true)
 	{
 		doReset();
 		_inputFilter.set(1 , Constants::GIBBS_CUTOFF_RATIO);		// set it really high
@@ -191,8 +189,8 @@ public:
 
 	// TODO: what do we want to do about pot range????
 	DMSlopeDetectorDual_old(int minTc_US = 1800, int maxTc_US=180000) : 
-		_sd1(quarterToneMV, 1 * 1000, 70000, true),
-		_sd2(quarterToneMV, 1 * 1000, 70000, true),
+		_sd1(quarterToneMV, 1 * 1000, Constants::DISTING_SAMPLE_RATE, true),
+		_sd2(quarterToneMV, 1 * 1000, Constants::DISTING_SAMPLE_RATE, true),
 		_scalePot_to_k((float)minTc_US , (float)maxTc_US),          //1.8 ms to 180 ms
 		_lastZ(-1),
         _samplesSinceZUpdate(0),

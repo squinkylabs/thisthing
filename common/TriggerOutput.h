@@ -12,7 +12,7 @@ class TriggerOutput
 {
 public:
 	TriggerOutput() :
-		_gateProcessor(false),
+		_gateProcessor(false, 111),		// pass kluge code to defeat reset logic that we don't want
 		_counter(0),
 		_duration( (Constants::TRIGGER_OUT_TIME_MS * Constants::DISTING_SAMPLE_RATE) / 1000)
 	{
