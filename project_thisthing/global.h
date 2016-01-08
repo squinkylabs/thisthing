@@ -42,10 +42,19 @@ extern void ErrorHalt();
 
 #define SYS_FREQ 	(40000000L)
 
-#define SAMPLE_RATE     78125
-#define RODIV		0
+//#define SAMPLE_RATE     78125
+
+// original values
+/* 
+#define RODIV		0       // should have been 1
 #define REFTRIM		0
-#define SPI_SRC_DIV     8
+#define SPI_SRC_DIV     8  // should have been 4
+ */
+
+// 40k
+#define RODIV		2
+#define REFTRIM		0
+#define SPI_SRC_DIV 4
 
 extern volatile unsigned int time;
 extern volatile int inL, inR;
