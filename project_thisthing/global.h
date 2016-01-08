@@ -42,10 +42,38 @@ extern void ErrorHalt();
 
 #define SYS_FREQ 	(40000000L)
 
-#define SAMPLE_RATE     78125
-#define RODIV		0
+/* from the internet:
+ Because the RODIV factor only allows even divisors. 
+
+From the data sheet:
+
+0 = No divide, 
+1 = /2, 
+2 = /4, 
+3 = /6, */
+// unused #define SAMPLE_RATE     78125
+
+/* These values worked for half rate, but OS says spi_src_div wants to be 4
+#define RODIV		1  // half sampe rate
 #define REFTRIM		0
-#define SPI_SRC_DIV     8
+#define SPI_SRC_DIV 8
+ */
+
+// these are my "final" half rate
+
+#define RODIV		2  // half sampe rate
+#define REFTRIM		0
+#define SPI_SRC_DIV 4
+ 
+
+// original values
+/*
+#define RODIV		0  // half sampe rate
+#define REFTRIM		0
+#define SPI_SRC_DIV 8
+ * */
+
+
 
 extern volatile unsigned int time;
 extern volatile int inL, inR;
