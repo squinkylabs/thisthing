@@ -56,17 +56,6 @@ int findRom()
     Nop();
     int * temp;
     
-#if 0 // failed experiment for mkII
-    
-    temp = (int * )PA_TO_KVA0(CAL_ADDR_MKII);
-    pp = temp;
-    if (isValid(temp))
-    {
-        cal_rom = temp;
-        return;
-    }
-#endif
-    
     // look for mk I table
     temp = (int * )PA_TO_KVA0(CAL_ADDR_MKI);
     if (isValid(temp))
@@ -75,10 +64,15 @@ int findRom()
         return 1;
     }
     
-    //TODO: mk II
- 
+    //if not found, look for mk II
+    temp = (int * )PA_TO_KVA0(CAL_ADDR_MKII);
+    pp = temp;
+    if (isValid(temp))
+    {
+        cal_rom = temp;
+        return 1;
+    }
     
-   
     // If we don't find one, just use fake to we don't crash
     temp = fake_cal_table;
     if (isValid(temp))
@@ -86,7 +80,7 @@ int findRom()
         cal_rom = temp;
         return 0;
     }
-   
+  
     xassert(0, 1046);
     cal_rom = temp;
     return 0;
