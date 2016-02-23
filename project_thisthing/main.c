@@ -86,15 +86,6 @@ void assert_fail(int code)
 #include <math.h>
 void delayLoop( int count )
 {
-    // once code optimisation is enabled,
-    // put this line in to retain similar timing
-//    count *= 5;
-    //
-#if 0 // original
-    int i;
-    for ( i=0; i<count; ++i )
-        looper++;
-#endif
     int i;
     int loops = count / 10;
     for (i=0; i< loops ; ++i )
@@ -266,17 +257,6 @@ int main(int argc, char** argv)
     const int calOK = initCal(); 
     Led_showCalibration(calOK);
 
-    // more LED flashing now that we're all configured
-#if 0
-    int j;
-    for ( j=0; j<4; ++j )
-    {
-        int i;
-        PORTAINV = BIT_2 | BIT_3;
-        delayLoop( 500000 );
-    }
-#endif
-
     // configure the ADC
     //
     // Tpb = 25ns
@@ -349,6 +329,9 @@ int main(int argc, char** argv)
     SpiChnPutC(SPI_CHANNEL1, 0); //Dummy write to start the SPI
     SpiChnPutC(SPI_CHANNEL1, 0); //Dummy write to start the SPI
 
+    // fix for "Initial LED state wrong with A1" #2
+    // init the display system for alg 0
+    Modules_setNewSelector(0);
     // main loop (never quits)
     for ( ;; )
     {

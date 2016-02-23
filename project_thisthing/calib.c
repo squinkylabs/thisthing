@@ -100,10 +100,6 @@ const int romOffsetOutputZero =1;
 const int romOffsetOutputHalf =2;
 const int romOffsetOutputThree =3;
 
-//long long temp64;
-//double dtemp;
-//int itemp;
-
 // z pot calibration
 int bpot = 0;
 int apot =  0;
@@ -200,7 +196,6 @@ const int MIN24 = 0xff800000;
 
 void calibrateAndPutOutput(int left, int right)
 {
-
     int toutL =  (((left  -D_cal[0]) * Er_cal[0]) >> 24);
     if (toutL < MIN24) toutL = MIN24;
     if (toutL > MAX24) toutL = MAX24;

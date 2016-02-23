@@ -35,7 +35,6 @@ extern "C" void Led_setSelector(int selector);
 extern "C" void getCalibratedInput(int * inLeft, int * inRight, int * inPot );
 extern "C" void calibrateAndPutOutput(int left, int right);
 
-
 // forward declarations
 void processZ(ZState * outState, int zValue);
 
@@ -59,16 +58,14 @@ DModule * modules[16] = {
     // 1A
     new DMSampleAndHoldDual(), 
 
-    
     // 1B
     new DMSampleAndHoldDualClock(), 
-
     
     // 1C
     new DMSampleAndHold(),
     
     // 1D
-     new DMTrackAndHoldDualClock(), 
+    new DMTrackAndHoldDualClock(), 
 
     // 2A
     new DMSampleAndHoldProbabalistic(), 
@@ -200,21 +197,7 @@ extern "C" void runModules()
         
         runModuleOnce();
         Led_clock();
-#if 0
-        _d.last_sel = selector;
-        if (pot != _d.last_pot)
-        {
-            _d.last_pot = pot;
-            _d.pot_changes++;
-        }
-
-        
-        if (selector >= 0 && selector <= 15)
-        {
-            runModuleOnce();
-        }
-#endif
-       
+   
         LOOP_END();
     }
 }
@@ -288,15 +271,11 @@ void processZ(ZState * outState, int zValue)
     outState->value = lastOfficialZValue;        // TODO: detect change
 }
 
-
 void doReset()
 {
     resetModulesFlag = true;
     zstate = 0;
 }
-
-
-
 
 extern "C" void Modules_setNewSelector(int selector)
 {
