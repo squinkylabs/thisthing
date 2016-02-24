@@ -145,6 +145,7 @@
     <ClInclude Include="..\..\common\DelayLine.h" />
     <ClInclude Include="..\..\common\DiscreteLookup.h" />
     <ClInclude Include="..\..\common\DMAdders.h" />
+    <ClInclude Include="..\..\common\DMBankSelector.h" />
     <ClInclude Include="..\..\common\DMCounter.h" />
     <ClInclude Include="..\..\common\DMMisc.h" />
     <ClInclude Include="..\..\common\DModule.h" />
@@ -175,6 +176,7 @@
     </ClCompile>
     <ClCompile Include="AdderTests.cpp" />
     <ClCompile Include="Ala152Test.cpp" />
+    <ClCompile Include="BankTests.cpp" />
     <ClCompile Include="Calibrate.cpp" />
     <ClCompile Include="CounterTests.cpp" />
     <ClCompile Include="DACVoltageTest.cpp" />

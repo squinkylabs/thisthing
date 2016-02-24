@@ -22,7 +22,6 @@ public:
 class DModule
 {
 public:
-	//virtual void go(int x, int y, int z, volatile int& a, volatile int&b)=0;
 	virtual void go(bool reset, int x, int y, const ZState& z, volatile int& a, volatile int&b)=0;
 protected:
 };

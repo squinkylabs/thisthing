@@ -24,10 +24,13 @@ extern void AdderTests();
 extern void Calibrate();
 extern void Ala152Test();
 extern void SwitchTests();
+extern void BankTests();
 
 int i_global;
 int led_test;
 int led_mode;
+int global_bank_number=10;
+
 extern "C" void Led_setTempSelectorOverride(int value, int mode)
 {
 	led_test = value;
@@ -37,8 +40,9 @@ extern "C" void Led_setTempSelectorOverride(int value, int mode)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-#if 1
+#if 0
 	printf("starting unit tests\n");
+	BankTests();
 	FixedPointTest();
 	LinearInterpTests();
 	
@@ -63,12 +67,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	SwitchTests();
 #else
 	printf("skipping most tests\n");
+	BankTests();
 	//LookupTableTest();
 	
 	
 	//SlopeDetectorModuleTests();
 	//CounterTests();
-	GateTriggerTests();
+	//GateTriggerTests();
 	//SampleAndHoldTest();
 	//DelayTest();
 	//QuantizerTests();
@@ -76,7 +81,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//DACVoltageTest();
 	//AdderTests();
 	
-	SlopeDetectorTests();
+	//SlopeDetectorTests();
 	//SlopeDetectorTests2();
 	//TestLFO();
 
