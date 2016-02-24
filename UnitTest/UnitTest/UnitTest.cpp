@@ -35,12 +35,13 @@ extern "C" void Led_setTempSelectorOverride(int value, int mode)
 {
 	led_test = value;
 	led_mode = mode;
+	//printf("test set led test to %d, mode to %d\n", led_test, led_mode);
 }
 
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-#if 0
+#if 1
 	printf("starting unit tests\n");
 	BankTests();
 	FixedPointTest();

@@ -17,6 +17,7 @@ public:
 		if (z.changed)
 		{
 			global_bank_number = _interp.interp(z.value);
+			Led_setTempSelectorOverride(1 + global_bank_number, 1);
 		}
 		a = b = 0;	// we output nothing
 	}
