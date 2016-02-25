@@ -27,6 +27,7 @@
 #include "DMTuningRef.h"
 #include "DMTrackAndHoldAla152.h"
 #include "DMSwitch.h"
+#include "DMBankSelector.h"
 
 // externs
 extern "C" void assert_fail(int code);
@@ -47,13 +48,14 @@ typedef struct
 } TimeMetrics;
 
 volatile TimeMetrics tm;
-
 static bool resetModulesFlag = false;
 
+int global_bank_number=0;
 
 
 
-DModule * modules[16] = {
+
+DModule * modules_bank0[16] = {
     
     // 1A
     new DMSampleAndHoldDual(), 
@@ -101,9 +103,71 @@ DModule * modules[16] = {
     new DMSemitoneAdderSubtractor(),
  
     // 4D
-    new DMTuningReference()
+    //new DMTuningReference()
     // new DMSwitch()
+    new DMBankSelector(2)
 };
+
+
+
+
+DModule * modules_bank1[16] = {
+    
+    //1A-II
+    new DMTuningReference(),
+    
+    //1B-II
+    new DMSwitch(),
+    
+    //1C-II
+    new DMZero(),
+    
+    //1D-II
+    new DMZero(),
+    
+    //2A-II
+    new DMZero(),
+
+    //2B-II
+    new DMZero(),
+    
+    //2C-II
+    new DMZero(),
+    
+    //2D-II
+    new DMZero(),
+    
+    //3A-II
+    new DMZero(),
+
+    //3B-II
+    new DMZero(),
+    
+    //3C-II
+    new DMZero(),
+    
+    //3D-II
+    new DMZero(),
+    
+    //4A-II
+    new DMZero(),
+
+    //4B-II
+    new DMZero(),
+    
+    //4C-II
+    new DMZero(),
+    
+    // 4D
+    new DMBankSelector(2)
+};
+
+
+DModule** modules[2] = {
+    modules_bank0,
+    modules_bank1
+};
+
 /* runs module until it is time to switch.
  * takes input from the globals set up by disting main
  */ 
@@ -166,7 +230,7 @@ static inline void runModuleOnce()
             if (resetModulesFlag)
                 z.changed = false;
            
-            modules[selector]->go(resetModulesFlag, calibratedInL, calibratedInR, z, rawOutL, rawOutR);
+            modules[global_bank_number][selector]->go(resetModulesFlag, calibratedInL, calibratedInR, z, rawOutL, rawOutR);
             calibrateAndPutOutput(rawOutL, rawOutR);  // TODO: pass real values
             resetModulesFlag = false;
             // rawL = rawOutL;
