@@ -244,7 +244,7 @@ private:
 //z = probability (linear taper, 10% to 100%)
 //
 //a = t&h
-//b = 1 t&h (inverted output)
+//b = t&h (tracks inverted gate)
 class DMTrackAndHoldProbabalistic  : public DModule
 {
 public:
