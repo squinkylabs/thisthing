@@ -175,8 +175,9 @@ bool testMod(DModule& mod, CVIN cvin, CVOUT cvout, bool isTrackAndHold, CKIN cki
 	
 		break;
 	case CKIN_X:
-		assert(!bCLockInverted);		// can't test this yet
-		x = DACVoltage::xcodeForMV(10000);
+		//assert(!bCLockInverted);		// can't test this yet
+		//x = DACVoltage::xcodeForMV(10000);
+		x = bCLockInverted ? 0 : DACVoltage::xcodeForMV(10000);
 		mod.go(false, x, y, zNothing, a, b);
 	
 		break;
@@ -198,6 +199,7 @@ bool testMod(DModule& mod, CVIN cvin, CVOUT cvout, bool isTrackAndHold, CKIN cki
 
 
 	// first, set up a gate low then high
+
 	switch (ckin)
 	{
 	case CKIN_Z:
@@ -208,19 +210,20 @@ bool testMod(DModule& mod, CVIN cvin, CVOUT cvout, bool isTrackAndHold, CKIN cki
 	
 		break;
 	case CKIN_X:
-		assert(!bCLockInverted);		// can't test this yet
-		x = 0;
+		//assert(!bCLockInverted);		// can't test this yet
+		///x = 0;
+
+		x = bCLockInverted ? DACVoltage::xcodeForMV(10000) : 0;
 		mod.go(false, x, y, zNothing, a, b);
-		x = DACVoltage::xcodeForMV(10000);
+		x = bCLockInverted ? 0 : DACVoltage::xcodeForMV(10000);
 		mod.go(false, x, y, zNothing, a, b);
-	
 		break;
 	default:
 		assert(false);
 	}
 
 	const int _inversionPoint = DACVoltage::xcodeForuV(Constants::INVERSION_VOLTAGE * 1000 * 1000);
-	//printf("x=%d y=%d z=%d a=%d b=%d testv=%d\n", x,y,z,a,b,testv);
+	//printf("226: x=%d y=%d a=%d b=%d testv=%d\n", x,y,a,b,testv);
 	assert(a >=0);
 
 	if (bIsMinusA)
@@ -244,6 +247,9 @@ bool testMod(DModule& mod, CVIN cvin, CVOUT cvout, bool isTrackAndHold, CKIN cki
 			assert(b == 0);
 		break;
 	case CVOUT_B:
+		if (b == testv) didFire = true;
+
+		assert(!isProbabalistic);		// haven't implemented this
 		assert(b == testv);
 		if (!bIgnoreOtherOutput) assert(a == 0);
 		break;
@@ -284,7 +290,12 @@ bool testMod(DModule& mod, CVIN cvin, CVOUT cvout, bool isTrackAndHold, CKIN cki
 			assert(b == 0);
 		break;
 	case CVOUT_B:
+		if (!(b == (isTrackAndHold ? testv2 : testv)))
+		{
+			printf("failing input change with gate. b = %d, isTrack=%d testv2=%d testv=%d\n", b, isTrackAndHold, testv2, testv);
+		}
 		assert(b == (isTrackAndHold ? testv2 : testv));
+
 		if (!bIgnoreOtherOutput) assert(a == 0);
 		break;
 	default:
@@ -398,16 +409,29 @@ void shm5b()
 {
 	printf("*** shm5b\n");
 
-	int count =0;
-	DMTrackAndHoldProbabalistic shp;
-	DModule * m = &shp;
+	// first test non inverted output
+	{
+		DMTrackAndHoldProbabalistic shp;
+		DModule * m = &shp;
 
-	bool fired =testMod(*m, CVIN_Y, CVOUT_A, true, CKIN_X, false, FLAG_BISMINUSA);
-	assert(fired);
+		bool fired =testMod(*m, CVIN_Y, CVOUT_A, true, CKIN_X, false, FLAG_IGNOREOTHER);
+		assert(fired);
 
-	resetModule(shp);
-	fired =testMod(*m, CVIN_Y, CVOUT_A, true, CKIN_X, false, FLAG_BISMINUSA);
-	assert(fired);
+		resetModule(shp);
+		fired =testMod(*m, CVIN_Y, CVOUT_A, true, CKIN_X, false, FLAG_IGNOREOTHER);
+		assert(fired);
+	}
+
+	// now test inverted
+	{
+		printf("*** shm5b-II\n");
+		DMTrackAndHoldProbabalistic shp;
+		DModule * m = &shp;
+
+		bool fired =testMod(*m, CVIN_Y, CVOUT_B, true, CKIN_X, false, FLAG_IGNOREOTHER | FLAG_CLOCKINVERTED);
+		assert(fired);
+	}
+
 }
 
 

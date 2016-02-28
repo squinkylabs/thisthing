@@ -266,19 +266,29 @@ public:
 		{
 			// need to scale z to 10..100
 			const int pct =  _potScale.interp(z.value);
-			//printf("z (%d) interp to %d\n", z.value, pct);
 			_trig.setPercent(pct);
 			Led_setTempSelectorOverride(_led.interp(z.value), 1);
 		}
+
 		_trig.go(x);		// clock x, pot z
-		//printf("in th, g=%d t=%d\n", _trig.gate(), _trig.trigger());
-		_sh.go(_trig.gate(), _trig.trigger(), y);
-		a = _sh.trackAndHold();
-			// keep outputing zero until real trigger
-		b = _trig.isReset() ? 0 : _inversionPoint - a;
+		if (_trig.gate())
+		{
+			_gateHasGoneHigh = true;
+		}
+	
+		_sha.go(_trig.gate(), _trig.trigger(), y);
+		a = _sha.trackAndHold();
+	
+		// B gets the inverted gate from A, except in reset neither gets gate
+		const bool bGate = _gateHasGoneHigh ? !_trig.gate() : false;
+
+		_shb.go(bGate, _trig.trigger(), y);
+		b = _shb.trackAndHold();
 	}
 private:
-	SampleAndHold _sh;
+	bool _gateHasGoneHigh;
+	SampleAndHold _sha;
+	SampleAndHold _shb;
 	RandomGateTrigger _trig;
 	LinearInterp _potScale;
 	InterpForLED _led;
@@ -289,7 +299,9 @@ private:
 	{
 		_trig.setPercent(100);
 		_trig.reset();
-		_sh.reset();
+		_sha.reset();
+		_shb.reset();
+		_gateHasGoneHigh = false;
 	}
 };
 
