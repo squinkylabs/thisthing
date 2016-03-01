@@ -2,7 +2,7 @@
 #ifndef INCLUDE_SLOPEDETECTOR
 #define INCLUDE_SLOPEDETECTOR
 
-#include "LowPassFilter_dbl.h"
+#include "LowPassFilter_f.h"
 #include "DACVoltage.h"
 
 class SlopeDetector

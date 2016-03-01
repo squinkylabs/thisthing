@@ -168,6 +168,7 @@
     <ClInclude Include="..\..\common\LookupTable.h" />
     <ClInclude Include="..\..\common\LowPassFilter_dbl.h" />
     <ClInclude Include="..\..\common\ChromaticQuantizer.h" />
+    <ClInclude Include="..\..\common\LowpassFilter_f.h" />
     <ClInclude Include="..\..\common\Random.h" />
     <ClInclude Include="..\..\common\SampleAndHold.h" />
     <ClInclude Include="..\..\common\SchmidtTrigger.h" />

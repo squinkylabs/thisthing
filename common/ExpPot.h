@@ -1,9 +1,10 @@
 #ifndef INCLUDE_EXPPOT
 #define INCLUDE_EXPPOT
 
-#include <cmath>
+//#include <cmath>
 //#include <memory>
 #include "LookupTable.h"
+#include "LowPassFilter_f.h"
 
 /** maps 0..3ff to various exponential functions
  */
@@ -48,7 +49,7 @@ public:
 private:
 };
 
-#include "LowPassFilter_dbl.h"
+
 
 /* maps from pot values wiht exp taper directly to filter coefficients
 */

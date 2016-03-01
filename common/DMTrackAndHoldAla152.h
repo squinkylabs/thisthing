@@ -4,6 +4,8 @@
 #include "DModule.h"
 #include "GateTrigger.h"
 #include "DiscreteLookup.h"
+
+// This one was superceded by the extended, below
 // x = cv
 // z = trigger
 // a = t&h "odd"
@@ -71,10 +73,12 @@ class DMTrackAndHoldExtendedAla152 : public DModule
 public:
 	DMTrackAndHoldExtendedAla152() : _trig(false), _count(-1), _a(0), _b(0)
 	{
-		//	lookup values are "a track step" | "b track step" << 8
+		/* FILL up the lookup table with the preset delay values
+		 *	lookup values are "a track step" | "b track step" << 8
+		 */
+
 		//1   a b - -
 		_lookup.setValue(0,  0 | 1<<8);
-
 		//2   a - b -
 		_lookup.setValue(1,  0 | 2<<8);
 		//3   a - - b
@@ -102,12 +106,13 @@ public:
 		_pattern = _lookup.getStepValue(0);
 
 	}
+
 	virtual void go(bool reset, int x, int y, const ZState& z, volatile int& a, volatile int&b)
 	{
 		if (reset)
 		{
 			 _count=-1;
-			 _a= _b =0;
+			 _a=_b =0;
 			 _trig.reset();
 		}
 		if (z.changed)
@@ -115,10 +120,13 @@ public:
 			_pattern = _lookup.process(z.value);
 			Led_setTempSelectorOverride(1 + _lookup.getStepNumber(), 1);
 		}
+
+		// extract from the current pattern, the clock count at which each input is tracking
 		const int acap = _pattern & 0xf;
 		const int bcap = _pattern >> 8;
-		//printf("step = %d z=%d acap = %d, bcap = %d\n", _lookup.getStepNumber(), z, acap, bcap);
 
+
+		// process the clock 0..7
 		_trig.go(x);
 		if (_trig.trigger())
 		{
@@ -127,6 +135,7 @@ public:
 				_count = 0;
 		}
 
+		// see which outputs, if any, should be tracking in this clock period
 		if (_count == acap)
 		{
 			_a = y;
@@ -140,8 +149,6 @@ public:
 
 		a = _a;
 		b = _b;
-
-		
 	}
 private:
 	int _pattern;
