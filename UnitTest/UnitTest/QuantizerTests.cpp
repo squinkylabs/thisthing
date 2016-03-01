@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "DMQuantizer.h"
-#include "Quantizer.h"
+//#include "Quantizer.h"
 #include "DACVoltage.h"
 #include "DMQuantizer.h"
 #include "DMAdders.h"
@@ -127,7 +127,7 @@ void qt5()
 // TODO: this is very bad test coverate
 void dq0()
 {
-	DMQuantizer q;
+	DMDiatonicQuantizer q;
 	int a, b;
 
 	

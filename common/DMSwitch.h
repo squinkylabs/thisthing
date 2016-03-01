@@ -1,7 +1,7 @@
 #ifndef INCLUDE_DMSWITCH
 #define INCLUDE_DMSWITCH
 
-#include "Quantizer.h"
+#include "ChromaticQuantizer.h"
 #include "GateTrigger.h"
 #include "DModule.h"
 

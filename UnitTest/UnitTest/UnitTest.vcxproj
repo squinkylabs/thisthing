@@ -143,6 +143,7 @@
     <ClInclude Include="..\..\common\Counter.h" />
     <ClInclude Include="..\..\common\DACVoltage.h" />
     <ClInclude Include="..\..\common\DelayLine.h" />
+    <ClInclude Include="..\..\common\DiatonicPitchMapper.h" />
     <ClInclude Include="..\..\common\DiscreteLookup.h" />
     <ClInclude Include="..\..\common\DMAdders.h" />
     <ClInclude Include="..\..\common\DMBankSelector.h" />
@@ -166,12 +167,12 @@
     <ClInclude Include="..\..\common\LinearInterp.h" />
     <ClInclude Include="..\..\common\LookupTable.h" />
     <ClInclude Include="..\..\common\LowPassFilter_dbl.h" />
-    <ClInclude Include="..\..\common\Quantizer.h" />
+    <ClInclude Include="..\..\common\ChromaticQuantizer.h" />
     <ClInclude Include="..\..\common\Random.h" />
     <ClInclude Include="..\..\common\SampleAndHold.h" />
     <ClInclude Include="..\..\common\SchmidtTrigger.h" />
     <ClInclude Include="..\..\common\SlopeDetector.h" />
-    <ClCompile Include="..\..\common\Quantizer.cpp">
+    <ClCompile Include="..\..\common\ChromaticQuantizer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="AdderTests.cpp" />

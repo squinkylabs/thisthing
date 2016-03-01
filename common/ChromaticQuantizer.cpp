@@ -5,7 +5,7 @@
 //#include <stdio.h>
 #include <assert.h>
 
-#include "Quantizer.h"
+#include "ChromaticQuantizer.h"
 
 const int ChromaticQuantizer::middleCV = DACVoltage::xcodeForMV(2000);
 const int ChromaticQuantizer::semiV = DACVoltage::xcodeForMV(1000) / 12;

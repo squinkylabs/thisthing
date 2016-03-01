@@ -1,11 +1,11 @@
 #ifndef INCLUDE_DMQUANTIZER
 #define INCLUDE_DMQUANTIZER
 
-#include "Quantizer.h"
+#include "DiatonicPitchMapper.h"
 #include "DModule.h"
 // x = cv in
 // a = quantized cv out
-class DMQuantizer : public DModule
+class DMDiatonicQuantizer : public DModule
 {
 public:
 	virtual void go(bool reset, int x, int y, const ZState& z, volatile int& a, volatile int&b)

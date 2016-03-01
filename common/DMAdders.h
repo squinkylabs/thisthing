@@ -6,7 +6,7 @@
 #include "LinearInterp.h"
 #include "DModule.h"
 #include "DACVoltage.h"
-#include "Quantizer.h"
+#include "DiatonicPitchMapper.h"
 
 class DMOctaveAdderSubtractor : public DModule
 {

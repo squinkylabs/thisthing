@@ -93,9 +93,6 @@
     <ClInclude Include="..\..\common\DMCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\Quantizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\common\DMQuantizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -127,6 +124,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\DMBankSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\ChromaticQuantizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\DiatonicPitchMapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -182,9 +185,6 @@
     <ClCompile Include="AdderTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\Quantizer.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="Calibrate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -205,6 +205,9 @@
     </ClCompile>
     <ClCompile Include="BankTests.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\ChromaticQuantizer.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

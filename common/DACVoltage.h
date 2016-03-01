@@ -5,28 +5,30 @@
 #include "Constants.h"
 
 
-
-// version that does not use disting calibration. for this one full scale is 10 volts
+/* Utilities for converting integers to voltaages and back
+ * assumes the disting calibration  convertion for the 24bit (x, y, a, b) i/o,
+ * and that is 1V = 1 << 19
+ *
+ * for 10 bit z, assumes 0x3ff is 10v
+ */
 class DACVoltage
 {
 public:
 
-	static const int max_10 = 0x3ff;
-	static const int zero_10 = 0x200;
+	static const int max_10z = 0x3ff;
+	static const int zero_10z = 0x200;
 
-
-
-	static const int code_volt =  (1 << 19);
+	static const int code_voltx =  (1 << 19);
 	static int xcodeForMV(int mv)
 	{
 		// probably don't need 64?
-		int64_t temp = (int64_t )mv * code_volt;
+		int64_t temp = (int64_t )mv * code_voltx;
 		temp /= 1000;
 		return (int) temp;
 	}
 	static int xcodeForuV(int uv)
 	{
-		int64_t temp = (int64_t )uv * code_volt;
+		int64_t temp = (int64_t )uv * code_voltx;
 		temp /= (1000 * 1000);
 		return (int) temp;
 	}
@@ -39,18 +41,18 @@ public:
 	// from the 10 bit z pot/dace
 	static int zcodeForMV(int mv)
 	{
-		int64_t x = max_10;		// code for 10v
+		int64_t x = max_10z;		// code for 10v
 		x *= mv;			// code for mv * 10v
 		x /= 20000;
-		return (int)x + zero_10;
+		return (int)x + zero_10z;
 	}
 
 	static int zMVFromCode(int code)
 	{
 		int x = code;
-		x -= zero_10;
+		x -= zero_10z;
 		x *= 20000;
-		x /= max_10;
+		x /= max_10z;
 		return x;
 	}
 
