@@ -3,6 +3,8 @@
 #ifndef INCLUDE_SAMPLEANDHOLD
 #define INCLUDE_SAMPLEANDHOLD
 
+/* basic sample and hold building block
+ */
 class SampleAndHold
 {
 public:

@@ -1,12 +1,11 @@
 #ifndef INCLUDE_EXPPOT
 #define INCLUDE_EXPPOT
 
-//#include <cmath>
-//#include <memory>
 #include "LookupTable.h"
 #include "LowPassFilter_f.h"
 
 /** maps 0..3ff to various exponential functions
+ * uses fp math - not very efficient
  */
 class ExpPot
 {
@@ -30,6 +29,7 @@ private:
 
 // where map(0) = min
 // map (0x3ff) = max
+// uses a lookup table - but a slow one.
 class ExpPotLookup : public LookupTable
 {
 public:
@@ -52,7 +52,8 @@ private:
 
 
 /* maps from pot values wiht exp taper directly to filter coefficients
-*/
+ * uses fast, fixed point math
+ */
 class ExpPotFilterLookup
 {
 public:
@@ -77,8 +78,6 @@ public:
 		//printf("lookup (%x) returning %f\n", pot,  _kLook.lookup(pot).toFloat()); 
 		return  _kLook.lookup(pot);
 	}
-
-
 private:
 	LookupTable_f<precission> _kLook;
 };
