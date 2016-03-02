@@ -76,10 +76,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//CounterTests();
 	//GateTriggerTests();
 
-	SampleAndHoldTest();
+	//SampleAndHoldTest();
 
 	//DelayTest();
-	//QuantizerTests();
+	QuantizerTests();
 	//LinearInterpTests();
 	//DACVoltageTest();
 	//AdderTests();

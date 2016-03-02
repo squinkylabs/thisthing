@@ -1,10 +1,10 @@
 #include "stdafx.h"
 
 #include "DMQuantizer.h"
-//#include "Quantizer.h"
 #include "DACVoltage.h"
 #include "DMQuantizer.h"
 #include "DMAdders.h"
+#include <algorithm>
 
 
 
@@ -120,9 +120,47 @@ void qt5()
 	q.go( base );
 	assert(q.getMIDI() == expect);
 	}
-
-
 }
+
+
+
+static bool within(int a, int b, int limit)
+{
+	return std::abs(a -b ) <= limit;		
+}
+
+void qt6()
+{
+	const int c1 = ChromaticQuantizer::middleCV;
+	const int c2 = ChromaticQuantizer::middleCV + ChromaticQuantizer::octaveV;
+	const int c3 = ChromaticQuantizer::middleCV + 2 * ChromaticQuantizer::octaveV;
+	const int c5 = ChromaticQuantizer::middleCV + 4 * ChromaticQuantizer::octaveV;
+
+	ChromaticQuantizer q;
+
+	q.go(c1);
+	int midi = q.getMIDI();
+	const int c1b = q.midi2CV(midi);
+	assert(c1 == c1b);
+
+	q.go(c2);
+	midi = q.getMIDI();
+	const int c2b = q.midi2CV(midi);
+	// code of 8 is about 16 uv. that's pretty good.
+	assert(within(c2, c2b, 8));
+
+
+	q.go(c3);
+	midi = q.getMIDI();
+	const int c3b = q.midi2CV(midi);
+	assert(within(c3, c3b, 16));
+
+	q.go(c5);
+	midi = q.getMIDI();
+	const int c5b = q.midi2CV(midi);
+	assert(within(c5, c5b, 32));
+
+};
 
 // TODO: this is very bad test coverate
 void dq0()
@@ -292,6 +330,7 @@ void QuantizerTests()
 	qt4();
 
 	qt5();
+	qt6();
 
 	dq0();
 	dq1();
