@@ -135,6 +135,9 @@
     <ClInclude Include="..\..\common\LowpassFilter_f.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\common\ScaleQuantizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -211,6 +214,9 @@
     </ClCompile>
     <ClCompile Include="..\..\common\ChromaticQuantizer.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleQuantizerTests.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

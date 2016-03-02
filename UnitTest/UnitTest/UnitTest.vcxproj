@@ -171,6 +171,7 @@
     <ClInclude Include="..\..\common\LowpassFilter_f.h" />
     <ClInclude Include="..\..\common\Random.h" />
     <ClInclude Include="..\..\common\SampleAndHold.h" />
+    <ClInclude Include="..\..\common\ScaleQuantizer.h" />
     <ClInclude Include="..\..\common\SchmidtTrigger.h" />
     <ClInclude Include="..\..\common\SlopeDetector.h" />
     <ClCompile Include="..\..\common\ChromaticQuantizer.cpp">
@@ -202,6 +203,7 @@
     <ClCompile Include="RandomTest.cpp" />
     <ClCompile Include="SampleAndHoldModuleTests.cpp" />
     <ClCompile Include="SampleAndHoldTest.cpp" />
+    <ClCompile Include="ScaleQuantizerTests.cpp" />
     <ClCompile Include="SlopeDetectorModuleTests.cpp" />
     <ClCompile Include="SlopeDetectorTests.cpp" />
     <ClCompile Include="SlopeDetectorTests2.cpp" />
