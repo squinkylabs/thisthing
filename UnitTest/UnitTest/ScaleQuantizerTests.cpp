@@ -5,19 +5,6 @@
 #include "ScaleQuantizer.h"
 
 
-/*
-static char quantize_semi(int semi, const char * scale)
-{
-	// first expand the scale
-	char expanded[ ScaleQuantizer::expandedSize];
-	const int len = ScaleQuantizer::expandScale(expanded, scale);
-
-	// now quantize it
-	return  ScaleQuantizer::quantize_semi_expanded(semi, expanded, len);
-}
-*/
-
-
 static void q_test(const char * scale, char semi, char pitch, char expected_semi, char expected_pitch)
 {
 	char expanded[ ScaleQuantizer::expandedSize];
@@ -27,6 +14,7 @@ static void q_test(const char * scale, char semi, char pitch, char expected_semi
 	assert(q == expected_semi);
 
 	q = ScaleQuantizer::quantize_expanded(pitch, expanded, len);
+	if (q != expected_pitch) printf("will fail, q=%d, expected %d\n", q, expected_pitch);
 	assert(q == expected_pitch);
 }
 
@@ -42,14 +30,14 @@ static void sq0()
 
 
 	char scale2[] = {6, -1};
-	q_test(scale2, 6, 6, 6, 6);
+	q_test(scale2, 6, 6+3*12, 6, 6 + 3*12);
 
 
 	char scale3[] = {6, 7, 8, 11, -1};
 	q_test(scale3, 7, 7, 7, 7);
 	q_test(scale3, 6, 6, 6, 6);
 	q_test(scale3, 8, 8, 8, 8);
-	q_test(scale3, 11, 11, 11, 11);
+	q_test(scale3, 11, 11 + 5*12, 11, 11 + 5*12);
 }
 
 
@@ -61,7 +49,7 @@ void sq1()
 
 		// out note is "past the end"
 	char scale[] = {3, -1};
-	q_test(scale, 11, 11, 3+12, 3+12);
+	q_test(scale, 11, 11 + 12, 3+12, 3+12*2);
 
 	// out note is "before the start"
 	char scale2[] = {11, -1};
@@ -74,7 +62,7 @@ void sq2()
 {
 	printf("sq2, a\n");
 	char scale[] = {3, 7, 11, -1};
-	q_test(scale, 4, 4, 3, 3); // 4 is close to 3
+	q_test(scale, 4, 4 + 12, 3, 3 + 12); // 4 is close to 3
 	
 
 	printf("sq2, b\n");

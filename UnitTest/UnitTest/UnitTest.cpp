@@ -67,6 +67,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	QuantizerTests();
 	AdderTests();
 	SwitchTests();
+	ScaleQuantizerTests();
 #else
 	printf("skipping most tests\n");
 	BankTests();

@@ -4,8 +4,8 @@
 #include "DACVoltage.h"
 
 /* quantized continuous voltage to a midi note number,
- * and the oposite
- */
+* and the oposite
+*/
 class ChromaticQuantizer
 {
 public:
@@ -16,15 +16,15 @@ public:
 
 	static int midi2CV(int midi)
 	{
-		//assert( ChromaticQuantizer::midi2CV(ChromaticQuantizer::middleCMIDI ==
-		//ChromaticQuantizer::middleCV));
-
-
-
 		int midiDelta = midi - (ChromaticQuantizer::middleCMIDI);
 		//printf("++ in midi2CV, midi in = %d,  middleC = %d midiDelta=%d midcmidi=%d\n", midi, ChromaticQuantizer::middleCV, midiDelta, ChromaticQuantizer::middleCMIDI);
 		return ChromaticQuantizer::middleCV + (midiDelta * semiV);
 	}
+
+	/* separates a "midi" note number into octave and semitone
+	* 0 <= semititone < 12
+	*/
+	static void separate(int midiIn, int& octave, int&semi);
 
 	const static int middleCV;
 	const static int octaveV;
@@ -35,7 +35,6 @@ private:
 	int _curMIDI;
 	int _lastCapturedV;
 };
-
 
 
 inline void ChromaticQuantizer::go(int v)
@@ -54,7 +53,6 @@ inline void ChromaticQuantizer::go(int v)
 		deltaMidC -= (semiV / 2);	// round
 	}
 
-
 	// add in an offset depending on direction voltage is trending,
 	// to implement hysteresis
 	const bool goingUp = v > _lastCapturedV;
@@ -68,7 +66,6 @@ inline void ChromaticQuantizer::go(int v)
 		deltaMidC += hysteresisV;
 	}
 
-
 	// now do division to go from voltage to midi number 
 	// (with correct rounding and hysteresis)
 	const int semiFromMidC = deltaMidC / semiV;
@@ -79,9 +76,32 @@ inline void ChromaticQuantizer::go(int v)
 		_curMIDI = midi; 
 		_lastCapturedV = v;
 	}
-	
-	//printf("delta=%d semiFrom=%d midi=%d semiV=%d goingup=%d\n", deltaMidC, semiFromMidC, _curMIDI, semiV, goingUp);
 
+	//printf("delta=%d semiFrom=%d midi=%d semiV=%d goingup=%d\n", deltaMidC, semiFromMidC, _curMIDI, semiV, goingUp);
+}
+
+inline void ChromaticQuantizer::separate(int midiIn, int& octave, int&semi)
+{
+	//	printf("** separate %d\n", midiIn);
+	int xdeltaMiddleC = midiIn - ChromaticQuantizer::middleCMIDI;
+
+	int oct = 4;		// assume we are at middle C
+	while (xdeltaMiddleC < 0)
+	{
+		xdeltaMiddleC+=12;
+		oct--;
+	}
+
+	while (xdeltaMiddleC > 11)
+	{
+		xdeltaMiddleC-=12;
+		oct++;
+	}
+	semi = xdeltaMiddleC;
+	octave = oct;
+	assert(semi>= 00 && semi <= 11);
+	//printf("reutrning semi %d octave = %d xdelta = %d adjdelta=%d\n", 
+	//	semi, octave, xdeltaMiddleC, adjDelta); 
 }
 
 

@@ -13,7 +13,7 @@ public:
 	static int map(int midiIn)
 	{
 		int octave, semi;
-		separate(midiIn, octave, semi);
+		ChromaticQuantizer::separate(midiIn, octave, semi);
 		
 		int ret = midiIn;
 		switch(semi)
@@ -38,33 +38,6 @@ public:
 			assert(0);
 		}
 		return ret;
-	}
-
-	/* Separate midi note number into octave and semi
-	 * semi will always be 0..11
-	 */
-	static void separate(int midiIn, int& octave, int&semi)
-	{
-	//	printf("** separate %d\n", midiIn);
-		int xdeltaMiddleC = midiIn - ChromaticQuantizer::middleCMIDI;
-
-		int oct = 4;		// assume we are at middle C
-		while (xdeltaMiddleC < 0)
-		{
-			xdeltaMiddleC+=12;
-			oct--;
-		}
-
-		while (xdeltaMiddleC > 11)
-		{
-			xdeltaMiddleC-=12;
-			oct++;
-		}
-		semi = xdeltaMiddleC;
-		octave = oct;
-		assert(semi>= 00 && semi <= 11);
-		//printf("reutrning semi %d octave = %d xdelta = %d adjdelta=%d\n", 
-		//	semi, octave, xdeltaMiddleC, adjDelta); 
 	}
 };
 

@@ -2,16 +2,17 @@
 #ifndef SCALE_QUANTIZER
 #define SCALE_QUANTIZER
 
+#include "ChromaticQuantizer.h"
 
 /* Definition: "expanded scale" is a one octave scale that:
- *		starts at 0, or lower
- *		ends at 11, or higher
- * note that expanded scales are octave scales - they represent scales that repeat each octave
- *
- * "normalized semitone" is 0..11.
- *
- * expaneded scale makes it easy to quatnize any "normalized" semitone.
- */
+*		starts at 0, or lower
+*		ends at 11, or higher
+* note that expanded scales are octave scales - they represent scales that repeat each octave
+*
+* "normalized semitone" is 0..11.
+*
+* expaneded scale makes it easy to quatnize any "normalized" semitone.
+*/
 class ScaleQuantizer
 {
 public:
@@ -27,7 +28,7 @@ public:
 	static char quantize_semi_expanded(char semi, const char * _scale, int scale_length);
 
 	/* will quantize "any" pitch to an expanded octave scale
-	 */
+	*/
 	static char quantize_expanded(char semi, const char * _scale, int scale_length);
 
 
@@ -45,56 +46,63 @@ public:
 
 };
 
-inline char ScaleQuantizer::quantize_expanded(char semi, const char * scale, int scale_length)
+inline char ScaleQuantizer::quantize_expanded(char pitch, const char * scale, int scale_length)
 {
-	return quantize_semi_expanded(semi, scale, scale_length);
+	int octave;
+	int semi;
+	ChromaticQuantizer::separate(pitch, octave, semi);
+	++octave;		// TODO: make separate return less crazy octaves.
+	//printf("separated %d into p=%d oct = %d\n", pitch, semi, octave);
+	char ret = quantize_semi_expanded(semi, scale, scale_length);
+	ret += 12 * octave;
+	return ret;
 }
 
 inline char ScaleQuantizer::quantize_semi_expanded(char semi, const char * _scale, int scale_length)
-	{
-		assert(check_expanded_scale(_scale, scale_length));
+{
+	assert(check_expanded_scale(_scale, scale_length));
 
-		for (int scale_index = 0; true; ++scale_index)
-		{	
-			// if we went off the end of the scale, something is wrong
-			if (scale_index >= scale_length)
-			{
-				assert(false);
-				return 0;			
-			}
-
-			const char scale_semi = _scale[scale_index];
-
-			// if we are on the target, we are golden
-			if (scale_semi == semi)
-			{
-				printf("terminate on match, ret = %d\n", semi);
-				return semi;
-			}
-
-			// if we need to look further, there better be a further
-			if (scale_index >= (scale_length-1))
-			{
-				assert(false);
-				return 0;
-			}
-
-			const char next_scale_semi = _scale[scale_index+1];
-
-			// if our semi is now in betwee, current and next, we can pick one
-			if (semi < next_scale_semi)
-			{
-				const int dprev = semi - scale_semi;
-				const int dnext = next_scale_semi - semi;
-				//printf("dprev=%d dnext=%d last=%d, scale=%d semi=%d\n", dprev, dnext, scale_semi, , semi); 
-				assert(dprev > 0 && dnext > 0);
-
-				return (dprev <= dnext) ? scale_semi : next_scale_semi;
-			}
+	for (int scale_index = 0; true; ++scale_index)
+	{	
+		// if we went off the end of the scale, something is wrong
+		if (scale_index >= scale_length)
+		{
+			assert(false);
+			return 0;			
 		}
-		assert(false);
-		return 0;
+
+		const char scale_semi = _scale[scale_index];
+
+		// if we are on the target, we are golden
+		if (scale_semi == semi)
+		{
+			//printf("terminate on match, ret = %d\n", semi);
+			return semi;
+		}
+
+		// if we need to look further, there better be a further
+		if (scale_index >= (scale_length-1))
+		{
+			assert(false);
+			return 0;
+		}
+
+		const char next_scale_semi = _scale[scale_index+1];
+
+		// if our semi is now in betwee, current and next, we can pick one
+		if (semi < next_scale_semi)
+		{
+			const int dprev = semi - scale_semi;
+			const int dnext = next_scale_semi - semi;
+			//printf("dprev=%d dnext=%d last=%d, scale=%d semi=%d\n", dprev, dnext, scale_semi, , semi); 
+			assert(dprev > 0 && dnext > 0);
+
+			return (dprev <= dnext) ? scale_semi : next_scale_semi;
+		}
 	}
+	assert(false);
+	return 0;
+}
 
 
 inline bool ScaleQuantizer::check_expanded_scale(const char * scale, int length)
@@ -132,13 +140,10 @@ inline int ScaleQuantizer::expandScale(char * expanded, const char * scale)
 	char first = *scale;
 	char last = 0;
 
-	//	printf("init scale: ");
 	for (const char *p=scale; *p != -1; ++p)
 	{
 		last = *p;
-		//printf("%d,", last);
 	}
-	//	printf("\n");
 
 	char * outp = expanded;
 
@@ -146,7 +151,6 @@ inline int ScaleQuantizer::expandScale(char * expanded, const char * scale)
 	// expand first entry, if needed
 	if (first > 0)
 	{
-		//printf("first > 0\n");
 		*outp++ = last - 12;
 		++len;
 	}
@@ -163,14 +167,6 @@ inline int ScaleQuantizer::expandScale(char * expanded, const char * scale)
 		++len;
 	}
 
-	//printf("expanded: ");
-
-	for (int i=0; i<len; ++i)
-	{
-		//printf("%d,", expanded[i]);
-
-	}
-	//printf("\n len=%d\n", len);
 	assert(check_expanded_scale(expanded, len));
 	return len;
 }

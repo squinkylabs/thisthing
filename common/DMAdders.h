@@ -108,7 +108,7 @@ public:
 	{
 	//	int octave = (midiIn - middleCMIDI) / 12;
 		int octave, semi;
-		DiatonicPitchMapper::separate(midiIn, octave, semi);
+		ChromaticQuantizer::separate(midiIn, octave, semi);
 		
 		int ret = midiIn;
 		switch(semi)

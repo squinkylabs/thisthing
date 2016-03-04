@@ -271,15 +271,15 @@ void dq1()
 void pm0()
 {
 	int oct, semi;
-	DiatonicPitchMapper::separate(ChromaticQuantizer::middleCMIDI, oct, semi);
+	ChromaticQuantizer::separate(ChromaticQuantizer::middleCMIDI, oct, semi);
 	assert(semi == 0);
 	assert( oct == 4);
 
-	DiatonicPitchMapper::separate(ChromaticQuantizer::middleCMIDI + 1, oct, semi);
+	ChromaticQuantizer::separate(ChromaticQuantizer::middleCMIDI + 1, oct, semi);
 	assert(semi == 1);
 	assert( oct == 4);
 
-	DiatonicPitchMapper::separate(ChromaticQuantizer::middleCMIDI - 1, oct, semi);
+	ChromaticQuantizer::separate(ChromaticQuantizer::middleCMIDI - 1, oct, semi);
 	assert(semi == 11);
 	assert( oct == 3);
 
@@ -290,15 +290,15 @@ void pm0()
 	{
 		//printf("xpose oct = %d\n", xposeOct);
 		int shift = 12 * xposeOct;
-		DiatonicPitchMapper::separate(ChromaticQuantizer::middleCMIDI + shift, oct, semi);
+		ChromaticQuantizer::separate(ChromaticQuantizer::middleCMIDI + shift, oct, semi);
 		assert(semi == 0);
 		assert( oct == 4+xposeOct);
 
-		DiatonicPitchMapper::separate(ChromaticQuantizer::middleCMIDI + 1 + shift, oct, semi);
+		ChromaticQuantizer::separate(ChromaticQuantizer::middleCMIDI + 1 + shift, oct, semi);
 		assert(semi == 1);
 		assert( oct == 4+xposeOct);
 
-		DiatonicPitchMapper::separate(ChromaticQuantizer::middleCMIDI - 1 + shift, oct, semi);
+		ChromaticQuantizer::separate(ChromaticQuantizer::middleCMIDI - 1 + shift, oct, semi);
 		assert(semi == 11);
 		assert( oct == 3+xposeOct);
 	}
