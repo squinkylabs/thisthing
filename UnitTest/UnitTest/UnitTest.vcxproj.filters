@@ -138,6 +138,12 @@
     <ClInclude Include="..\..\common\ScaleQuantizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestUtils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\DMScaleQuantizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

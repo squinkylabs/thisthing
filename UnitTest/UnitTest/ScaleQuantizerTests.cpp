@@ -1,52 +1,55 @@
 
 #include "stdafx.h"
 
+#include "DMScaleQuantizer.h"
 #include "ScaleQuantizer.h"
 
 
-
+/*
 static char quantize_semi(int semi, const char * scale)
 {
 	// first expand the scale
-
-
 	char expanded[ ScaleQuantizer::expandedSize];
 	const int len = ScaleQuantizer::expandScale(expanded, scale);
 
 	// now quantize it
 	return  ScaleQuantizer::quantize_semi_expanded(semi, expanded, len);
 }
+*/
+
+
+static void q_test(const char * scale, char semi, char pitch, char expected_semi, char expected_pitch)
+{
+	char expanded[ ScaleQuantizer::expandedSize];
+	const int len = ScaleQuantizer::expandScale(expanded, scale);
+
+	int q = ScaleQuantizer::quantize_semi_expanded(semi, expanded, len);
+	assert(q == expected_semi);
+
+	q = ScaleQuantizer::quantize_expanded(pitch, expanded, len);
+	assert(q == expected_pitch);
+}
+
 
 // test some simple case: ScaleQuantizer::quantize_semi
 // single note in scale
 static void sq0()
 {
 	printf("sq0\n");
-	{
+
 	char scale[] = {0, -1};
-	int q = quantize_semi(0, scale);
-	assert(q == 0);
-	}
+	q_test(scale, 0, 0 + 2*12, 0, 0 + 2 * 12);
 
-	printf("sq0-b\n");
-	{
+
 	char scale2[] = {6, -1};
-	int q = quantize_semi(6, scale2);
-	assert(q == 6);
-	}
+	q_test(scale2, 6, 6, 6, 6);
 
-	printf("sq0-c\n");
-	{
+
 	char scale3[] = {6, 7, 8, 11, -1};
-	int q = quantize_semi(7, scale3);
-	assert(q == 7);
-	q = quantize_semi(6, scale3);
-	assert(q == 6);
-	q = quantize_semi(8, scale3);
-	assert(q == 8);
-	q = quantize_semi(11, scale3);
-	assert(q == 11);
-	}
+	q_test(scale3, 7, 7, 7, 7);
+	q_test(scale3, 6, 6, 6, 6);
+	q_test(scale3, 8, 8, 8, 8);
+	q_test(scale3, 11, 11, 11, 11);
 }
 
 
@@ -55,20 +58,15 @@ static void sq0()
 void sq1()
 {
 	printf("sq1\n");
-	{
+
 		// out note is "past the end"
-		char scale[] = {3, -1};
-		int q = quantize_semi(11, scale);
-		assert(q == 3+12); // wrap next octave
-		}
-	printf("sq1-b\n");
-	{
-		// out note is "before the start"
-		char scale[] = {11, -1};
-		int q = quantize_semi(3, scale);
-		printf("q =%d\n", q);
-		assert(q == 11-12);		// wraps under
-	}
+	char scale[] = {3, -1};
+	q_test(scale, 11, 11, 3+12, 3+12);
+
+	// out note is "before the start"
+	char scale2[] = {11, -1};
+	q_test(scale2, 3, 3, 11-12, 11-12);
+
 }
 
 // basic tests for "in between" notes
@@ -76,12 +74,11 @@ void sq2()
 {
 	printf("sq2, a\n");
 	char scale[] = {3, 7, 11, -1};
-	int q = quantize_semi(4, scale);
-	assert(q == 3);		// 4 is close to 3
+	q_test(scale, 4, 4, 3, 3); // 4 is close to 3
+	
 
 	printf("sq2, b\n");
-	q = quantize_semi(6, scale);
-	assert(q == 7);		// 6 is close to 7
+	q_test(scale, 6, 6, 7, 7);
 
 }
 
@@ -90,8 +87,8 @@ void sq3()
 {
 	printf("sq3\n");
 	char scale[] = { 1, 2, -1};
-	int q = quantize_semi(11, scale);
-	assert(q == 1+12);		// 1 is "pretty close" to 11 if you wrap octaves
+	q_test(scale, 11, 11, 1+12, 1+12); // 1 is "pretty close" to 11 if you wrap octaves
+	
 }
 
 
@@ -107,6 +104,23 @@ void scale0()
 	}
 }
 
+
+// todo: move module tests?
+void sqm0()
+{
+	DModule& m = DMScaleQuantizer1();
+
+	int x = 100;
+	int y = 200;
+	ZState z(0);
+
+	int a=2;
+	int b=3;
+
+	m.go(false, x, y, z, a, b);
+	assert(a == 0 && b==0);
+}
+
 void ScaleQuantizerTests()
 {
 	sq0();
@@ -115,4 +129,6 @@ void ScaleQuantizerTests()
 	sq3();
 
 	scale0();
+
+	sqm0();
 }

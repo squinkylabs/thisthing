@@ -1,5 +1,7 @@
 #include "stdafx.h"
+#include "TestUtils.h"
 #include <algorithm>
+
 
 #include "DMSwitch.h"
 extern int led_test, led_mode;
@@ -18,13 +20,7 @@ void st0()
 	assert(led_test == -1);
 }
 
-void resetModule(DModule& mod)
-{
-	int a;
-	int x = DACVoltage::xcodeForMV(10000);
-	
-	mod.go(true, x, x, ZState(0x3ff, true), a, a);
-}
+
 
 bool within8(int a, int b)
 {
@@ -88,7 +84,7 @@ void st1()
 	DModule& dm = sw;
 
 	st1_sub(sw, true);
-	resetModule(sw);
+	Test::resetModule(sw);
 	printf("st1-b\n");
 	st1_sub(sw, false);
 
