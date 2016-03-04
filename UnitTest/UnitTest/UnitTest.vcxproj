@@ -174,7 +174,7 @@
     <ClInclude Include="..\..\common\ScaleQuantizer.h" />
     <ClInclude Include="..\..\common\SchmidtTrigger.h" />
     <ClInclude Include="..\..\common\SlopeDetector.h" />
-    <ClCompile Include="..\..\common\ChromaticQuantizer.cpp">
+    <ClCompile Include="..\..\common\Quantizer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="AdderTests.cpp" />

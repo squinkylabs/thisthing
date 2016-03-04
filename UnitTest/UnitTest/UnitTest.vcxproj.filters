@@ -212,11 +212,11 @@
     <ClCompile Include="BankTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\ChromaticQuantizer.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="ScaleQuantizerTests.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\Quantizer.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
