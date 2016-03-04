@@ -4,6 +4,7 @@
 class ScaleQuantizer
 {
 public:
+	static const int expandedSize = 13;
 	/*  semi is 0..11 normalized semitone.
 	 * scale is a list of normalized semitones, terminated with < 0 entry
 	 * scale is "expanded" such that the the lowest entry is <=0 and the highest is >=11
@@ -17,14 +18,12 @@ public:
 		assert(check_expanded_scale(_scale, scale_length));
 
 		for (int scale_index = 0; true; ++scale_index)
-		{
-			
+		{	
 			// if we went off the end of the scale, something is wrong
 			if (scale_index >= scale_length)
 			{
 				assert(false);
 				return 0;			
-
 			}
 
 			const char scale_semi = _scale[scale_index];
@@ -32,7 +31,6 @@ public:
 			// if we are on the target, we are golden
 			if (scale_semi == semi)
 			{
-	
 				printf("terminate on match, ret = %d\n", semi);
 				return semi;
 			}
@@ -49,18 +47,13 @@ public:
 			// if our semi is now in betwee, current and next, we can pick one
 			if (semi < next_scale_semi)
 			{
-
 				const int dprev = semi - scale_semi;
 				const int dnext = next_scale_semi - semi;
 				//printf("dprev=%d dnext=%d last=%d, scale=%d semi=%d\n", dprev, dnext, scale_semi, , semi); 
 				assert(dprev > 0 && dnext > 0);
 
 				return (dprev <= dnext) ? scale_semi : next_scale_semi;
-				//done = true;
-				//printf(" leave on in between %d\n", ret);
 			}
-
-			//last_scale_entry = *scale;
 		}
 		assert(false);
 		return 0;
@@ -78,8 +71,7 @@ public:
 			{
 				printf("scale not increasing x=%d last=%d\n", x, last);
 				return false;
-			}
-			
+			}		
 			last = x;
 		}
 
@@ -95,6 +87,61 @@ public:
 		}
 		
 		return true;
+	}
+
+	static int getNumOctaveScales() { return 10; }
+	
+
+	// returns unexpanded scale: 0..11 -1
+	static const char * getOctaveScale(int index);
+
+	// returns length
+	static int expandScale(char * expanded, const char * scale) 
+	{
+		char first = *scale;
+		char last = 0;
+
+	//	printf("init scale: ");
+		for (const char *p=scale; *p != -1; ++p)
+		{
+			last = *p;
+			//printf("%d,", last);
+		}
+	//	printf("\n");
+
+		char * outp = expanded;
+
+		int len = 0;
+		// expand first entry, if needed
+		if (first > 0)
+		{
+			//printf("first > 0\n");
+			*outp++ = last - 12;
+			++len;
+		}
+	
+		for (const char *p=scale; *p != -1; ++p)
+		{
+			*outp++ = *p;
+			++len;
+		}
+
+		if (last < 11)
+		{
+			*outp++ = first + 12;
+			++len;
+		}
+
+		//printf("expanded: ");
+	
+		for (int i=0; i<len; ++i)
+		{
+			//printf("%d,", expanded[i]);
+
+		}
+		//printf("\n len=%d\n", len);
+		assert(check_expanded_scale(expanded, len));
+		return len;
 	}
 };
 #endif

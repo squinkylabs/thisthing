@@ -10,54 +10,8 @@ static char quantize_semi(int semi, const char * scale)
 	// first expand the scale
 
 
-	char expanded[13];
-	char first = *scale;
-	char last = 0;
-
-	printf("init scale: ");
-	for (const char *p=scale; *p != -1; ++p)
-	{
-		last = *p;
-		printf("%d,", last);
-	}
-	printf("\n");
-
-	char * outp = expanded;
-
-	int len = 0;
-	// expand first entry, if needed
-	if (first > 0)
-	{
-		printf("first > 0\n");
-		*outp++ = last - 12;
-		++len;
-	}
-	
-	for (const char *p=scale; *p != -1; ++p)
-	{
-		*outp++ = *p;
-		++len;
-	}
-
-	if (last < 11)
-	{
-		*outp++ = first + 12;
-		++len;
-	}
-
-	
-
-	printf("expanded: ");
-	
-	for (int i=0; i<len; ++i)
-	{
-		printf("%d,", expanded[i]);
-
-	}
-	printf("\n len=%d\n", len);
-
-
-
+	char expanded[ ScaleQuantizer::expandedSize];
+	const int len = ScaleQuantizer::expandScale(expanded, scale);
 
 	// now quantize it
 	return  ScaleQuantizer::quantize_semi_expanded(semi, expanded, len);
@@ -141,10 +95,24 @@ void sq3()
 }
 
 
+void scale0()
+{
+	assert(ScaleQuantizer::getNumOctaveScales() > 0);
+	for (int i = 0; i < ScaleQuantizer::getNumOctaveScales(); ++i)
+	{
+		const char * scale = ScaleQuantizer::getOctaveScale(i);
+		char expanded[ ScaleQuantizer::expandedSize];
+		const int len = ScaleQuantizer::expandScale(expanded, scale);
+		assert(len >= 2);
+	}
+}
+
 void ScaleQuantizerTests()
 {
 	sq0();
 	sq1();
 	sq2();
 	sq3();
+
+	scale0();
 }
