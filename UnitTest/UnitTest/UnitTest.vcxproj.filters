@@ -144,6 +144,9 @@
     <ClInclude Include="..\..\common\DMScaleQuantizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleTester.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -223,6 +226,12 @@
     </ClCompile>
     <ClCompile Include="..\..\common\Quantizer.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTesterTester.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTester.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

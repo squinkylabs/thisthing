@@ -188,6 +188,7 @@
       <FileType>CppHeader</FileType>
     </ClCompile>
     <ClInclude Include="..\..\common\TriggerOutput.h" />
+    <ClInclude Include="ModuleTester.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestUtils.h" />
@@ -201,6 +202,8 @@
     <ClCompile Include="LookupTableTest.cpp" />
     <ClCompile Include="LPFilterTest.cpp" />
     <ClCompile Include="MiscTest.cpp" />
+    <ClCompile Include="ModuleTester.cpp" />
+    <ClCompile Include="ModuleTesterTester.cpp" />
     <ClCompile Include="QuantizerTests.cpp" />
     <ClCompile Include="RandomTest.cpp" />
     <ClCompile Include="SampleAndHoldModuleTests.cpp" />

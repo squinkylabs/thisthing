@@ -26,6 +26,7 @@ extern void Ala152Test();
 extern void SwitchTests();
 extern void BankTests();
 extern void ScaleQuantizerTests();
+extern void ModuleTesterTest();
 
 int i_global;
 int led_test;
@@ -44,6 +45,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 #if 0
 	printf("starting unit tests\n");
+	ModuleTesterTest();
 	BankTests();
 	FixedPointTest();
 	LinearInterpTests();
@@ -70,7 +72,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	ScaleQuantizerTests();
 #else
 	printf("skipping most tests\n");
-	BankTests();
+
+	ModuleTesterTest();
+	//BankTests();
 	//LookupTableTest();
 	
 	
@@ -82,7 +86,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//DelayTest();
 	//QuantizerTests();
-	ScaleQuantizerTests();
+	//ScaleQuantizerTests();
 	//LinearInterpTests();
 	//DACVoltageTest();
 	//AdderTests();

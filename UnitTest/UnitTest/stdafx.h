@@ -11,6 +11,8 @@
 #include <tchar.h>
 #include <assert.h>
 #include <stdint.h>
+
+#include <vector>
 #include "common_headers.h"
 
 #ifndef _DEBUG

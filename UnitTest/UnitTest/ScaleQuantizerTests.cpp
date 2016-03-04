@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 
+#include "ModuleTester.h"
 #include "DMScaleQuantizer.h"
 #include "ScaleQuantizer.h"
 
