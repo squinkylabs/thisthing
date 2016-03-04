@@ -10,16 +10,29 @@ class MTIn
 public:
 	/* Static factories
 	 */
-	static MTIn xy(int x, int y) { MTIn ret; ret._x = x, ret._y = y; return ret; }
+
+	// specify x and y, don't care z
+	static MTIn xy(int x, int y) { MTIn ret; ret.x = x, ret.y = y; return ret; }
+
+	static MTIn z_interp(int step, int steps)
+	{ 
+		MTIn ret;
+		int zval = 0x3ff * step / steps;
+		ret.z = ZState(zval, true);
+		return ret;
+	}
+	
+
+	int x;
+	int y;
+	ZState z;
+	int time;		// duration of this input set
 private:
-	MTIn() : _x(0), _y(0), _time(1) {}
-	int _x;
-	int _y;
-	ZState _z;
-	int _time;		// duration of this input set
+	MTIn() : x(0), y(0), time(1), z(0, false) {}
+	
 };
 
-enum Conds { C_NONE, C_XEQ, C_YEQ, C_XYEQ } ;
+enum Conds { C_NONE, C_AEQ, C_BEQ, C_ABEQ } ;
 // condition to test
 class MTCond
 {
@@ -29,16 +42,18 @@ public:
 	 */
 
 	// check x and y for equal
-	static MTCond xy(int x, int y) { MTCond ret; ret._cond = C_XYEQ; ret._x = x; ret._y=y; return ret; }
+	static MTCond xy(int a, int b) { MTCond ret; ret._cond = C_ABEQ; ret._a = a; ret._b=b; return ret; }
+
+	static MTCond none() { return MTCond(); }
 	// null constructor
 	MTCond() : _cond(C_NONE)
 	{}
 
-	bool eval();
+	bool eval(int a, int b) const;
 private:
 	Conds _cond;
-	int _x;
-	int _y;
+	int _a;
+	int _b;
 };
 
 
@@ -48,7 +63,7 @@ class ModuleTester
 public:
 	ModuleTester(class DModule& dm) : _dm(dm) {}
 
-	void run();
+	bool run() const;
 	/* Add an input with no test
 	 */
 	void add(MTIn);
@@ -64,13 +79,18 @@ private:
 	class Entry
 	{
 	public:
-		Entry(const MTIn& i , const MTCond& c) : _in(i), _cond(c) {}
-		MTIn _in;
-		MTCond _cond;
+		Entry(const MTIn& i , const MTCond& c) : in(i), cond(c) {}
+		MTIn in;
+		MTCond cond;
 	};
 
-	std::vector<Entry> _entries;
+	typedef std::vector<Entry> container;
+	typedef container::iterator iterator;
+	typedef container::const_iterator const_iterator;
+	container _entries;
 	class DModule & _dm;
+
+	bool run(const Entry&) const;
 };
 
 
