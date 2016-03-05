@@ -5,6 +5,8 @@
 
 bool ModuleTester::run() const
 {
+	if (_entries.empty()) return false;
+
 	for (const_iterator it = _entries.begin(); it != _entries.end(); ++it)
 	{
 		bool b = run(*it);

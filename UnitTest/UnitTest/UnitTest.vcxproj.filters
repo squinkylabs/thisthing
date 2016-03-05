@@ -147,7 +147,7 @@
     <ClInclude Include="ModuleTester.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="OctaveScaleManager.h">
+    <ClInclude Include="..\..\common\OctaveScaleManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -234,6 +234,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ModuleTester.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QuantizerModuleTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

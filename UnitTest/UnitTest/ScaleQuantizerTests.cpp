@@ -107,21 +107,6 @@ void scale0()
 }
 
 
-// todo: move module tests?
-void sqm0()
-{
-	DModule& m = DMScaleQuantizer1();
-
-	int x = 100;
-	int y = 200;
-	ZState z(0);
-
-	int a=2;
-	int b=3;
-
-	m.go(false, x, y, z, a, b);
-	assert(a == 0 && b==0);
-}
 
 void ScaleQuantizerTests()
 {
@@ -132,5 +117,5 @@ void ScaleQuantizerTests()
 
 	scale0();
 
-	sqm0();
+
 }

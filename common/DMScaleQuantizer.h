@@ -30,6 +30,7 @@ public:
 		_trigger.go(y);
 		if (_trigger.trigger())
 		{
+			printf("need to do some quantizing\n");
 			assert(false);
 		}
 		a = b = 0;

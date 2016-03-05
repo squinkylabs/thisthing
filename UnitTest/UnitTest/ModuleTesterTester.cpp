@@ -13,7 +13,7 @@ static void mt0()
 	// no matter what input, should output 55,66
 	mt.add(
 		MTIn::xy(3,4),
-		MTCond::xy(55, 66)
+		MTCond::ab(55, 66)
 	);
 	assert(mt.run());
 }
@@ -34,12 +34,12 @@ static void mt1()
 
 	mt.add(
 		MTIn::xy( 0, 0),
-		MTCond::xy(minus5, minus5)
+		MTCond::ab(minus5, minus5)
 		);
 
 	mt.add(
 		MTIn::xy( 100, 200),
-		MTCond::xy(minus5 +300, minus5 - 100)
+		MTCond::ab(minus5 +300, minus5 - 100)
 		);
 	assert(mt.run());
 }

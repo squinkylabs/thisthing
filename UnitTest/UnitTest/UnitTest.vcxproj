@@ -170,6 +170,7 @@
     <ClInclude Include="..\..\common\LowPassFilter_dbl.h" />
     <ClInclude Include="..\..\common\ChromaticQuantizer.h" />
     <ClInclude Include="..\..\common\LowpassFilter_f.h" />
+    <ClInclude Include="..\..\common\OctaveScaleManager.h" />
     <ClInclude Include="..\..\common\Random.h" />
     <ClInclude Include="..\..\common\SampleAndHold.h" />
     <ClInclude Include="..\..\common\ScaleQuantizer.h" />
@@ -189,7 +190,6 @@
     </ClCompile>
     <ClInclude Include="..\..\common\TriggerOutput.h" />
     <ClInclude Include="ModuleTester.h" />
-    <ClInclude Include="OctaveScaleManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestUtils.h" />
@@ -205,6 +205,7 @@
     <ClCompile Include="MiscTest.cpp" />
     <ClCompile Include="ModuleTester.cpp" />
     <ClCompile Include="ModuleTesterTester.cpp" />
+    <ClCompile Include="QuantizerModuleTests.cpp" />
     <ClCompile Include="QuantizerTests.cpp" />
     <ClCompile Include="RandomTest.cpp" />
     <ClCompile Include="SampleAndHoldModuleTests.cpp" />

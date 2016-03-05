@@ -42,7 +42,7 @@ public:
 	 */
 
 	// check x and y for equal
-	static MTCond xy(int a, int b) { MTCond ret; ret._cond = C_ABEQ; ret._a = a; ret._b=b; return ret; }
+	static MTCond ab(int a, int b) { MTCond ret; ret._cond = C_ABEQ; ret._a = a; ret._b=b; return ret; }
 
 	static MTCond none() { return MTCond(); }
 	// null constructor
