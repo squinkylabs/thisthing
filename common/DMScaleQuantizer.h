@@ -35,11 +35,13 @@ public:
 			// quantize pitch to midi note number
 			_chromaticQuantizer.go(x);
 			int pitch = _chromaticQuantizer.getMIDI();
+
+			// then quantize to our scale
 			char len;
 			const char * scale = _scales.get(len);
 			char q = ScaleQuantizer::quantize_expanded(pitch,scale , len);
-			//printf("need to do some quantizing\n");
-			//assert(false);
+
+			// and back to CV
 			_qv = ChromaticQuantizer::midi2CV(q);
 		}
 		a = b = _qv;
@@ -55,8 +57,9 @@ private:
 	void _reset()
 	{
 		_qv=0;
-
+#ifdef _MSC_VER
 		printf("TODO: reset chromatic Q\n");
+#endif
 		//_chromaticQuantizer.reset();
 	}
 };

@@ -3,11 +3,13 @@
 
 #include "ScaleQuantizer.h"
 
+/* a simple wrapper around a few pre-set scales
+ * also hold a "current selection" as an expanded octave scale
+ */
 class OctaveScaleManager
 {
 public:
 	static int getNumOctaveScales() { return 10; }
-
 
 	// returns unexpanded scale: 0..11 -1
 	static const char * getOctaveScale(int index);

@@ -28,6 +28,7 @@
 #include "DMTrackAndHoldAla152.h"
 #include "DMSwitch.h"
 #include "DMBankSelector.h"
+#include "DMScaleQuantizer.h"
 
 // externs
 extern "C" void assert_fail(int code);
@@ -120,7 +121,7 @@ DModule * modules_bank1[16] = {
     new DMSwitch(),
     
     //1C-II
-    new DMZero(),
+    new DMScaleQuantizer1(),
     
     //1D-II
     new DMZero(),
