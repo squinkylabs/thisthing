@@ -18,9 +18,11 @@ public:
 	  _interp(0, OctaveScaleManager::getNumOctaveScales()),
 	 _trigger(false)
 	{
+		_reset();
 	}
 	virtual void go(bool reset, int x, int y, const ZState& z, volatile int& a, volatile int&b)
 	{
+		if (reset) _reset();
 		if (z.changed)
 		{
 			int index = _interp.interp(z.value);
@@ -30,15 +32,32 @@ public:
 		_trigger.go(y);
 		if (_trigger.trigger())
 		{
-			printf("need to do some quantizing\n");
-			assert(false);
+			// quantize pitch to midi note number
+			_chromaticQuantizer.go(x);
+			int pitch = _chromaticQuantizer.getMIDI();
+			char len;
+			const char * scale = _scales.get(len);
+			char q = ScaleQuantizer::quantize_expanded(pitch,scale , len);
+			//printf("need to do some quantizing\n");
+			//assert(false);
+			_qv = ChromaticQuantizer::midi2CV(q);
 		}
-		a = b = 0;
+		a = b = _qv;
 	}
 
 private:
 	OctaveScaleManager _scales;
+	ChromaticQuantizer _chromaticQuantizer;
 	LinearInterp _interp;
 	GateTrigger _trigger;
+	int _qv;
+
+	void _reset()
+	{
+		_qv=0;
+
+		printf("TODO: reset chromatic Q\n");
+		//_chromaticQuantizer.reset();
+	}
 };
 #endif

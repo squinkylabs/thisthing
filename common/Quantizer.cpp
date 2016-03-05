@@ -51,7 +51,6 @@ const char  s9[] = { 2, 4, 7, 9, 10, -1 };
 
 static const char * octave_scales[10] = {
 	s0, s1, s2, s3, s4, s5, s6, s7, s8, s9
-	
 };
 
 const char * OctaveScaleManager::getOctaveScale(int index)
