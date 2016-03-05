@@ -28,10 +28,8 @@ static void mt1()
 
 	// set octave all the way down
 	mt.add(
-
 		// z zero, down 5 oct
-		MTIn::z_interp(0, 11),
-		MTCond::none()
+		MTIn::z_interp(0, 11)
 		);
 
 	mt.add(

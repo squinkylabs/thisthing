@@ -35,11 +35,7 @@ public:
 	// returns true if the scale is a valid expanded scale
 	static bool check_expanded_scale(const char * scale, int length);
 
-	static int getNumOctaveScales() { return 10; }
 
-
-	// returns unexpanded scale: 0..11 -1
-	static const char * getOctaveScale(int index);
 
 	// returns length
 	static int expandScale(char * expanded, const char * scale);
@@ -115,7 +111,7 @@ inline bool ScaleQuantizer::check_expanded_scale(const char * scale, int length)
 		int x = scale[i];
 		if (x <= last)
 		{
-			printf("scale not increasing x=%d last=%d\n", x, last);
+			//printf("scale not increasing x=%d last=%d\n", x, last);
 			return false;
 		}		
 		last = x;
@@ -123,12 +119,12 @@ inline bool ScaleQuantizer::check_expanded_scale(const char * scale, int length)
 
 	if (scale[0] > 0)
 	{
-		printf("not expanded on bottom\n");
+		//printf("not expanded on bottom\n");
 		return false;
 	}
 	if (last < 11)
 	{
-		printf("not expanded on top, last = %d\n", last);
+		//printf("not expanded on top, last = %d\n", last);
 		return false;
 	}
 

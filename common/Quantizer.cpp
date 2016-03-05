@@ -6,6 +6,8 @@
 #include <assert.h>
 
 #include "ChromaticQuantizer.h"
+#include "OctaveScaleManager.h"
+
 
 #define printf (void *)
 #include "ScaleQuantizer.h"
@@ -52,7 +54,7 @@ static const char * octave_scales[10] = {
 	
 };
 
-const char * ScaleQuantizer::getOctaveScale(int index)
+const char * OctaveScaleManager::getOctaveScale(int index)
 {
 	return octave_scales[index];
 }

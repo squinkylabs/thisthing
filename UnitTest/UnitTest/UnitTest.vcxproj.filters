@@ -147,6 +147,9 @@
     <ClInclude Include="ModuleTester.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="OctaveScaleManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

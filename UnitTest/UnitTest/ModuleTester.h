@@ -66,7 +66,7 @@ public:
 	bool run() const;
 	/* Add an input with no test
 	 */
-	void add(MTIn);
+	void add(MTIn in) { add(in, MTCond()); }
 
 	/* Add an input and a test
 	 */

@@ -4,6 +4,7 @@
 #include "ModuleTester.h"
 #include "DMScaleQuantizer.h"
 #include "ScaleQuantizer.h"
+#include "OctaveScaleManager.h"
 
 
 static void q_test(const char * scale, char semi, char pitch, char expected_semi, char expected_pitch)
@@ -83,13 +84,25 @@ void sq3()
 
 void scale0()
 {
-	assert(ScaleQuantizer::getNumOctaveScales() > 0);
-	for (int i = 0; i < ScaleQuantizer::getNumOctaveScales(); ++i)
+	OctaveScaleManager mgr;
+	assert(OctaveScaleManager::getNumOctaveScales() > 0);
+	for (int i = 0; i < OctaveScaleManager::getNumOctaveScales(); ++i)
 	{
-		const char * scale = ScaleQuantizer::getOctaveScale(i);
+		const char * scale = OctaveScaleManager::getOctaveScale(i);
 		char expanded[ ScaleQuantizer::expandedSize];
 		const int len = ScaleQuantizer::expandScale(expanded, scale);
 		assert(len >= 2);
+
+		mgr.select(i);
+		char size;
+		char x = mgr.get(size)[0];
+		char y = mgr.get(size)[size -1];
+		assert(x >= -12);
+		assert(x <= 0);
+		assert(y >= 11);
+		assert(y <= 24);
+		assert(size >0);
+		assert(size < 12);
 	}
 }
 
