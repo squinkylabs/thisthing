@@ -4,6 +4,8 @@
 
 #include "ChromaticQuantizer.h"
 
+#define _SCVERBOSE
+
 /* Definition: "expanded scale" is a one octave scale that:
 *		starts at 0, or lower
 *		ends at 11, or higher
@@ -116,9 +118,11 @@ inline void ScaleQuantizer::dumpScale(const char * scale)
 inline bool  ScaleQuantizer::check_scale(const char * scale)
 {
 
+#ifdef _SCVERBOSE
 	// dump it
-//	printf("check_scale: ");
-	//dumpScale(scale);
+	printf("check_scale: ");
+	dumpScale(scale);
+#endif
 
 	// make sure it's increasing
 	int last = -100000000;
@@ -136,7 +140,9 @@ inline bool  ScaleQuantizer::check_scale(const char * scale)
 
 	if (*scale != -1)
 	{
-		printf("term is %d\n", *scale);
+#ifdef _SCVERBOSE
+		printf("bad terminator is %d\n", *scale);
+#endif
 		return false;
 	}
 	return true;
@@ -246,8 +252,10 @@ inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * sca
 		temp[i+1]=-1;
 	} 
 
-	//printf("exps 2 \n");
-	//dumpScale(temp);
+#ifdef _SCVERBOSE
+	printf("exps 2 overflow index=%d \n", overflowIndex);
+	dumpScale(temp);
+#endif
 
 	// now let's rotate and normalize into temp2
 	// if we shifted past octave
@@ -258,13 +266,18 @@ inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * sca
 		for (j=0, i= overflowIndex; i<unexpandedLen; ++i, ++j)
 		{
 			temp2[j] = temp[i] - 12;
+#ifdef _SCVERBOSE
+			printf("first shift loop, temp[%d]=%d -12 to temp2[%d] is %d\n", i, temp[i], j, temp2[j]);
+#endif
 		}
 		for (i=0, j= unexpandedLen-overflowIndex; i< overflowIndex; ++i, ++j)
 		{
-			temp2[j] = temp[i] - 12;
+			temp2[j] = temp[i];
+#ifdef _SCVERBOSE
+			printf("second shift loop, temp[%d]=%d  to temp2[%d] is=%d\n", i, temp[i], j, temp2[j]);
+#endif
 		}
-		
-		//printf("exps 3\n");
+		printf("exps 3\n");
 	}
 	else
 	{
@@ -273,9 +286,13 @@ inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * sca
 			temp2[i] = temp[i];
 			//printf("temp2[%d]=%d\n", i, temp2[i]);
 		}
-		//printf("exps 4\n");
+		printf("exps 4\n");
 	}
 	temp2[unexpandedLen]=-1;
+
+#ifdef _SCVERBOSE
+			printf("terminated at temp2[%d]\n", unexpandedLen);
+#endif
 
 	
 
