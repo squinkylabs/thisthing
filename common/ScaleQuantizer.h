@@ -35,10 +35,16 @@ public:
 	// returns true if the scale is a valid expanded scale
 	static bool check_expanded_scale(const char * scale, int length);
 
+	// for unexpanded, terminated with -1
+	static bool check_scale(const char * scale);
+
+	static void dumpScale(const char * scale);;
+
 
 
 	// returns length
 	static int expandScale(char * expanded, const char * scale);
+	static int expandScaleShift(char * expanded, const char * scale, char shift);
 
 };
 
@@ -100,6 +106,42 @@ inline char ScaleQuantizer::quantize_semi_expanded(char semi, const char * _scal
 	return 0;
 }
 
+inline void ScaleQuantizer::dumpScale(const char * scale)
+{
+	printf("dump_scale: ");
+	for (const char * p=scale; *p >= 0; ++p) printf("%d, ", *p);
+	printf("\n");
+}
+
+inline bool  ScaleQuantizer::check_scale(const char * scale)
+{
+
+	// dump it
+//	printf("check_scale: ");
+	//dumpScale(scale);
+
+	// make sure it's increasing
+	int last = -100000000;
+
+	if (scale[0] < 0) return false;	// not empty
+
+	for ( ;*scale >= 0; ++scale)
+	{
+		int x = *scale;
+		if (x <= last) return false;
+		if (x > 11) return false;
+
+		last = x;
+	}
+
+	if (*scale != -1)
+	{
+		printf("term is %d\n", *scale);
+		return false;
+	}
+	return true;
+
+}
 
 inline bool ScaleQuantizer::check_expanded_scale(const char * scale, int length)
 {
@@ -139,6 +181,7 @@ inline int ScaleQuantizer::expandScale(char * expanded, const char * scale)
 	for (const char *p=scale; *p != -1; ++p)
 	{
 		last = *p;
+		//printf("in expand loop, last = %d\n", last);
 	}
 
 	char * outp = expanded;
@@ -163,9 +206,135 @@ inline int ScaleQuantizer::expandScale(char * expanded, const char * scale)
 		++len;
 	}
 
+#if 0
+	{
+		printf("expanded len=%d: ", len);
+		for (int i=0; i<len; ++i) printf("%d, ");
+		printf("\n");
+	}
+#endif
+
 	assert(check_expanded_scale(expanded, len));
 	return len;
 }
+
+inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * scale, char shift)
+{
+	//printf("exps 1\n");
+	//dumpScale(scale);
+	assert(shift >= 0 && shift < 12);
+	assert(check_scale(scale));
+
+	int unexpandedLen;
+	for (unexpandedLen=0; scale[unexpandedLen] >= 0; ++unexpandedLen)
+	{
+	}
+	//printf("unexpanded len = %d\n", unexpandedLen);
+	//let's shift the scale into temp
+	char temp[expandedSize];
+	char temp2[expandedSize];
+
+	// now shift into temp, and remember where we cross octaves
+	int overflowIndex=-1;
+	for (int i=0; i< unexpandedLen; ++i)
+	{
+		temp[i] = scale[i] + shift;
+		//printf("initialshitf, shift = %d, shifted[%d] = %d\n", shift, i, temp[i]);
+		if ((temp[i] > 12) && (overflowIndex < 0))
+			overflowIndex = i;
+
+		temp[i+1]=-1;
+	} 
+
+	//printf("exps 2 \n");
+	//dumpScale(temp);
+
+	// now let's rotate and normalize into temp2
+	// if we shifted past octave
+	if (overflowIndex >= 0)
+	{
+		int i, j;
+		// shift the top, overflow, section down, and normalize it
+		for (j=0, i= overflowIndex; i<unexpandedLen; ++i, ++j)
+		{
+			temp2[j] = temp[i] - 12;
+		}
+		for (i=0, j= unexpandedLen-overflowIndex; i< overflowIndex; ++i, ++j)
+		{
+			temp2[j] = temp[i] - 12;
+		}
+		
+		//printf("exps 3\n");
+	}
+	else
+	{
+		for (int i=0; i<unexpandedLen; ++i)
+		{
+			temp2[i] = temp[i];
+			//printf("temp2[%d]=%d\n", i, temp2[i]);
+		}
+		//printf("exps 4\n");
+	}
+	temp2[unexpandedLen]=-1;
+
+	
+
+
+	assert( check_scale(temp2));
+	//printf("exps 5\n");
+
+	const int len = expandScale(expandedOut, temp2);
+	//printf("exps 6\n");
+	return len;
+
+}
+
+#if 0
+first try no good
+inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * scale, char shift)
+{
+	assert(shift >= 0 && shift < 12);
+
+	char temp[expandedSize];
+	const int len = expandScale(temp, scale);
+
+	
+
+	int overflowIndex=-1;
+	for (int i=0; i< len; ++i)
+	{
+		temp[i] += shift;
+		printf("shift = %d, expanded[%d] = %d\n", shift, i, temp[i]);
+		if ((temp[i] > 12) && (overflowIndex < 0))
+			overflowIndex = i;
+	}
+
+	// if we shifted past octave
+	if (overflowIndex >= 0)
+	{
+		int i, j;
+		// shift the top, overflow, section down, and normalize it
+		for (j=0, i= overflowIndex; i<len; ++i, ++j)
+		{
+			expandedOut[j] = temp[i] - 12;
+		}
+		for (i=0, j= len-overflowIndex; i< overflowIndex; ++i, ++j)
+		{
+			expandedOut[j] = temp[i] - 12;
+		}
+	}
+	else
+	{
+		for (int i=0; i<len; ++i)
+		{
+			expandedOut[i] = temp[i];
+		}
+	}
+
+	assert(check_expanded_scale(expandedOut, len));
+	return len;
+}
+#endif
 
 
 

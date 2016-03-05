@@ -2,7 +2,7 @@
 // we need to avoid stdafx here and instead pull in common stuff
 // this is the only cpp file we share between projects
 #include "common_headers.h"
-//#include <stdio.h>
+#include <stdio.h>
 #include <assert.h>
 
 #include "ChromaticQuantizer.h"

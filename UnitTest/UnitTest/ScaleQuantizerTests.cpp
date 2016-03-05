@@ -7,10 +7,24 @@
 #include "OctaveScaleManager.h"
 
 
+
 static void q_test(const char * scale, char semi, char pitch, char expected_semi, char expected_pitch)
 {
 	char expanded[ ScaleQuantizer::expandedSize];
 	const int len = ScaleQuantizer::expandScale(expanded, scale);
+
+	int q = ScaleQuantizer::quantize_semi_expanded(semi, expanded, len);
+	assert(q == expected_semi);
+
+	q = ScaleQuantizer::quantize_expanded(pitch, expanded, len);
+	if (q != expected_pitch) printf("will fail, q=%d, expected %d\n", q, expected_pitch);
+	assert(q == expected_pitch);
+}
+
+static void q_test_shift(int shift, const char * scale, char semi, char pitch, char expected_semi, char expected_pitch)
+{
+	char expanded[ ScaleQuantizer::expandedSize];
+	const int len = ScaleQuantizer::expandScaleShift(expanded, scale, shift);
 
 	int q = ScaleQuantizer::quantize_semi_expanded(semi, expanded, len);
 	assert(q == expected_semi);
@@ -107,6 +121,18 @@ void scale0()
 }
 
 
+// simple shifted scale test
+static void shs0()
+{
+	printf("shs0\n");
+
+	char scale[] = {0, -1};
+	q_test_shift(0, scale, 0, 0 + 2*12, 0, 0 + 2 * 12);
+
+	// shift scale to c#, expect c# from C
+	q_test_shift(1, scale, 0, 0 + 2*12, 1, 1 + 2 * 12);
+
+}
 
 void ScaleQuantizerTests()
 {
@@ -116,6 +142,8 @@ void ScaleQuantizerTests()
 	sq3();
 
 	scale0();
+
+	shs0();
 
 
 }
