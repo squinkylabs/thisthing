@@ -4,7 +4,7 @@
 
 #include "ChromaticQuantizer.h"
 
-#define _SCVERBOSE
+//#define _SCVERBOSE
 
 /* Definition: "expanded scale" is a one octave scale that:
 *		starts at 0, or lower
@@ -108,12 +108,14 @@ inline char ScaleQuantizer::quantize_semi_expanded(char semi, const char * _scal
 	return 0;
 }
 
+#ifdef _MSC_VER
 inline void ScaleQuantizer::dumpScale(const char * scale)
 {
 	printf("dump_scale: ");
 	for (const char * p=scale; *p >= 0; ++p) printf("%d, ", *p);
 	printf("\n");
 }
+#endif
 
 inline bool  ScaleQuantizer::check_scale(const char * scale)
 {
@@ -277,7 +279,7 @@ inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * sca
 			printf("second shift loop, temp[%d]=%d  to temp2[%d] is=%d\n", i, temp[i], j, temp2[j]);
 #endif
 		}
-		printf("exps 3\n");
+		//printf("exps 3\n");
 	}
 	else
 	{
@@ -286,7 +288,7 @@ inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * sca
 			temp2[i] = temp[i];
 			//printf("temp2[%d]=%d\n", i, temp2[i]);
 		}
-		printf("exps 4\n");
+		//printf("exps 4\n");
 	}
 	temp2[unexpandedLen]=-1;
 
@@ -306,52 +308,6 @@ inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * sca
 
 }
 
-#if 0
-first try no good
-inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * scale, char shift)
-{
-	assert(shift >= 0 && shift < 12);
-
-	char temp[expandedSize];
-	const int len = expandScale(temp, scale);
-
-	
-
-	int overflowIndex=-1;
-	for (int i=0; i< len; ++i)
-	{
-		temp[i] += shift;
-		printf("shift = %d, expanded[%d] = %d\n", shift, i, temp[i]);
-		if ((temp[i] > 12) && (overflowIndex < 0))
-			overflowIndex = i;
-	}
-
-	// if we shifted past octave
-	if (overflowIndex >= 0)
-	{
-		int i, j;
-		// shift the top, overflow, section down, and normalize it
-		for (j=0, i= overflowIndex; i<len; ++i, ++j)
-		{
-			expandedOut[j] = temp[i] - 12;
-		}
-		for (i=0, j= len-overflowIndex; i< overflowIndex; ++i, ++j)
-		{
-			expandedOut[j] = temp[i] - 12;
-		}
-	}
-	else
-	{
-		for (int i=0; i<len; ++i)
-		{
-			expandedOut[i] = temp[i];
-		}
-	}
-
-	assert(check_expanded_scale(expandedOut, len));
-	return len;
-}
-#endif
 
 
 
