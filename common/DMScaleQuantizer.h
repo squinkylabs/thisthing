@@ -84,6 +84,7 @@ public:
 		{
 			int shift = _interpShift.interp(z.value);
 			Led_setTempSelectorOverride(1 + shift, 1);
+			printf("shift now %d z=%d\n", shift, z.value);
 			_scales.selectAndShift(2, shift);
 		}
 		_trigger.go(y);

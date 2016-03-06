@@ -44,7 +44,7 @@ extern "C" void Led_setTempSelectorOverride(int value, int mode)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-#if 0
+#if 1
 	printf("starting unit tests\n");
 	ModuleTesterTest();
 	BankTests();
@@ -75,7 +75,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #else
 	printf("skipping most tests\n");
 
-	//ModuleTesterTest();
+	ModuleTesterTest();
 	//BankTests();
 	//LookupTableTest();
 	
@@ -88,9 +88,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//DelayTest();
 	//QuantizerTests();
-	ScaleQuantizerTests();
-	//QuantizerModuleTests();
+	//ScaleQuantizerTests();
 	//LinearInterpTests();
+	QuantizerModuleTests();
+	
 	//DACVoltageTest();
 	//AdderTests();
 	

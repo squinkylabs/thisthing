@@ -142,6 +142,24 @@ void dl1()
 	assert(x == 223344);
 
 }
+
+
+// test that the _inverse function works
+void inv0()
+{
+	LinearInterp li(0, 11);
+	for (int i=0; i < 0x3ff; ++i)
+	{
+		int x = li.interp(i);
+		//printf("interp(%d) gave %d\n", i, x);
+
+		int y = li._inverse(x);
+		int x0=  li.interp(y);
+		//printf("interp(%d) gave %d inv=%d and back %d\n", i, x, y, x0);
+		assert(x == x0);
+	}
+}
+
 void LinearInterpTests()
 {
 	li6();
@@ -154,5 +172,6 @@ void LinearInterpTests()
 	li5();
 
 	dl1();
-	
+
+	inv0();
 }

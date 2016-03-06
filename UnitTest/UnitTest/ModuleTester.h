@@ -2,6 +2,7 @@
 #define MODULETESTER
 
 #include "DModule.h"
+#include "LinearInterp.h"
 
 
 // set of inputs for a test
@@ -14,10 +15,12 @@ public:
 	// specify x and y, don't care z
 	static MTIn xy(int x, int y) { MTIn ret; ret.x = x, ret.y = y; return ret; }
 
-	static MTIn z_interp(int step, int steps)
+	static MTIn z_interp(int range0, int range1, int step)
 	{ 
 		MTIn ret;
-		int zval = 0x3ff * step / steps;
+		//int zval = 0x3ff * step / steps;
+		LinearInterp li(range0, range1);
+		int zval = li._inverse(step);
 		ret.z = ZState(zval, true);
 		return ret;
 	}

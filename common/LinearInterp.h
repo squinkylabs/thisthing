@@ -54,6 +54,20 @@ public:
 	//	printf("li (%d) ret %f (%d)\n", x, d.toFloat(), ret);
 		return ret;
 	}
+
+	// just for testing - do an inverse lookup
+	int _inverse(int val) const
+	{
+		// search for the right answer. slow and dumb, but it works
+		for (int x=0; x <0x3fff; ++x)
+		{
+			int i = interp(x);
+			if (i == val)
+				return x;
+		}
+		assert(false);
+		return -1;
+	}
 private:
 	const static int precission =16;
 	typedef FixedPoint<precission> fp;

@@ -17,8 +17,8 @@ void testm1(DModule& mod, int index, char inPitch, char outPitch)
 	int gatevhi = DACVoltage::xcodeForMV(10 * 1000);
 	int expectedv =  ChromaticQuantizer::midi2CV(outPitch);
 
-	// first select alg
-	mt.add( MTIn::z_interp(index, OctaveScaleManager::getNumOctaveScales()));
+	// first select scale
+	mt.add( MTIn::z_interp(0, OctaveScaleManager::getNumOctaveScales()-1, index));
 
 
 
@@ -32,6 +32,33 @@ void testm1(DModule& mod, int index, char inPitch, char outPitch)
 	);
 	assert(mt.run());
 }
+
+
+void testm2(DModule& mod, int shift, char inPitch, char outPitch)
+{
+	ModuleTester mt(mod);
+
+	int pitchv = ChromaticQuantizer::midi2CV(inPitch);
+	int gatevlo =  DACVoltage::xcodeForMV(0);
+	int gatevhi = DACVoltage::xcodeForMV(10 * 1000);
+	int expectedv =  ChromaticQuantizer::midi2CV(outPitch);
+
+	// first select shift
+	mt.add( MTIn::z_interp(0, 11, shift));
+
+
+
+	// now run pitch in
+	mt.add( MTIn::xy(pitchv, gatevlo));
+
+	// trigger with pitch, check output
+	mt.add(
+		MTIn::xy(pitchv, gatevhi),
+		MTCond::ab( expectedv, expectedv)
+	);
+	assert(mt.run());
+}
+
 
 void qm0()
 {
@@ -81,10 +108,52 @@ void qm9()
 	//testm1(m, 9, 0, 12);
 }
 
+// no shift, 
+void qmb0()
+{
+	int shift = 0;
+
+	DMScaleQuantizer2 m;
+
+	//void testm2(DModule& mod, int shift, char inPitch, char outPitch)
+	//C, D, E, G, A
+	// const char  s2[] = {0, 2, 4, 7, 9, -1 };
+	testm2(m, shift, 0, 0);
+	testm2(m, shift, 1, 0);
+	testm2(m, shift, 2, 2);
+	testm2(m, shift, 3, 2);
+	testm2(m, shift, 4, 4);
+	testm2(m, shift, 5, 4);
+	testm2(m, shift, 6, 7);
+	testm2(m, shift, 7, 7);
+	testm2(m, shift, 9, 9);
+	testm2(m, shift, 10, 9);
+	testm2(m, shift, 2*12, 2*12);
+}
+
+void qmb1()
+{
+	printf("qmb1\n");
+	int shift = 1;
+
+	DMScaleQuantizer2 m;
+
+	//void testm2(DModule& mod, int shift, char inPitch, char outPitch)
+	//C, D, E, G, A
+	// const char  s2[] = {0, 2, 4, 7, 9, -1 };
+	// --> 1, 3, 5, 8, 10,
+
+	testm2(m, shift, 1,1);
+	//testm2(m, shift, 3,3);
+	//testm2(m, shift, 10, 10);
+}
 
 void QuantizerModuleTests()
 {
 	qm0();
 	qm1();
 	qm9();
+
+	//qmb0();
+	qmb1();
 }

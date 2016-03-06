@@ -43,7 +43,6 @@ public:
 	static void dumpScale(const char * scale);;
 
 
-
 	// returns length
 	static int expandScale(char * expanded, const char * scale);
 	static int expandScaleShift(char * expanded, const char * scale, char shift);
@@ -296,16 +295,9 @@ inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * sca
 			printf("terminated at temp2[%d]\n", unexpandedLen);
 #endif
 
-	
-
-
 	assert( check_scale(temp2));
-	//printf("exps 5\n");
-
 	const int len = expandScale(expandedOut, temp2);
-	//printf("exps 6\n");
 	return len;
-
 }
 
 
