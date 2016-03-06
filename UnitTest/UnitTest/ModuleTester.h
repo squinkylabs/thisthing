@@ -24,14 +24,16 @@ public:
 		ret.z = ZState(zval, true);
 		return ret;
 	}
+	static MTIn reset() { MTIn ret; ret._reset = true; return ret; }
 	
 
 	int x;
 	int y;
 	ZState z;
 	int time;		// duration of this input set
+	bool _reset;
 private:
-	MTIn() : x(0), y(0), time(1), z(0, false) {}
+	MTIn() : x(0), y(0), time(1), z(0, false), _reset(false) {}
 	
 };
 

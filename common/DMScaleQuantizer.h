@@ -22,7 +22,10 @@ public:
 	}
 	virtual void go(bool reset, int x, int y, const ZState& z, volatile int& a, volatile int&b)
 	{
-		if (reset) _reset();
+		if (reset) {
+			_reset();
+			return;
+		}
 		if (z.changed)
 		{
 			int index = _interp.interp(z.value);
@@ -57,10 +60,8 @@ private:
 	void _reset()
 	{
 		_qv=0;
-#ifdef _MSC_VER
-		printf("TODO: reset chromatic Q\n");
-#endif
-		//_chromaticQuantizer.reset();
+		_trigger.reset();
+		_chromaticQuantizer.reset();
 	}
 };
 
@@ -79,12 +80,16 @@ public:
 	}
 	virtual void go(bool reset, int x, int y, const ZState& z, volatile int& a, volatile int&b)
 	{
-		if (reset) _reset();
+		if (reset) 
+		{
+			_reset();
+			return;
+		}
 		if (z.changed)
 		{
 			int shift = _interpShift.interp(z.value);
 			Led_setTempSelectorOverride(1 + shift, 1);
-			printf("shift now %d z=%d\n", shift, z.value);
+			//printf("shift now %d z=%d\n", shift, z.value);
 			_scales.selectAndShift(2, shift);
 		}
 		_trigger.go(y);
@@ -115,10 +120,8 @@ private:
 	void _reset()
 	{
 		_qv=0;
-#ifdef _MSC_VER
-		printf("TODO: reset chromatic Q\n");
-#endif
-		//_chromaticQuantizer.reset();
+		_trigger.reset();
+		_chromaticQuantizer.reset();
 	}
 };
 #endif

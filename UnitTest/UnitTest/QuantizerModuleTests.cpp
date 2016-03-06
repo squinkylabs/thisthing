@@ -30,6 +30,12 @@ void testm1(DModule& mod, int index, char inPitch, char outPitch)
 		MTIn::xy(pitchv, gatevhi),
 		MTCond::ab( expectedv, expectedv)
 	);
+
+	// reset, check for zero
+	mt.add(
+		MTIn::reset(),
+		MTCond::ab(0,0)
+		);
 	assert(mt.run());
 }
 
@@ -56,6 +62,12 @@ void testm2(DModule& mod, int shift, char inPitch, char outPitch)
 		MTIn::xy(pitchv, gatevhi),
 		MTCond::ab( expectedv, expectedv)
 	);
+
+		// reset, check for zero
+	mt.add(
+		MTIn::reset(),
+		MTCond::ab(0,0)
+		);
 	assert(mt.run());
 }
 
@@ -69,6 +81,8 @@ void qm0()
 	testm1(m, 0, 6, 0);	
 	testm1(m, 0, 7, 12);	
 }
+
+
 
 void qm1()
 {
@@ -144,16 +158,38 @@ void qmb1()
 	// --> 1, 3, 5, 8, 10,
 
 	testm2(m, shift, 1,1);
-	//testm2(m, shift, 3,3);
-	//testm2(m, shift, 10, 10);
+	testm2(m, shift, 3,3);
+	testm2(m, shift, 10, 10);
+	testm2(m, shift, 11, 10);
+	testm2(m, shift, 12, 1+12);
 }
 
+void qmb9()
+{
+	printf("qmb9\n");
+	int shift = 9;
+
+	DMScaleQuantizer2 m;
+
+	//void testm2(DModule& mod, int shift, char inPitch, char outPitch)
+	//C, D, E, G, A
+	// const char  s2[] = {0, 2, 4, 7, 9, -1 };
+	// --> 9, 11, 13, 16, 18,
+	// --> 1, 4, 6, 9, 11, 
+
+	testm2(m, shift, 1,1);
+	testm2(m, shift, 4,4);
+	testm2(m, shift, 9,9);
+	testm2(m, shift, 6, 6);
+	testm2(m, shift, 11, 11);
+}
 void QuantizerModuleTests()
 {
 	qm0();
 	qm1();
 	qm9();
 
-	//qmb0();
+	qmb0();
 	qmb1();
+	qmb9();
 }

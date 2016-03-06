@@ -24,7 +24,7 @@ bool ModuleTester::run(const Entry& entry) const
 	int a=0, b=0;
 	for ( ; time > 0; --time)
 	{
-		_dm.go(false, entry.in.x, entry.in.y, entry.in.z, a, b);
+		_dm.go(entry.in._reset, entry.in.x, entry.in.y, entry.in.z, a, b);
 	}
 
 	return entry.cond.eval(a, b);

@@ -9,7 +9,7 @@
 class ChromaticQuantizer
 {
 public:
-	ChromaticQuantizer() : _curMIDI(0), _lastCapturedV(0) {}
+	ChromaticQuantizer() { reset(); }
 
 	void go(int);
 	int getMIDI() const { return _curMIDI; } 
@@ -26,6 +26,12 @@ public:
 	*/
 	static void separate(int midiIn, int& octave, int&semi);
 
+	void reset()
+	{
+		 _curMIDI =0;
+		 _lastCapturedV=0;
+	}
+
 	const static int middleCV;
 	const static int octaveV;
 	const static int semiV;
@@ -34,6 +40,8 @@ public:
 private:
 	int _curMIDI;
 	int _lastCapturedV;
+
+	
 };
 
 
