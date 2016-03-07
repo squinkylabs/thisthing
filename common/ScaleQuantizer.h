@@ -45,7 +45,9 @@ public:
 
 	// returns length
 	static int expandScale(char * expanded, const char * scale);
-	static int expandScaleShift(char * expanded, const char * scale, char shift);
+
+	// note that this rotates the scale itself. possibly not something we really want to do
+	static int expandScaleAndRotate(char * expanded, const char * scale, char rotation);
 
 };
 
@@ -225,11 +227,11 @@ inline int ScaleQuantizer::expandScale(char * expanded, const char * scale)
 	return len;
 }
 
-inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * scale, char shift)
+inline int ScaleQuantizer::expandScaleAndRotate(char * expandedOut, const char * scale, char rotation)
 {
 	//printf("exps 1\n");
 	//dumpScale(scale);
-	assert(shift >= 0 && shift < 12);
+	assert(rotation >= 0 && rotation < 12);
 	assert(check_scale(scale));
 
 	int unexpandedLen;
@@ -245,8 +247,8 @@ inline int ScaleQuantizer::expandScaleShift(char * expandedOut, const char * sca
 	int overflowIndex=-1;
 	for (int i=0; i< unexpandedLen; ++i)
 	{
-		temp[i] = scale[i] + shift;
-		//printf("initialshitf, shift = %d, shifted[%d] = %d\n", shift, i, temp[i]);
+		temp[i] = scale[i] + rotation;
+		//printf("initialshitf, shift = %d, shifted[%d] = %d\n", rotation, i, temp[i]);
 		if ((temp[i] > 12) && (overflowIndex < 0))
 			overflowIndex = i;
 

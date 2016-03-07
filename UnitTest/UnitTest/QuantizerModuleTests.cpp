@@ -40,7 +40,10 @@ void testm1(DModule& mod, int index, char inPitch, char outPitch)
 }
 
 
-void testm2(DModule& mod, int shift, char inPitch, char outPitch)
+/* Test DMScaleQuantizer2,  which quantizes to a rotated scale
+ * will also test DMScaleQuanizer3, which uses a normal scale, then rotates after
+ */
+void testm2(DModule& mod, int rotation, char inPitch, char outPitch)
 {
 	ModuleTester mt(mod);
 
@@ -50,7 +53,7 @@ void testm2(DModule& mod, int shift, char inPitch, char outPitch)
 	int expectedv =  ChromaticQuantizer::midi2CV(outPitch);
 
 	// first select shift
-	mt.add( MTIn::z_interp(0, 11, shift));
+	mt.add( MTIn::z_interp(0, 11, rotation));
 
 
 
@@ -157,11 +160,19 @@ void qmb1()
 	// const char  s2[] = {0, 2, 4, 7, 9, -1 };
 	// --> 1, 3, 5, 8, 10,
 
-	testm2(m, shift, 1,1);
+	testm2(m, shift, 0, 1);	// c -> c#
+	testm2(m, shift, 1,1);  // c# -> c#
+	testm2(m, shift, 2,1);
 	testm2(m, shift, 3,3);
+	testm2(m, shift, 4,3);
+	testm2(m, shift, 5,5);
+	testm2(m, shift, 6,5);
+	testm2(m, shift, 7,8);
+	testm2(m, shift, 8,8);
+	testm2(m, shift, 9,8);
 	testm2(m, shift, 10, 10);
 	testm2(m, shift, 11, 10);
-	testm2(m, shift, 12, 1+12);
+	testm2(m, shift, 12, 1+12);		// C# next octave
 }
 
 void qmb9()

@@ -21,11 +21,12 @@ public:
 		_size = ScaleQuantizer::expandScale(_expandedScale, unexpanded);
 	}
 
-	// pick one of the scales, shift it, and and expand it
-	void selectAndShift(int index, int shift)
+	// pick one of the scales, rotate it, and and expand it
+	// note that this algorithm is based on a mis-understanding of some requiremens, to not used.
+	void selectAndRotate(int index, int rotation)
 	{
 		const char * unexpanded = getOctaveScale(index);
-		_size = ScaleQuantizer::expandScaleShift(_expandedScale, unexpanded, shift);
+		_size = ScaleQuantizer::expandScaleAndRotate(_expandedScale, unexpanded, rotation);
 	}
 
 	const char * get(char& outSize) const

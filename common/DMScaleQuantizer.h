@@ -87,10 +87,10 @@ public:
 		}
 		if (z.changed)
 		{
-			int shift = _interpShift.interp(z.value);
-			Led_setTempSelectorOverride(1 + shift, 1);
+			int rotation = _interpShift.interp(z.value);
+			Led_setTempSelectorOverride(1 + rotation, 1);
 			//printf("shift now %d z=%d\n", shift, z.value);
-			_scales.selectAndShift(2, shift);
+			_scales.selectAndRotate(2, rotation);
 		}
 		_trigger.go(y);
 		if (_trigger.trigger())
