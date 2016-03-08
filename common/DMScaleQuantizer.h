@@ -132,7 +132,7 @@ private:
 
 /* X = CV
  * y = trigger
- * z = shift-LC version
+ * z = rotate-LC version
  * 
  */
 class DMScaleQuantizer3 : public DModule
@@ -155,8 +155,6 @@ public:
 		{
 			_rotation = _interpShift.interp(z.value);
 			Led_setTempSelectorOverride(1 + _rotation, 1);
-			//printf("shift now %d z=%d\n", shift, z.value);
-			//_scales.selectAn(2, rotation);
 		}
 		_trigger.go(y);
 		if (_trigger.trigger())

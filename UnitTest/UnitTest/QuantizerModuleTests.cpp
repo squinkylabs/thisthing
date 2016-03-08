@@ -194,6 +194,84 @@ void qmb9()
 	testm2(m, shift, 6, 6);
 	testm2(m, shift, 11, 11);
 }
+
+
+
+
+// no rotation, qm3
+void qmc0()
+{
+	int rotation = 0;
+
+	DMScaleQuantizer3 m;
+
+	//void testm2(DModule& mod, int shift, char inPitch, char outPitch)
+	//C, D, E, G, A
+	// const char  s2[] = {0, 2, 4, 7, 9, -1 };
+	testm2(m, rotation, 0, 0);
+	testm2(m, rotation, 1, 0);
+	testm2(m, rotation, 2, 2);
+	testm2(m, rotation, 3, 2);
+	testm2(m, rotation, 4, 4);
+	testm2(m, rotation, 5, 4);
+	testm2(m, rotation, 6, 7);
+	testm2(m, rotation, 7, 7);
+	testm2(m, rotation, 9, 9);
+	testm2(m, rotation, 10, 9);
+	testm2(m, rotation, 2*12, 2*12);
+}
+
+
+void qmc1()
+{
+	printf("qmc1\n");
+	int rotation = 1;
+
+	DMScaleQuantizer3 m;
+
+	//void testm2(DModule& mod, int shift, char inPitch, char outPitch)
+	//C, D, E, G, A
+	// const char  s2[] = {0, 2, 4, 7, 9, -1 };
+	// --> 1, 3, 5, 8, 10,
+
+	testm2(m, rotation, 0, 1);	// c -> c -> c#
+	testm2(m, rotation, 1,1);  // c# -> c -> c#
+	testm2(m, rotation, 2,3);	// D -> D -> D#
+	testm2(m, rotation, 3,3);
+	testm2(m, rotation, 4,5);	// E -> E -> F
+	testm2(m, rotation, 5,5);
+	testm2(m, rotation, 6,8);	// F# -> G -> G#
+	testm2(m, rotation, 7,8);
+	testm2(m, rotation, 8,8);	// G# -> G -> G#
+	testm2(m, rotation, 9,10);	//A -> A -> A#
+	testm2(m, rotation, 10, 10); // A# -> A -> A#
+	testm2(m, rotation, 11, 12+1); // B -> C -> C#
+	testm2(m, rotation, 12, 1+12);	//  C -> C -> C#
+}
+
+
+void qmc9()
+{
+	printf("qmc9\n");
+	int shift = 9;
+
+	DMScaleQuantizer3 m;
+
+	//void testm2(DModule& mod, int shift, char inPitch, char outPitch)
+	//C, D, E, G, A
+	// const char  s2[] = {0, 2, 4, 7, 9, -1 };
+	// --> 9, 11, 13, 16, 18,
+	// --> 1, 4, 6, 9, 11, 
+
+	testm2(m, shift, 1,9);	// C# -> C -> A
+	testm2(m, shift, 4,13-12);	// E ->  E -> 13 -> 1
+	testm2(m, shift, 9, 18-12);	//A -> A -> 18 -> 6
+	testm2(m, shift, 6, 16-12);	// F# -> G -> 16 -> 4
+	testm2(m, shift, 11, 9+12);	// B -> C2 -> A2
+}
+
+
+
 void QuantizerModuleTests()
 {
 	qm0();
@@ -203,4 +281,8 @@ void QuantizerModuleTests()
 	qmb0();
 	qmb1();
 	qmb9();
+
+	qmc0();
+	qmc1();
+	qmc9();
 }

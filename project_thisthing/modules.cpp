@@ -124,7 +124,7 @@ DModule * modules_bank1[16] = {
     new DMScaleQuantizer1(),
     
     //1D-II
-    new DMScaleQuantizer2(),
+    new DMScaleQuantizer3(),
     
     //2A-II
     new DMZero(),

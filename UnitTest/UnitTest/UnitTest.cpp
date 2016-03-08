@@ -75,7 +75,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #else
 	printf("skipping most tests\n");
 
-	ModuleTesterTest();
+	//ModuleTesterTest();
 	//BankTests();
 	//LookupTableTest();
 	
@@ -90,7 +90,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//QuantizerTests();
 	ScaleQuantizerTests();
 	//LinearInterpTests();
-	//QuantizerModuleTests();
+	QuantizerModuleTests();
 	
 	//DACVoltageTest();
 	//AdderTests();
