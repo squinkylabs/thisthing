@@ -206,6 +206,9 @@ static void sr1()
 	q_test_scale_then_rotation(rotation, scale, 4, 4+12, 5+rotation, 5+rotation+12);
 	q_test_scale_then_rotation(rotation, scale, 5, 5+12, 5+rotation, 5+rotation+12);
 	q_test_scale_then_rotation(rotation, scale, 6, 6+12, 5+rotation, 5+rotation+12);
+
+	//  B quant to C, then rot 1, so no octave shift post quantize
+	// (as per LC, 3/7/2016)
 	q_test_scale_then_rotation(rotation, scale, 11, 11+12, 12+rotation, 12+rotation+12);
 	
 	rotation=8;
@@ -218,9 +221,12 @@ static void sr1()
 	// 4 -> 5, rotates to 13 (different octave) so goes back down
 	q_test_scale_then_rotation(rotation, scale, 4, 4+12, 5+rotation-12, 5+rotation+12-12);
 
-	q_test_scale_then_rotation(rotation, scale, 5, 5+12, 5+rotation, 5+rotation+12);
-	q_test_scale_then_rotation(rotation, scale, 6, 6+12, 5+rotation, 5+rotation+12);
+	q_test_scale_then_rotation(rotation, scale, 5, 5+12, 5+rotation-12, 5+rotation+12-12);
+	q_test_scale_then_rotation(rotation, scale, 6, 6+12, 5+rotation-12, 5+rotation+12-12);
+
+	// B3 -> C4 then up 11, no wrap on octave
 	q_test_scale_then_rotation(rotation, scale, 11, 11+12, 12+rotation, 12+rotation+12);
+
 	
 }
 

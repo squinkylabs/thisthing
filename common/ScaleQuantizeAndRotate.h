@@ -18,7 +18,7 @@ public:
 		ChromaticQuantizer::separate(inputPitch, octave, semi);
 		++octave;		// TODO: make separate return less crazy octaves.
 
-		printf("separated %d into p=%d oct = %d\n", inputPitch, semi, octave);
+		//printf("separated %d into p=%d oct = %d\n", inputPitch, semi, octave);
 		int quantizedSemi = ScaleQuantizer::quantize_semi_expanded(semi, expandedScale, scaleLength);
 		reNormalize(octave, quantizedSemi);
 

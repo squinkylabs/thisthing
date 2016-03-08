@@ -2,6 +2,7 @@
 #ifndef DMSCALEQUANTIZER
 #define  DMSCALEQUANTIZER
 
+#include "ScaleQuantizeAndRotate.h"
 #include "OctaveScaleManager.h"
 #include "DModule.h"
 #include "LinearInterp.h"
@@ -67,7 +68,9 @@ private:
 
 /* X = CV
  * y = trigger
- * z = shift
+ * z = shift-broken version
+ * 
+ * this shift based on a bad reading of the specs
  */
 class DMScaleQuantizer2 : public DModule
 {
@@ -122,6 +125,72 @@ private:
 		_qv=0;
 		_trigger.reset();
 		_chromaticQuantizer.reset();
+	}
+};
+
+
+
+/* X = CV
+ * y = trigger
+ * z = shift-LC version
+ * 
+ */
+class DMScaleQuantizer3 : public DModule
+{
+public:
+	DMScaleQuantizer3() : 
+	  _interpShift(0,11),
+	 _trigger(false)
+	{
+		_reset();
+	}
+	virtual void go(bool reset, int x, int y, const ZState& z, volatile int& a, volatile int&b)
+	{
+		if (reset) 
+		{
+			_reset();
+			return;
+		}
+		if (z.changed)
+		{
+			_rotation = _interpShift.interp(z.value);
+			Led_setTempSelectorOverride(1 + _rotation, 1);
+			//printf("shift now %d z=%d\n", shift, z.value);
+			//_scales.selectAn(2, rotation);
+		}
+		_trigger.go(y);
+		if (_trigger.trigger())
+		{
+			// quantize pitch to midi note number
+			_chromaticQuantizer.go(x);
+			int pitch = _chromaticQuantizer.getMIDI();
+
+			// qunatize to scale and rotat
+			char len;
+			const char * expanded = _scales.get(len);
+			int q = ScaleQuantizeAndRotate::quantizeAndRotate(len, expanded, _rotation, pitch);
+
+			// and back to CV
+			_qv = ChromaticQuantizer::midi2CV(q);
+		}
+		a = b = _qv;
+	}
+
+private:
+	OctaveScaleManager _scales;
+	ChromaticQuantizer _chromaticQuantizer;
+	LinearInterp _interpShift;
+	GateTrigger _trigger;
+	int _qv;
+	int _rotation;
+
+	void _reset()
+	{
+		_qv=0;
+		_rotation=0;
+		_trigger.reset();
+		_chromaticQuantizer.reset();
+		_scales.select(2);
 	}
 };
 #endif
