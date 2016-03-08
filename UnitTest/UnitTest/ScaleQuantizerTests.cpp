@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 
+#include "ScaleQuantizeAndRotate.h"
 #include "ModuleTester.h"
 #include "DMScaleQuantizer.h"
 #include "ScaleQuantizer.h"
@@ -34,6 +35,22 @@ static void q_test_rotated_scale(int rotation, const char * scale, char semi, ch
 	q = ScaleQuantizer::quantize_expanded(pitch, expanded, len);
 	if (q != expected_pitch) printf("will fail, q=%d, expected_pitch %d\n", q, expected_pitch);
 	assert(q == expected_pitch);
+}
+
+static void q_test_scale_then_rotation(int rotation, const char * scale, char semi, char pitch, char expected_semi, char expected_pitch)
+{
+	//char scale[] = {0, -1};
+	char expanded[ ScaleQuantizer::expandedSize];
+	const int len = ScaleQuantizer::expandScale(expanded, scale);
+
+	// no rotation
+	
+	int out_semi = ScaleQuantizeAndRotate::quantizeAndRotate(len, expanded, rotation, semi);
+	assert(out_semi == expected_semi);
+
+	int out_pitch = ScaleQuantizeAndRotate::quantizeAndRotate(len, expanded, rotation, pitch);
+	assert(out_pitch == expected_pitch);
+	
 }
 
 
@@ -150,6 +167,64 @@ printf("\nshs1, b\n");
 	q_test_rotated_scale(6, scale, 9, 9, 9, 9);
 }
 
+void sr0()
+{
+	char scale[] = {0, -1};
+	char expanded[ ScaleQuantizer::expandedSize];
+	const int len = ScaleQuantizer::expandScale(expanded, scale);
+
+	// no rotation
+	int outPitch = ScaleQuantizeAndRotate::quantizeAndRotate(len, expanded, 0, 0);
+	assert(outPitch == 0);
+
+	//rotate 1
+	outPitch = ScaleQuantizeAndRotate::quantizeAndRotate(len, expanded, 1, 0);
+	assert(outPitch == 1);
+
+
+
+}
+
+static void sr1()
+{
+	printf("sr1\n");
+	char scale[] = {0, 5, -1};
+
+	int rotation=0;
+	q_test_scale_then_rotation(rotation, scale, 0, 0+12, 0, 0+12);
+	q_test_scale_then_rotation(rotation, scale, 1, 1, 0, 0);
+	q_test_scale_then_rotation(rotation, scale, 4, 4+12, 5, 5+12);
+	q_test_scale_then_rotation(rotation, scale, 5, 5+12, 5, 5+12);
+	q_test_scale_then_rotation(rotation, scale, 6, 6+12, 5, 5+12);
+
+	q_test_scale_then_rotation(rotation, scale, 11, 11+12, 12, 12+12);
+
+	rotation=1;
+	printf("sr1-b\n");
+	q_test_scale_then_rotation(rotation, scale, 0, 0+12, 0+rotation, 0+rotation+12);
+	q_test_scale_then_rotation(rotation, scale, 1, 1+12, 0+rotation, 0+rotation+12);
+	q_test_scale_then_rotation(rotation, scale, 4, 4+12, 5+rotation, 5+rotation+12);
+	q_test_scale_then_rotation(rotation, scale, 5, 5+12, 5+rotation, 5+rotation+12);
+	q_test_scale_then_rotation(rotation, scale, 6, 6+12, 5+rotation, 5+rotation+12);
+	q_test_scale_then_rotation(rotation, scale, 11, 11+12, 12+rotation, 12+rotation+12);
+	
+	rotation=8;
+	printf("sr1-c\n");
+
+	// C -> C, rotate up 8
+	q_test_scale_then_rotation(rotation, scale, 0, 0+12, 0+rotation, 0+rotation+12);
+	q_test_scale_then_rotation(rotation, scale, 1, 1+12, 0+rotation, 0+rotation+12);
+
+	// 4 -> 5, rotates to 13 (different octave) so goes back down
+	q_test_scale_then_rotation(rotation, scale, 4, 4+12, 5+rotation-12, 5+rotation+12-12);
+
+	q_test_scale_then_rotation(rotation, scale, 5, 5+12, 5+rotation, 5+rotation+12);
+	q_test_scale_then_rotation(rotation, scale, 6, 6+12, 5+rotation, 5+rotation+12);
+	q_test_scale_then_rotation(rotation, scale, 11, 11+12, 12+rotation, 12+rotation+12);
+	
+}
+
+
 void ScaleQuantizerTests()
 {
 	sq0();
@@ -162,5 +237,8 @@ void ScaleQuantizerTests()
 	shs0();
 	shs1();
 
+
+	sr0();
+	sr1();
 
 }

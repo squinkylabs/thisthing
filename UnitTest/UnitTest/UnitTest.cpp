@@ -88,9 +88,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//DelayTest();
 	//QuantizerTests();
-	//ScaleQuantizerTests();
+	ScaleQuantizerTests();
 	//LinearInterpTests();
-	QuantizerModuleTests();
+	//QuantizerModuleTests();
 	
 	//DACVoltageTest();
 	//AdderTests();

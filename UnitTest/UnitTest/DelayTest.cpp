@@ -132,7 +132,7 @@ void sr1_sub(DMDigitalShiftRegister& dr)
 	assert(b==57);
 }
 
-void sr1()
+static void sr1()
 {
 	DMDigitalShiftRegister dr;
 	sr1_sub(dr);
@@ -145,7 +145,7 @@ void sr1()
 }
 
 
-void sr2()
+static void sr2()
 {
 	printf("*** sr2\n");
 	DMDigitalShiftRegister dr;

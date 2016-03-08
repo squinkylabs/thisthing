@@ -173,6 +173,7 @@
     <ClInclude Include="..\..\common\OctaveScaleManager.h" />
     <ClInclude Include="..\..\common\Random.h" />
     <ClInclude Include="..\..\common\SampleAndHold.h" />
+    <ClInclude Include="..\..\common\ScaleQuantizeAndRotate.h" />
     <ClInclude Include="..\..\common\ScaleQuantizer.h" />
     <ClInclude Include="..\..\common\SchmidtTrigger.h" />
     <ClInclude Include="..\..\common\SlopeDetector.h" />
