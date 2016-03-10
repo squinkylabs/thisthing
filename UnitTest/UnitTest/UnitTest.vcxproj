@@ -199,6 +199,7 @@
   <ItemGroup>
     <ClCompile Include="DelayTest.cpp" />
     <ClCompile Include="GateTriggerTests.cpp" />
+    <ClCompile Include="GrammarTest.cpp" />
     <ClCompile Include="LFOTest.cpp" />
     <ClCompile Include="LinearInterpTests.cpp" />
     <ClCompile Include="LookupTableTest.cpp" />

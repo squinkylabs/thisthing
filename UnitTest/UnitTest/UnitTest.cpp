@@ -28,6 +28,7 @@ extern void BankTests();
 extern void ScaleQuantizerTests();
 extern void ModuleTesterTest();
 extern void QuantizerModuleTests();
+extern void GrammarTest();
 
 int i_global;
 int led_test;
@@ -44,7 +45,7 @@ extern "C" void Led_setTempSelectorOverride(int value, int mode)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-#if 1
+#if 0
 	printf("starting unit tests\n");
 	ModuleTesterTest();
 	BankTests();
@@ -88,9 +89,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//DelayTest();
 	//QuantizerTests();
-	ScaleQuantizerTests();
+	//ScaleQuantizerTests();
 	//LinearInterpTests();
-	QuantizerModuleTests();
+	//QuantizerModuleTests();
 	
 	//DACVoltageTest();
 	//AdderTests();
@@ -101,6 +102,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//Ala152Test();
 	//SwitchTests();
+
+	GrammarTest();
 
 #endif
 	printf("leaving unit tests\n");

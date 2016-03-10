@@ -16,7 +16,7 @@ class DMScaleQuantizer1 : public DModule
 {
 public:
 	DMScaleQuantizer1() : 
-	  _interp(0, OctaveScaleManager::getNumOctaveScales()),
+	  _interp(0, OctaveScaleManager::getNumOctaveScales()-1),
 	 _trigger(false)
 	{
 		_reset();

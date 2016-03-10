@@ -146,18 +146,18 @@ DModule * modules_bank1[16] = {
     
     //3C-II
     new DMZero(),
-    
+  
     //3D-II
     new DMZero(),
     
     //4A-II
-    new DMZero(),
-
-    //4B-II
-    new DMZero(),
+    new DMRandomSource1(Constants::DISTING_SAMPLE_RATE),
     
+    //4B-II
+    new DMRandomSource2(Constants::DISTING_SAMPLE_RATE),
+
     //4C-II
-    new DMZero(),
+    new DMScaleQuantizer2(),
     
     // 4D
     new DMBankSelector(2)
