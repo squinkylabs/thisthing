@@ -101,7 +101,7 @@ void qm1()
 
 }
 
-// { 2, 4, 7, 9, 10, -1 };
+// { 2, 4, 5,  7, 9, 10, -1 };
 void qm9()
 {
 	DMScaleQuantizer1 m;
@@ -109,8 +109,8 @@ void qm9()
 	testm1(m, 9, 2, 2);
 	testm1(m, 9, 3, 2);
 	testm1(m, 9, 4, 4);
-	testm1(m, 9, 5, 4);
-	testm1(m, 9, 6, 7);
+	testm1(m, 9, 5, 5);
+	testm1(m, 9, 6, 5);
 	testm1(m, 9, 7, 7);
 	testm1(m, 9, 8, 7);
 	testm1(m, 9, 9, 9);
