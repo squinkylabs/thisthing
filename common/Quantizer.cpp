@@ -47,7 +47,7 @@ const char  s7[] = {0, 2, 3, 5, 7, 8, -1 };
 const char  s8[] = { 2, 4, 7, 9, 11, -1 };
 
 //D, E, F, G, A, Bb
-const char  s9[] = { 2, 4, 7, 9, 10, -1 };
+const char  s9[] = { 2, 4, 5, 7, 9, 10, -1 };
 
 static const char * octave_scales[10] = {
 	s0, s1, s2, s3, s4, s5, s6, s7, s8, s9
