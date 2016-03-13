@@ -189,6 +189,7 @@
     <ClCompile Include="FixedPointTest.cpp">
       <FileType>CppHeader</FileType>
     </ClCompile>
+    <ClInclude Include="..\..\common\StochasticGrammar.h" />
     <ClInclude Include="..\..\common\TriggerOutput.h" />
     <ClInclude Include="ModuleTester.h" />
     <ClInclude Include="stdafx.h" />

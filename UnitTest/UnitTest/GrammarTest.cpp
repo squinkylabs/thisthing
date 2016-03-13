@@ -1,65 +1,12 @@
 
 #include "stdafx.h"
+#include "StochasticGrammar.h"
 
 #include "Random.h"
 
 static const int numRules = 3;
-static Random r;
+//static Random r;
 
-class ProductionRuleEntry
-{
-public:
-	ProductionRuleEntry() : probability(0), code(0) {}
-	unsigned char probability;	// 1..256
-	unsigned char code;			// what to do if this one fires
-};
-
-class ProductionRule
-{
-public:
-	static const int numEntries=3;
-	ProductionRule() {}
-	void evaluate()
-	{
-		assert(_isValid());
-		int rand = r.get() & 0xff;
-		printf("rand is %d\n", rand);
-		for (int i=0; i<numEntries; ++i)
-		{
-			printf("prob is %d\n",  entries[i].probability);
-			if ( entries[i].probability >= rand)
-			{
-				// rule fired!
-				printf("rule fired! execute code %d\n",  entries[i].code);
-				return;
-			}
-		}
-		// no rule fired
-		//printf("no rule fired, so will exectue code %d\n", code);
-		assert(false);
-
-	}
-
-	ProductionRuleEntry entries[numEntries];
-
-	bool _isValid() const 
-	{
-		int last = -1;
-		for (int i=0; i<numEntries; ++i)
-		{
-			const ProductionRuleEntry& e = entries[i];
-			if (e.probability <= last)			// probabilites grow
-			{
-				printf("probability not growing is %d was %d\n", e.probability, last);
-				return false;
-			}
-			if (e.probability == 0xff)
-				return true;					// must have a 255 to end it			
-		}
-		printf("not terminated\n");
-		return false;
-	}
-};
 
 
 static ProductionRule rules[numRules]; 
@@ -90,7 +37,12 @@ static void init0()
 void gt0()
 {
 	init0();
-	rules[0].evaluate();
+//	rules[0].evaluate();
+	Random r;
+	ProductionRule::EvaluationState es(r);
+	es.rules = rules;
+	es.numRules = numRules;
+	ProductionRule::evaluate(es, 0);
 }
 void GrammarTest()
 {
