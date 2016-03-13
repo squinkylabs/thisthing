@@ -87,12 +87,20 @@ inline const char * ProductionRuleKeys::toString(GKEY key)
 	const char * ret;
 	switch(key)
 	{
-	case sg_w2: ret = "2xw"; break;
+		case sg_w2: ret = "2xw"; break;
+		case sg_ww: ret = "w,w"; break;
+		case sg_w: ret = "w"; break;
+		case sg_h: ret = "h"; break;
+		case sg_hh: ret = "h,h"; break;
+		case sg_q: ret = "q"; break;
+		case sg_qq: ret = "q,q"; break;
+		case sg_e: ret = "e"; break;
+		case sg_ee: ret = "e,e"; break;
 	
-	default:
-		printf("can't print key %d\n", key);
-		assert(false);
-		ret="error";
+		default:
+			printf("can't print key %d\n", key);
+			assert(false);
+			ret="error";
 	}
 	return ret;
 
@@ -206,7 +214,15 @@ inline void ProductionRule::evaluate(const EvaluationState& es, int ruleToEval)
 	{
 		printf("production rule #%d expanded to %d\n", ruleToEval, result);
 		// need to expand,then eval all of the expanded codes
-		assert(false);
+		
+		GKEY buffer[ProductionRuleKeys::bufferSize];
+		ProductionRuleKeys::breakDown(result, buffer);
+		for ( GKEY * p = buffer ; *p != sg_invalid; ++p)
+		{
+			printf("expanding rule #%d with %d\n", ruleToEval, *p);
+			evaluate(es, *p);
+		}
+		printf("done expanding %d\n", ruleToEval);
 	}
 }
 			
