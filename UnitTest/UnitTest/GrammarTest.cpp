@@ -149,9 +149,10 @@ static void ts0()
 
 static void ts1()
 {
+	printf("ts1\n");
 	TriggerSequencer::Event seq[] =
 	{
-		{ TriggerSequencer::TRIGGER, 1 },
+		{ TriggerSequencer::TRIGGER, 2 },
 		{ TriggerSequencer::END, 0 }
 	};
 	TriggerSequencer ts(seq);
@@ -168,6 +169,37 @@ static void ts1()
 	 b = ts.clock();
 	assert(!b);
 }
+
+
+// 8 clock loop
+static void ts2()
+{
+	printf("ts2\n");
+	TriggerSequencer::Event seq[] =
+	{
+		{ TriggerSequencer::TRIGGER, 8 },
+		{ TriggerSequencer::LOOP, 0 },
+		{ TriggerSequencer::END, 0 }
+	};
+	TriggerSequencer ts(seq);
+
+	for (int i=0; i< 4; ++i)
+	{
+		// 7 none, 1  trigger
+		assert(!ts.clock());
+		assert(!ts.clock());
+		assert(!ts.clock());
+		assert(!ts.clock());
+		assert(!ts.clock());
+		assert(!ts.clock());
+		assert(!ts.clock());
+
+		assert(ts.clock());
+	}
+
+	
+}
+
 void GrammarTest()
 {
 #if 0
@@ -180,6 +212,7 @@ void GrammarTest()
 
 	ts0();
 	ts1();
+	ts2();
 
 }
 
