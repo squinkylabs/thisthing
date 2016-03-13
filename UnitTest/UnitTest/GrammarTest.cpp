@@ -78,10 +78,36 @@ void gt1()
 	es.numRules = numRules;
 	ProductionRule::evaluate(es, init);
 }
+
+// test all the gkeys
+void gt2()
+{
+	const int siz = ProductionRuleKeys::bufferSize;
+	GKEY buffer[siz];
+
+	for (GKEY gk = sg_first; gk <= sg_last; ++gk)
+	{
+		printf("testing key %d\n", gk);
+		const int dur = ProductionRuleKeys::getDuration(gk);
+		ProductionRuleKeys::breakDown(gk, buffer );
+		int sum =0;
+		for ( GKEY * p = buffer ; *p != sg_invalid; ++p)
+		{
+			printf("adding to sum %d\n", ProductionRuleKeys::getDuration(*p));
+			sum += ProductionRuleKeys::getDuration(*p);
+		
+		}
+		printf("dur = %d sum = %d\n", dur, sum);
+		assert(dur == sum);
+	}
+}
 void GrammarTest()
 {
-	//gt0();
+	gt2();
+#if 0
+	gt0();
 	for (int i=0; i<10; ++i)
 		gt1();
+#endif
 }
 
