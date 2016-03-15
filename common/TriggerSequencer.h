@@ -6,7 +6,7 @@ class TriggerSequencer
 public:
 	enum EVT {
 		TRIGGER,
-		LOOP,
+	//	LOOP, move loop extnally
 		END
 	};
 	class Event
@@ -18,53 +18,75 @@ public:
 
 	// data is a buffer that will be bound to the sequencer, although it is "owned"
 	// by the caller
-	TriggerSequencer(const Event * data) : events(data), curEvent(data)
+	TriggerSequencer(const Event * data) : curEvent(data), trigger(false)
 	{
+		reset(data);
+		//delay = data->delay;
+	}
+
+	// send one clock to the seq
+	void clock();
+
+	// reset by concatenating new data to seq
+	// note that reset may generate a trigger
+	void reset(const Event * data)
+	{
+		curEvent = data;
 		delay = data->delay;
 	}
 
-	// send one clock to the seq, return true if trig should be generated
-	bool clock();
+	bool getTrigger() const {return trigger; }	// get trigger state after last clock
+	bool getEnd() const { return curEvent == 0; }		// did sequencer end after last clock?
 
 
 private:
-	const Event * const events;
+	//const Event * const events;
 	const Event * curEvent;
 	short delay;
+	//
+	bool trigger;
 };
 
-inline bool TriggerSequencer::clock()
+inline void TriggerSequencer::clock()
 {
+	trigger = false;
 	printf("enter clock, curevt =%p, delay = %d\n", curEvent, delay);
-	if (!curEvent) return false;	// seq is stopped
+	if (!curEvent)
+	{
+		printf("leave clock early - ended\n");
+		return;	// seq is stopped
+	}
 
-	bool ret = false;
-	if (delay)
-		--delay;
 
+
+	// check for delay 0 first
 	while (!delay)
 	{
 		printf("delay went to zero, evt=%d\n", curEvent->evt);
 		switch (curEvent->evt)
 		{
 		case END:
+			printf("setting end at 58\n");
 			curEvent = 0;		// stop seq by clering ptr
-			return ret;
+			return;
 		case TRIGGER:
-			ret = true;
+			trigger = true;
 			++curEvent;			// and go to next one
 			printf("trigger set true\n");
 			break;
+#if 0
 		case LOOP:
 			curEvent = events;
 			break;
+#endif
 		default:
 			assert(false);
 		}
 
 		delay = curEvent->delay;
 	}
-	return ret;
+	assert(delay);
+	delay--;
 };
 
 

@@ -143,65 +143,97 @@ static void ts0()
 	};
 	TriggerSequencer ts(seq);
 
-	bool b = ts.clock();
+	ts.clock();
+	bool b = ts.getTrigger();
 	assert(!b);
 }
 
+// test event at zero fires at zero
+static void ts0b()
+{
+	printf("ts0b\n");
+	TriggerSequencer::Event seq[] =
+	{
+		{ TriggerSequencer::TRIGGER, 0 },
+		{ TriggerSequencer::END, 100 }
+	};
+	TriggerSequencer ts(seq);
+
+	ts.clock();
+	assert(ts.getTrigger());
+
+	ts.clock();
+	assert(!ts.getTrigger());
+
+}
+
+// test trigger at 1 happens at 1
 static void ts1()
 {
 	printf("ts1\n");
 	TriggerSequencer::Event seq[] =
 	{
-		{ TriggerSequencer::TRIGGER, 2 },
+		{ TriggerSequencer::TRIGGER, 1 },
 		{ TriggerSequencer::END, 0 }
 	};
 	TriggerSequencer ts(seq);
 
-	bool b = ts.clock();
-	assert(!b);
+	ts.clock();
+	assert(!ts.getTrigger());
 
-	 b = ts.clock();
-	assert(b);
+	ts.clock();
+	assert(ts.getTrigger());
 
-	 b = ts.clock();
-	assert(!b);
+	ts.clock();
+	assert(!ts.getTrigger());
 
-	 b = ts.clock();
-	assert(!b);
+	ts.clock();
+	assert(!ts.getTrigger());
 }
 
 
-// 8 clock loop
+// 8 clock loop: delay 8, trigger, end
 static void ts2()
 {
 	printf("ts2\n");
+#if 0
+	printf("finish ts2\n");
+	assert(false);
+#else
 	TriggerSequencer::Event seq[] =
 	{
 		{ TriggerSequencer::TRIGGER, 8 },
-		{ TriggerSequencer::LOOP, 0 },
+//		{ TriggerSequencer::LOOP, 0 },
 		{ TriggerSequencer::END, 0 }
 	};
 	TriggerSequencer ts(seq);
 
 	for (int i=0; i< 4; ++i)
 	{
+		printf("--- loop ----\n");
 		// 7 none, 1  trigger
-		assert(!ts.clock());
-		assert(!ts.clock());
-		assert(!ts.clock());
-		assert(!ts.clock());
-		assert(!ts.clock());
-		assert(!ts.clock());
-		assert(!ts.clock());
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
 
-		assert(ts.clock());
+		ts.clock(); assert(ts.getTrigger());
+		assert(ts.getEnd());
+
+		ts.reset(seq);
 	}
+#endif
 
 	
 }
 
 void GrammarTest()
 {
+	printf("skpping a bunch of grammr tests\n");
 #if 0
 	gtk();
 	gt0();
@@ -211,6 +243,7 @@ void GrammarTest()
 
 
 	ts0();
+	ts0b();
 	ts1();
 	ts2();
 
