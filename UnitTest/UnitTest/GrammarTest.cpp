@@ -192,60 +192,124 @@ static void ts1()
 }
 
 
-// 8 clock loop: delay 8, trigger, end
+// 4 clock loop: delay 4, trigger, end
 static void ts2()
 {
 	printf("ts2\n");
-#if 0
-	printf("finish ts2\n");
-	assert(false);
-#else
 	TriggerSequencer::Event seq[] =
 	{
-		{ TriggerSequencer::TRIGGER, 8 },
-//		{ TriggerSequencer::LOOP, 0 },
+		{ TriggerSequencer::TRIGGER, 4 },
 		{ TriggerSequencer::END, 0 }
 	};
 	TriggerSequencer ts(seq);
 
+	bool firstTime = true;
+	// first time through, 4 clocks of nothing. then clock, 0,0,0
 	for (int i=0; i< 4; ++i)
 	{
 		printf("--- loop ----\n");
-		// 7 none, 1  trigger
-		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
-		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
-		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
-		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
-		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
-		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
-		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
-		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		
+		ts.clock();
+		if (firstTime)
+		{
+			 assert(!ts.getTrigger()); assert(!ts.getEnd());
+			 firstTime = false;
+		}
+		else
+		{
+			printf("second time around, t=%d e=%d\n", ts.getTrigger(), ts.getEnd());
+			// second time around we finally see the trigger
 
-		ts.clock(); assert(ts.getTrigger());
-		assert(ts.getEnd());
+			assert(ts.getTrigger());
 
-		ts.reset(seq);
+			
+			// second time around, need to clock the end of the last time
+			assert(ts.getEnd());
+			ts.reset(seq);				// start it up again
+
+			printf("e\n");
+			assert(!ts.getTrigger());	// resetting should not set us up for a trigger
+		}
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		
+
+		ts.clock(); assert(!ts.getTrigger());
+	//	assert(ts.getEnd());
+
+	//	ts.reset(seq);
 	}
-#endif
+}
 
+
+// 4 clock loop: trigger, delay 4 end
+static void ts3()
+{
+	printf("ts3\n");
+
+
+	TriggerSequencer::Event seq[] =
+	{
+		{ TriggerSequencer::TRIGGER, 0 },
+		{ TriggerSequencer::END, 4 }
+	};
+	TriggerSequencer ts(seq);
+
+
+	bool firstLoop = true;
+	for (int i=0; i< 4; ++i)
+	{
+		printf("--- loop ----\n");
 	
+		// 1
+	
+		ts.clock();
+		if (firstLoop)
+		{
+
+			 assert(ts.getTrigger());
+			// we just primed loop at top, so it's got a ways
+			assert(!ts.getEnd());
+			firstLoop = false;
+		}
+		else
+		{
+			// second time around, need to clock the end of the last time
+			assert(ts.getEnd());
+			ts.reset(seq);				// start it up again
+
+			printf("e\n");
+			assert(ts.getTrigger());	// resetting should have set us up for a trigger
+		}
+		// 2
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		// 3
+		ts.clock(); assert(!ts.getTrigger()); assert(!ts.getEnd());
+		// 4
+		ts.clock(); 
+		assert(!ts.getTrigger());
+		assert(!ts.getEnd());
+	}	
 }
 
 void GrammarTest()
 {
 	printf("skpping a bunch of grammr tests\n");
-#if 0
+#if 1
 	gtk();
 	gt0();
 	gt1();
-	for (int i=0; i<10; ++i) gt2();
-#endif
+	//for (int i=0; i<10; ++i) gt2();
+
 
 
 	ts0();
 	ts0b();
 	ts1();
+#endif
 	ts2();
+
+	ts3();
 
 }
 

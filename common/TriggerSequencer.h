@@ -18,7 +18,7 @@ public:
 
 	// data is a buffer that will be bound to the sequencer, although it is "owned"
 	// by the caller
-	TriggerSequencer(const Event * data) : curEvent(data), trigger(false)
+	TriggerSequencer(const Event * data) : curEvent(data), trigger(false), delay(0)
 	{
 		reset(data);
 		//delay = data->delay;
@@ -31,8 +31,11 @@ public:
 	// note that reset may generate a trigger
 	void reset(const Event * data)
 	{
+		printf("reset: initial delay = %d\n", delay);
 		curEvent = data;
-		delay = data->delay;
+		delay += data->delay;		// should this be += delay??
+		printf("after reset: delay = %d\n", delay);
+		processClocks();
 	}
 
 	bool getTrigger() const {return trigger; }	// get trigger state after last clock
@@ -45,12 +48,21 @@ private:
 	short delay;
 	//
 	bool trigger;
+
+	//
+	void processClocks();
 };
 
 inline void TriggerSequencer::clock()
 {
+	--delay;
+	processClocks();
+}
+
+inline void TriggerSequencer::processClocks()
+{
 	trigger = false;
-	printf("enter clock, curevt =%p, delay = %d\n", curEvent, delay);
+	printf("enter proc clock, curevt =%p, delay = %d\n", curEvent, delay);
 	if (!curEvent)
 	{
 		printf("leave clock early - ended\n");
@@ -58,11 +70,9 @@ inline void TriggerSequencer::clock()
 	}
 
 
-
-	// check for delay 0 first
-	while (!delay)
+	while (delay < 0)
 	{
-		printf("delay went to zero, evt=%d\n", curEvent->evt);
+		printf("delay went to %d, evt=%d\n", delay, curEvent->evt);
 		switch (curEvent->evt)
 		{
 		case END:
@@ -74,19 +84,15 @@ inline void TriggerSequencer::clock()
 			++curEvent;			// and go to next one
 			printf("trigger set true\n");
 			break;
-#if 0
-		case LOOP:
-			curEvent = events;
-			break;
-#endif
+
 		default:
 			assert(false);
 		}
 
-		delay = curEvent->delay;
+		delay += curEvent->delay;
 	}
-	assert(delay);
-	delay--;
+
+	printf("leave clock %d\n", delay);
 };
 
 
