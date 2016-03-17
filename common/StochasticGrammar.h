@@ -151,6 +151,7 @@ public:
 		const ProductionRule * rules;
 		int numRules;
 		Random& r;		//random number generator to use 
+		virtual void writeSymbol(GKEY) {}
 	};
 
 	ProductionRule()  {}
@@ -160,9 +161,8 @@ public:
 
 	// each possible production rule for this state
 	ProductionRuleEntry entries[numEntries];
-//	GKEY terminalValue;		// if nothing produced, this is the output (entire time duration of interval)
 
-	static void evaluate(const EvaluationState& es, int ruleToEval);
+	static void evaluate(EvaluationState& es, int ruleToEval);
 private:
 	static int _evaluateRule(const ProductionRule& rule, int random);
 	bool _isValid(int index) const;
@@ -175,7 +175,6 @@ inline int ProductionRule::_evaluateRule(const ProductionRule& rule, int random)
 	//int rand = r.get() & 0xff;
 	int rand = random & 0xff;
 	printf("evaluateRule called with rand is %d\n", rand);
-		//for (int i=0; i<numEntries; ++i)
 
 	int i=0;
 	for (bool done2=false; !done2; ++i )
@@ -196,7 +195,7 @@ inline int ProductionRule::_evaluateRule(const ProductionRule& rule, int random)
 	return 0;
 }
 
-inline void ProductionRule::evaluate(const EvaluationState& es, int ruleToEval)
+inline void ProductionRule::evaluate(EvaluationState& es, int ruleToEval)
 {
 	printf("\n evaluate called on rule #%d\n", ruleToEval);
 	const ProductionRule& rule = es.rules[ruleToEval];
@@ -209,6 +208,7 @@ inline void ProductionRule::evaluate(const EvaluationState& es, int ruleToEval)
 		printf("rule terminated! execute code %s\n",  ProductionRuleKeys::toString(code));
 		printf("TODO: generate note dur %d\n",  ProductionRuleKeys::getDuration(code));
 		printf("TODO: need to produce something\n");
+		es.writeSymbol(code);
 	}
 	else
 	{

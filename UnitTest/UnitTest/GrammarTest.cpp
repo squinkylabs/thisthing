@@ -15,6 +15,25 @@ typedef GKEY (* INITFN)();
 
 static ProductionRule rules[numRules]; 
 
+class TestEvaluator : public ProductionRule::EvaluationState
+{
+public:
+	TestEvaluator(Random& xr) : ProductionRule::EvaluationState(xr) {}
+	virtual void writeSymbol(GKEY key)
+	{
+		keys.push_back(key);
+	}
+
+	int getNumSymbols() { 
+		printf("final keys: ");
+		for (int i=0; i< keys.size(); ++i) printf("%s, ",  ProductionRuleKeys::toString(keys[i]));
+		printf("\n");
+		return keys.size();
+	}
+private:
+	std::vector<GKEY> keys;
+};
+
 
 // simplest possible grammar.
 
@@ -38,10 +57,12 @@ static void testSub(INITFN f)
 	GKEY init = f();
 
 	Random r;
-	ProductionRule::EvaluationState es(r);
+	TestEvaluator es(r);
 	es.rules = rules;
 	es.numRules = numRules;
 	ProductionRule::evaluate(es, init);
+
+	assert(es.getNumSymbols() > 0);
 }
 
 
