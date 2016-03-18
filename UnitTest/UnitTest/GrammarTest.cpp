@@ -6,6 +6,7 @@
 #include "StochasticGrammar.h"
 
 #include "Random.h"
+#include <set>
 
 static const int numRules = 3;
 static Random r;
@@ -318,14 +319,22 @@ static void ts3()
 **********************************************************************************************/
 
 
+// test that we get some clocks and some not
 static void gtg0()
 {
+	printf("gtg0\n");
 	GKEY key = init1();
-	GenerativeTriggerGenerator gtg(rules, key);
-	bool b = false;
+	GenerativeTriggerGenerator gtg(rules, numRules, key);
+	bool yes = false;
+	bool no = false;
 	for (int i=0; i<100000; ++i)
 	{
 	   if (gtg.clock())
+		   yes = true;
+	   else
+		   no = true;
+
+	   if (yes && no)
 	   {
 		   printf("clocked at %d\n", i);
 		   return;
@@ -335,10 +344,44 @@ static void gtg0()
 	
 }
 
+
+// test that we get everything in even quarter notes
+static void gtg1()
+{
+	printf("gtg1\n");
+	GKEY key = init1();
+	std::set<int> counts;
+
+	GenerativeTriggerGenerator gtg(rules, numRules, key);
+
+	int ct = 0;
+	for (int i=0; i<10; ++i)
+	{
+		bool b = gtg.clock();
+		if (b)
+		{
+		   printf("clocked at %d\n", ct);
+		   counts.insert(ct);
+		   ct = 0;
+		}
+		ct++;
+	}
+	counts.insert(50);
+	assert(!counts.empty());
+	for (std::set<int>::iterator it=counts.begin(); it != counts.end(); ++it)
+	{
+		int c = *it;
+		printf("got count %d\n", c);
+
+		assert(c % PPQ == 0);
+		//assert(false);		// finish me
+	}
+	
+}
 void GrammarTest()
 {
 	printf("skpping a bunch of grammr tests\n");
-#if 1
+#if 0
 	gtk();
 	gt0();
 	gt1();
@@ -349,12 +392,12 @@ void GrammarTest()
 	ts0();
 	ts0b();
 	ts1();
-#endif
+
 	ts2();
 
 	ts3();
-
+#endif
 	gtg0();
-
+	gtg1();
 }
 
