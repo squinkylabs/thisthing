@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 
+#include "GenerativeTriggerGenerator.h"
 #include "TriggerSequencer.h"
 #include "StochasticGrammar.h"
 
@@ -26,7 +27,7 @@ public:
 
 	int getNumSymbols() { 
 		printf("final keys: ");
-		for (int i=0; i< keys.size(); ++i) printf("%s, ",  ProductionRuleKeys::toString(keys[i]));
+		for (size_t i=0; i< keys.size(); ++i) printf("%s, ",  ProductionRuleKeys::toString(keys[i]));
 		printf("\n");
 		return keys.size();
 	}
@@ -312,6 +313,27 @@ static void ts3()
 		assert(!ts.getEnd());
 	}	
 }
+/********************************************************************************************
+
+**********************************************************************************************/
+
+
+static void gtg0()
+{
+	GKEY key = init1();
+	GenerativeTriggerGenerator gtg(rules, key);
+	bool b = false;
+	for (int i=0; i<100000; ++i)
+	{
+	   if (gtg.clock())
+	   {
+		   printf("clocked at %d\n", i);
+		   return;
+	   }
+	}
+	assert(false);
+	
+}
 
 void GrammarTest()
 {
@@ -331,6 +353,8 @@ void GrammarTest()
 	ts2();
 
 	ts3();
+
+	gtg0();
 
 }
 

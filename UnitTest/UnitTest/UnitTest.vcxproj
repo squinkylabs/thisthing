@@ -164,6 +164,7 @@
     <ClInclude Include="..\..\common\ExpPot.h" />
     <ClInclude Include="..\..\common\FixedPoint.h" />
     <ClInclude Include="..\..\common\GateTrigger.h" />
+    <ClInclude Include="..\..\common\GenerativeTriggerGenerator.h" />
     <ClInclude Include="..\..\common\LFO.h" />
     <ClInclude Include="..\..\common\LinearInterp.h" />
     <ClInclude Include="..\..\common\LookupTable.h" />
