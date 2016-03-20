@@ -42,6 +42,8 @@ public:
 	bool getEnd() const { return curEvent == 0; }		// did sequencer end after last clock?
 
 
+	// checks that a sequence is valid
+	static bool isValid(const Event * data);
 private:
 	//const Event * const events;
 	const Event * curEvent;
@@ -94,6 +96,20 @@ inline void TriggerSequencer::processClocks()
 
 	printf("leave clock %d\n", delay);
 };
+
+
+inline bool TriggerSequencer::isValid(const Event * data)
+{
+	while (data->evt != END)
+	{
+		assert(data->evt == TRIGGER);
+		assert(data->delay >= 0);
+		assert(data->delay < 2000);	// just for now - we expect them to be small
+		++data;
+	}
+
+	return true;
+}
 
 
 

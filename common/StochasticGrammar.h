@@ -8,8 +8,6 @@
 ************************************************/
 typedef unsigned char GKEY;
 
-// TODO: need to re-think these. Go back to haveing the keys be the table index, too?
-// in that case, don't need terminalValue any more....
 
 const GKEY sg_invalid = 0;		// either uninitialized rule, or return value that stops recursion.
 								// Note that this means table of production rules must have a dummy entry up front
@@ -26,8 +24,13 @@ const GKEY sg_ee	= 9;
 const GKEY sg_first = 1;		// first valid one
 const GKEY sg_last  = 9;
 
+const int fullRuleTableSize = sg_last + 1;
+
 const int PPQ = 96;
 
+/* class ProductionRuleKeys
+ * ollection of utility functions around rule keys
+ */
 class ProductionRuleKeys
 {
 public:
@@ -77,7 +80,7 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 			*outKeys++ = sg_invalid;
 			break;
 		default:
-			printf("can't break down %d\n", key);
+			//printf("can't break down %d\n", key);
 			assert(false);
 	}
 }
@@ -128,10 +131,11 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 	return ret;
 
 }
-/**************************************************************************
 
-**************************************************************************/
-
+/* class ProductionRuleEntry
+ * A single entry in a production rule.
+ * if A -> B or A -> C, then each of these would be a separate rule entry 
+ */
 class ProductionRuleEntry
 {
 public:
@@ -140,6 +144,13 @@ public:
 	GKEY code;			// what to do if this one fires
 };
 
+
+/* class ProductionRule
+ * A production rule encapsulates every way that a starting sysmbol
+ * can prodcuce others.
+ * if A -> B or A -> C, then a single production rule could represent this
+ *
+ */
 class ProductionRule
 {
 public:
@@ -156,13 +167,14 @@ public:
 
 	ProductionRule()  {}
 
-	/* the data
-	 */
+	/* the data */
 
 	// each possible production rule for this state
 	ProductionRuleEntry entries[numEntries];
 
 	static void evaluate(EvaluationState& es, int ruleToEval);
+
+	static bool isGrammarValid(const ProductionRule * rules,  int numRules, GKEY firstRule);
 private:
 	static int _evaluateRule(const ProductionRule& rule, int random);
 	bool _isValid(int index) const;
@@ -250,6 +262,29 @@ inline bool ProductionRule::_isValid(int index) const
 	// TODO: test that all rules add up to terminalValue
 	return false;
 }
+
+
+/* class StochasticGrammarDictionary
+ *
+ * just a collection of pre-made grammars
+ */
+class StochasticGrammarDictionary
+{
+public:
+	class Grammar
+	{
+	public:
+		const ProductionRule * rules;
+		int numRules;
+		GKEY firstRule;
+	};
+	static Grammar getGrammar(int index);
+	static int getNumGrammars();
+private:
+	static bool _didInitRules;
+	static void initRules();
+	static void initRule0();
+};
 
 
 

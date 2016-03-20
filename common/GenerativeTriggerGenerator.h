@@ -4,6 +4,9 @@
 #include "StochasticGrammar.h"
 #include "TriggerSequencer.h"
 
+/* Knows how to generate trigger sequence data
+ * when evaluating a grammar
+ */
 class GTGEvaluator : public ProductionRule::EvaluationState
 {
 public:
@@ -16,8 +19,6 @@ public:
 
 	virtual void writeSymbol(GKEY key)
 	{
-		printf("need to write to seq\n");
-
 		// first: write out a trigger at "current delay"
 		_buf->evt = TriggerSequencer::TRIGGER;
 		_buf->delay = _delay;
@@ -33,12 +34,9 @@ public:
 		_buf->evt = TriggerSequencer::END;
 		_buf->delay = _delay;
 	}
-
-
 private:
 	TriggerSequencer::Event * _buf;
 	int _delay;
-	
 };
 
 
@@ -69,6 +67,7 @@ public:
 		bool ret = _seq->getTrigger();
 		if (_seq->getEnd())
 		{
+			// when we finish playing the seq, generate a new random one
 			generate();
 			ret |= _seq->getEnd();
 		}
@@ -84,14 +83,14 @@ private:
 	//
 	void generate()
 	{
-		
 		GTGEvaluator es(_r, _data);
 		es.rules = _rules;
 		es.numRules = _numRules;
 		ProductionRule::evaluate(es, _initKey);
 
 		es.writeEnd();
-		assert(false);		// assert that the sequence is valid
+		TriggerSequencer::isValid(_data);
+		_seq->reset(_data);
 		assert(!_seq->getEnd());
 	}
 };

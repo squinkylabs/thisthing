@@ -355,7 +355,7 @@ static void gtg1()
 	GenerativeTriggerGenerator gtg(rules, numRules, key);
 
 	int ct = 0;
-	for (int i=0; i<10; ++i)
+	for (int i=0; i<10000; ++i)
 	{
 		bool b = gtg.clock();
 		if (b)
@@ -366,18 +366,36 @@ static void gtg1()
 		}
 		ct++;
 	}
-	counts.insert(50);
+	//counts.insert(50);
 	assert(!counts.empty());
 	for (std::set<int>::iterator it=counts.begin(); it != counts.end(); ++it)
 	{
 		int c = *it;
 		printf("got count %d\n", c);
 
-		assert(c % PPQ == 0);
+
+		 if ((c % PPQ) != 0)
+		 {
+			 printf("PPQ=%d, c%PPQ=%d\n", PPQ, (c % PPQ));
+			 printf("2ppq = %d, 4ppq=%d\n", 2*PPQ, 4*PPQ);
+			 assert(false);
+		 }
 		//assert(false);		// finish me
 	}
 	
 }
+
+void gdt0()
+{
+	assert( StochasticGrammarDictionary::getNumGrammars() > 0);
+	for (int i=0; i< StochasticGrammarDictionary::getNumGrammars(); ++i)
+	{
+		StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(i);
+		bool b = ProductionRule::isGrammarValid(g.rules, g.numRules, g.firstRule);
+		assert(b);
+	}
+}
+
 void GrammarTest()
 {
 	printf("skpping a bunch of grammr tests\n");
@@ -396,8 +414,11 @@ void GrammarTest()
 	ts2();
 
 	ts3();
-#endif
+
 	gtg0();
 	gtg1();
+#endif
+
+	gdt0();
 }
 

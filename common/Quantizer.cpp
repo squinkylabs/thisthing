@@ -11,6 +11,7 @@
 
 #define printf (void *)
 #include "ScaleQuantizer.h"
+#include "StochasticGrammar.h"
 
 const int ChromaticQuantizer::middleCV = DACVoltage::xcodeForMV(2000);
 const int ChromaticQuantizer::semiV = DACVoltage::xcodeForMV(1000) / 12;
@@ -57,3 +58,56 @@ const char * OctaveScaleManager::getOctaveScale(int index)
 {
 	return octave_scales[index];
 }
+
+//////////////////////////////////////////////////////////////////
+
+static ProductionRule rules0[fullRuleTableSize];
+
+
+bool StochasticGrammarDictionary::_didInitRules = false;
+
+void StochasticGrammarDictionary::initRules()
+{
+	initRule0();
+}
+
+void StochasticGrammarDictionary::initRule0()
+{
+	ProductionRule& r = rules0[sg_w2];
+
+	// break into w,w prob 100
+
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_ww;		
+}
+
+ int StochasticGrammarDictionary::getNumGrammars()
+ {
+	 return 1;
+ }
+
+StochasticGrammarDictionary::Grammar StochasticGrammarDictionary::getGrammar(int index)
+ {
+	 if (!_didInitRules)
+		 initRules();
+
+	assert(index >= 0 && index < getNumGrammars());
+
+	
+	Grammar ret;
+	ret.firstRule = sg_w2;
+	ret.numRules = fullRuleTableSize;
+
+	switch(index)
+	{
+	case 0:
+		ret.rules = rules0;
+		
+		break;
+	default:
+		assert(false);
+	}
+	return ret;
+ }
+
+	
