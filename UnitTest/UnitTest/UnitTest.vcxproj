@@ -161,6 +161,7 @@
     <ClInclude Include="..\..\common\DMTrackAndHoldAla152.h" />
     <ClInclude Include="..\..\common\DMTuner.h" />
     <ClInclude Include="..\..\common\DMTuningRef.h" />
+    <ClInclude Include="..\..\common\DM_SGTriggerGenerator.h" />
     <ClInclude Include="..\..\common\ExpPot.h" />
     <ClInclude Include="..\..\common\FixedPoint.h" />
     <ClInclude Include="..\..\common\GateTrigger.h" />

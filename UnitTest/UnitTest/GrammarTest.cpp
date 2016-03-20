@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 
+#include "DM_SGTriggerGenerator.h"
 #include "GenerativeTriggerGenerator.h"
 #include "TriggerSequencer.h"
 #include "StochasticGrammar.h"
@@ -446,6 +447,13 @@ void gdt1()
 	}
 }
 
+void gdm0()
+{
+
+	DM_SGTriggerGenerator m;
+	DModule& dm = m;
+}
+
 void GrammarTest()
 {
 	printf("skpping a bunch of grammr tests\n");
@@ -472,5 +480,6 @@ void GrammarTest()
 	gdt0();
 	gdt1();
 
+	gdm0();
 }
 
