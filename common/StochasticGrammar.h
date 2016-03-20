@@ -21,8 +21,13 @@ const GKEY sg_qq	= 7;
 const GKEY sg_e		= 8;
 const GKEY sg_ee	= 9;
 
+//
+const GKEY sg_e3e3e3 = 10;		// three trip eights
+const GKEY sg_e3 =  11;			//  trip eight
+
+
 const GKEY sg_first = 1;		// first valid one
-const GKEY sg_last  = 9;
+const GKEY sg_last  = 11;
 
 const int fullRuleTableSize = sg_last + 1;
 
@@ -56,6 +61,7 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 		case sg_h:
 		case sg_q:
 		case sg_e:
+		case sg_e3:
 			*outKeys++ = key;
 			*outKeys++ = sg_invalid;
 			break;
@@ -79,6 +85,12 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 			*outKeys++ = sg_e;
 			*outKeys++ = sg_invalid;
 			break;
+		case sg_e3e3e3:
+			*outKeys++ = sg_e3;
+			*outKeys++ = sg_e3;
+			*outKeys++ = sg_e3;
+			*outKeys++ = sg_invalid;
+			break;
 		default:
 			//printf("can't break down %d\n", key);
 			assert(false);
@@ -99,6 +111,9 @@ inline const char * ProductionRuleKeys::toString(GKEY key)
 		case sg_qq: ret = "q,q"; break;
 		case sg_e: ret = "e"; break;
 		case sg_ee: ret = "e,e"; break;
+
+		case sg_e3e3e3: ret = "3e,3e,3e"; break;
+		case sg_e3: ret = "3e"; break; 
 	
 		default:
 			printf("can't print key %d\n", key);
@@ -112,6 +127,8 @@ inline const char * ProductionRuleKeys::toString(GKEY key)
 inline int ProductionRuleKeys::getDuration(GKEY key)
 {
 	int ret;
+
+	assert((PPQ % 3) == 0);
 	switch(key)
 	{
 		case sg_w2: ret = 2 * 4 * PPQ; 	break;
@@ -123,6 +140,8 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 		case sg_qq: ret = 2  * PPQ; 	break;
 		case sg_e: ret =  PPQ / 2; 	break;
 		case sg_ee: ret = PPQ; 	break;
+		case sg_e3e3e3: ret = PPQ ; break;
+		case sg_e3: ret = PPQ / 3; break; 
 		default:
 			printf("can't get dur key %d\n", key);
 			assert(false);
@@ -247,8 +266,14 @@ inline bool ProductionRule::_isValid(int index) const
 		return false;
 	}
 	int last = -1;
-	for (int i=0; i<numEntries; ++i)
+	bool foundTerminator = false;
+	for (int i=0;!foundTerminator; ++i)
 	{
+		if (i >= numEntries)
+		{
+			printf("entries not terminated\n");
+			return false;
+		}
 		const ProductionRuleEntry& e = entries[i];
 		if (e.probability <= last)			// probabilites grow
 		{
@@ -256,11 +281,70 @@ inline bool ProductionRule::_isValid(int index) const
 			return false;
 		}
 		if (e.probability == 0xff)
-			return true;					// must have a 255 to end it			
+		{
+			foundTerminator= true;					// must have a 255 to end it
+			if (e.code == index)
+			{
+				printf("rule terminates on self: recursion not allowed\n");
+				return false;
+			}
+		}
+
+		if (e.code < sg_invalid || e.code > sg_last)
+		{
+			printf("rule[%d] entry[%d] had invalid code: %d\n", index, i, e.code);
+			return false;
+		}
+
+		// if we are terminating recursion, then by definition our duration is correct
+		if (e.code != sg_invalid)
+		{
+			int entryDuration =  ProductionRuleKeys::getDuration(e.code);
+			int ruleDuration = ProductionRuleKeys::getDuration(index);
+			if (entryDuration != ruleDuration)
+			{
+				printf("production rule duration mismatch (time not conserved) dur = %d entry %d\n", ruleDuration, entryDuration);
+				return false;
+			}
+		}
 	}
-	printf("not terminated\n");
-	// TODO: test that all rules add up to terminalValue
-	return false;
+	return true;
+}
+
+inline bool ProductionRule::isGrammarValid(const ProductionRule * rules,  int numRules, GKEY firstRule)
+{
+	printf("is grammar valid, numRules = %d first = %d\n", numRules, firstRule);
+	if (firstRule < sg_first)
+	{
+		printf("first rule index (%d) bad\n", firstRule);
+		return false;
+	}
+	if (numRules != (sg_last +1))
+	{
+		printf("bad number of rules\n");
+		return false;
+	}
+
+	const ProductionRule& r = rules[firstRule];
+
+	if (!r._isValid(firstRule))
+	{
+		return false;
+	}
+	for (int i=0; i<numEntries; ++i)
+	{
+		const ProductionRuleEntry& e = r.entries[i];
+		if (e.probability == 0xff)
+			break;					// must have a 255 to end it	
+		GKEY newKey = e.code;
+		if (!isGrammarValid(rules, numRules, newKey))
+		{
+			printf("followed rules to bad one\n");
+			return false;
+		}
+	}
+	
+	return true;
 }
 
 

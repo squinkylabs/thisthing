@@ -8,7 +8,7 @@
 #include "Random.h"
 #include <set>
 
-static const int numRules = 3;
+static const int numRules = fullRuleTableSize;
 static Random r;
 
 
@@ -41,14 +41,13 @@ private:
 
 static GKEY init0()
 {
+	printf("called init0\n");
 	// This rule always generate sg-w2 (two whole notes tied together)
 	ProductionRule& r = rules[sg_w2];
 
-	// why isn't this entries[0]?
-	r.entries[1].probability = (unsigned char)255;
-	r.entries[1].code = sg_invalid;		// always terminate
+	r.entries[0].probability = (unsigned char)255;
+	r.entries[0].code = sg_invalid;		// termindate expansion		
 
-	printf("just set prob to 255: %d\n", rules[0].entries[0].probability);
 
 	return sg_w2;
 }
@@ -57,6 +56,12 @@ INITFN x = init0;
 static void testSub(INITFN f)
 {
 	GKEY init = f();
+
+
+	bool b = ProductionRule::isGrammarValid(rules, numRules, init);
+	assert(b);
+
+	printf("test sub finihsed validating grammar\n");
 
 	Random r;
 	TestEvaluator es(r);
@@ -71,6 +76,7 @@ static void testSub(INITFN f)
 
 void gt0()
 {
+	printf("gt0\n");
 	testSub(init0);
 }
 
@@ -78,23 +84,23 @@ void gt0()
 // simple grammar with a rule but no random
 static GKEY init1()
 {
-	printf("in init1 making simple w,w %d\n", sg_w2);
+
 	{
-	// start with w2 durration
-	ProductionRule& r = rules[sg_w2];
+		// start with w2 durration
+		ProductionRule& r = rules[sg_w2];
 
-	// break into w,w prob 100
+		// break into w,w prob 100
 
-	r.entries[0].probability = 255;
-	r.entries[0].code = sg_ww;		
+		r.entries[0].probability = 255;
+		r.entries[0].code = sg_ww;		
 	}
 
 	{
-	// now need rule for w hole
-	printf("in init1 making 100 for %d\n", sg_w);
-	 ProductionRule& r = rules[sg_w];
-	 r.entries[1].probability = (unsigned char)255;
-	 r.entries[1].code = sg_invalid;		// always terminate
+		// now need rule for w hole
+		printf("in init1 making 100 for %d\n", sg_w);
+		 ProductionRule& r = rules[sg_w];
+		 r.entries[0].probability = (unsigned char)255;
+		 r.entries[1].code = sg_invalid;		
 	}
 	 printf("leave init 1. rule 1 p0 = %d\n",  rules[sg_w2].entries[0].probability);
 	 return sg_w2;
@@ -131,6 +137,7 @@ static GKEY init2()
 
 void gt1()
 {
+	printf("gt1\n");
 	testSub(init1);
 }
 
@@ -153,7 +160,7 @@ void gtk()
 			sum += ProductionRuleKeys::getDuration(*p);
 		
 		}
-		printf("dur = %d sum = %d\n", dur, sum);
+		printf("dur = %d sum = %d (should be the same)\n", dur, sum);
 		assert(dur == sum);
 	}
 }
@@ -387,6 +394,49 @@ static void gtg1()
 
 void gdt0()
 {
+	printf("gdt0\n");
+	{
+		printf("gdt0a\n");
+		static ProductionRule rules[numRules]; 
+		bool b = ProductionRule::isGrammarValid(rules, numRules, sg_invalid);
+		assert(!b);
+	}
+	{
+		// throw in a positive case
+		printf("gdt0b\n");
+		static ProductionRule rules[numRules]; 
+		ProductionRule& r = rules[sg_w];
+		r.entries[0].probability = 255;
+		r.entries[0].code = sg_invalid;		
+
+		bool b = ProductionRule::isGrammarValid(rules, numRules, sg_w);
+		assert(b);
+	}
+	{
+		// terminal code wrong
+		printf("gdt0c\n");
+		static ProductionRule rules[numRules]; 
+		ProductionRule& r = rules[sg_w];
+		r.entries[0].probability = 255;
+		r.entries[0].code = sg_q;		
+
+		bool b = ProductionRule::isGrammarValid(rules, numRules, sg_w);
+		assert(!b);
+	}
+	{
+		// bad order of proability
+		printf("gdt0c\n");
+		static ProductionRule rules[numRules]; 
+		ProductionRule& r = rules[sg_w];
+		r.entries[0].probability = 255;
+		r.entries[0].code = sg_q;		
+
+		bool b = ProductionRule::isGrammarValid(rules, numRules, sg_w);
+		assert(!b);
+	}
+}
+void gdt1()
+{
 	assert( StochasticGrammarDictionary::getNumGrammars() > 0);
 	for (int i=0; i< StochasticGrammarDictionary::getNumGrammars(); ++i)
 	{
@@ -399,7 +449,7 @@ void gdt0()
 void GrammarTest()
 {
 	printf("skpping a bunch of grammr tests\n");
-#if 0
+#if 1
 	gtk();
 	gt0();
 	gt1();
@@ -420,5 +470,7 @@ void GrammarTest()
 #endif
 
 	gdt0();
+	gdt1();
+
 }
 
