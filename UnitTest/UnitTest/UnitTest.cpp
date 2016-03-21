@@ -73,6 +73,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	SwitchTests();
 	ScaleQuantizerTests();
 	QuantizerModuleTests();
+	GrammarTest();
 #else
 	printf("skipping most tests\n");
 

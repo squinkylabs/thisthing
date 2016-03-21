@@ -13,6 +13,7 @@
 
 #define printf(a) DONT_DO_THIS()
 
+#include "DM_SGTriggerGenerator.h"
 #include "DMMisc.h"
 #include "DMSampleAndHold.h"
 #include "DMRandomSource1.h"
@@ -148,7 +149,8 @@ DModule * modules_bank1[16] = {
     new DMZero(),
   
     //3D-II
-    new DMZero(),
+    new DM_SGTriggerGenerator(),
+   // new DMZero(),
     
     //4A-II
     new DMRandomSource1(Constants::DISTING_SAMPLE_RATE),
@@ -250,6 +252,7 @@ extern "C" void runModules()
     _d.pot_changes = 0;
     while (1)
     {
+        Nop();
         tm.loops++;
         tm.elapsedSamples = time - tm.sampleCount0;
         IDLE();

@@ -12,6 +12,7 @@
       <itemPath>../../common/DMSlopeDetector.h</itemPath>
       <itemPath>../../common/DMMisc.h</itemPath>
       <itemPath>../../common/DMTest.h</itemPath>
+      <itemPath>../../common/DM_SGTriggerGenerator.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -219,6 +220,7 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

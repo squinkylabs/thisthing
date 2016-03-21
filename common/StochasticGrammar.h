@@ -97,6 +97,7 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 	}
 }
 
+#ifdef _MSC_VER
 inline const char * ProductionRuleKeys::toString(GKEY key)
 {
 	const char * ret;
@@ -121,8 +122,8 @@ inline const char * ProductionRuleKeys::toString(GKEY key)
 			ret="error";
 	}
 	return ret;
-
 }
+#endif
 
 inline int ProductionRuleKeys::getDuration(GKEY key)
 {
@@ -143,7 +144,9 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 		case sg_e3e3e3: ret = PPQ ; break;
 		case sg_e3: ret = PPQ / 3; break; 
 		default:
+#ifdef _MSC_VER
 			printf("can't get dur key %d\n", key);
+#endif
 			assert(false);
 			ret=0;
 	}
@@ -196,7 +199,9 @@ public:
 	static bool isGrammarValid(const ProductionRule * rules,  int numRules, GKEY firstRule);
 private:
 	static int _evaluateRule(const ProductionRule& rule, int random);
+#ifdef _MSC_VER
 	bool _isValid(int index) const;
+#endif
 };
 
 
@@ -205,20 +210,17 @@ inline int ProductionRule::_evaluateRule(const ProductionRule& rule, int random)
 {
 	//int rand = r.get() & 0xff;
 	int rand = random & 0xff;
-	printf("evaluateRule called with rand is %d\n", rand);
+	//printf("evaluateRule called with rand is %d\n", rand);
 
 	int i=0;
 	for (bool done2=false; !done2; ++i )
 	{
 		assert(i<numEntries);
-		printf("prob[%d] is %d\n", i,  rule.entries[i].probability);
+		//printf("prob[%d] is %d\n", i,  rule.entries[i].probability);
 		if ( rule.entries[i].probability >= rand)
 		{
 			GKEY code = rule.entries[i].code;
-			printf("rule fired on code abs val=%d\n", code);
-			// rule fired!
-			//printf("rule fired! execute code %s\n",  ProductionRuleKeys::toString(code));
-			//printf("TODO: generate note dur %d\n",  ProductionRuleKeys::getDuration(code));
+			//printf("rule fired on code abs val=%d\n", code);
 			return code;
 		}
 	}
@@ -228,36 +230,39 @@ inline int ProductionRule::_evaluateRule(const ProductionRule& rule, int random)
 
 inline void ProductionRule::evaluate(EvaluationState& es, int ruleToEval)
 {
-	printf("\n evaluate called on rule #%d\n", ruleToEval);
+	//printf("\n evaluate called on rule #%d\n", ruleToEval);
 	const ProductionRule& rule = es.rules[ruleToEval];
+
+#ifdef _MSC_VER
 	assert(rule._isValid(ruleToEval));
+#endif
 	GKEY result = _evaluateRule(rule, es.r.get());
 	if (result == sg_invalid)		// request to remindate recrsion
 	{
 		GKEY code = ruleToEval;		// our "real" terminal code is our table index
-		printf("production rule #%d terminated\n", ruleToEval);
-		printf("rule terminated! execute code %s\n",  ProductionRuleKeys::toString(code));
-		printf("TODO: generate note dur %d\n",  ProductionRuleKeys::getDuration(code));
-		printf("TODO: need to produce something\n");
+		//printf("production rule #%d terminated\n", ruleToEval);
+		//printf("rule terminated! execute code %s\n",  ProductionRuleKeys::toString(code));
 		es.writeSymbol(code);
 	}
 	else
 	{
-		printf("production rule #%d expanded to %d\n", ruleToEval, result);
+		//printf("production rule #%d expanded to %d\n", ruleToEval, result);
+
 		// need to expand,then eval all of the expanded codes
 		
 		GKEY buffer[ProductionRuleKeys::bufferSize];
 		ProductionRuleKeys::breakDown(result, buffer);
 		for ( GKEY * p = buffer ; *p != sg_invalid; ++p)
 		{
-			printf("expanding rule #%d with %d\n", ruleToEval, *p);
+			//printf("expanding rule #%d with %d\n", ruleToEval, *p);
 			evaluate(es, *p);
 		}
-		printf("done expanding %d\n", ruleToEval);
+		//printf("done expanding %d\n", ruleToEval);
 	}
 }
 			
 // is the data self consistent, and appropriate for index
+#ifdef _MSC_VER
 inline bool ProductionRule::_isValid(int index) const 
 {
 	if (index == sg_invalid)
@@ -310,7 +315,9 @@ inline bool ProductionRule::_isValid(int index) const
 	}
 	return true;
 }
+#endif
 
+#ifdef _MSC_VER
 inline bool ProductionRule::isGrammarValid(const ProductionRule * rules,  int numRules, GKEY firstRule)
 {
 	printf("is grammar valid, numRules = %d first = %d\n", numRules, firstRule);
@@ -346,7 +353,7 @@ inline bool ProductionRule::isGrammarValid(const ProductionRule * rules,  int nu
 	
 	return true;
 }
-
+#endif
 
 /* class StochasticGrammarDictionary
  *

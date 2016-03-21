@@ -14,6 +14,7 @@ class  DM_SGTriggerGenerator : public DModule
 public:
 	DM_SGTriggerGenerator() : _clockIn(false)
 	{
+	//	Nop();
 		// set up generator with first grammar
 		StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(0);
 		_generator = new GenerativeTriggerGenerator(g.rules, g.numRules, g.firstRule);

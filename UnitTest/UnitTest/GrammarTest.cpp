@@ -449,9 +449,17 @@ void gdt1()
 
 void gdm0()
 {
-
+	printf("dgm0\n");
 	DM_SGTriggerGenerator m;
 	DModule& dm = m;
+
+	int a, b;
+	for (int i=0; i< 100; ++i)
+		dm.go(false, 0, 0, ZState(), a, b);
+
+	
+	DModule * p = new DM_SGTriggerGenerator();
+	delete p;
 }
 
 void GrammarTest()

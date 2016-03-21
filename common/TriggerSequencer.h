@@ -31,10 +31,10 @@ public:
 	// note that reset may generate a trigger
 	void reset(const Event * data)
 	{
-		printf("reset: initial delay = %d\n", delay);
+		//printf("reset: initial delay = %d\n", delay);
 		curEvent = data;
 		delay += data->delay;		// should this be += delay??
-		printf("after reset: delay = %d\n", delay);
+		//printf("after reset: delay = %d\n", delay);
 		processClocks();
 	}
 
@@ -64,27 +64,27 @@ inline void TriggerSequencer::clock()
 inline void TriggerSequencer::processClocks()
 {
 	trigger = false;
-	printf("enter proc clock, curevt =%p, delay = %d\n", curEvent, delay);
+	//printf("enter proc clock, curevt =%p, delay = %d\n", curEvent, delay);
 	if (!curEvent)
 	{
-		printf("leave clock early - ended\n");
+		//printf("leave clock early - ended\n");
 		return;	// seq is stopped
 	}
 
 
 	while (delay < 0)
 	{
-		printf("delay went to %d, evt=%d\n", delay, curEvent->evt);
+		//printf("delay went to %d, evt=%d\n", delay, curEvent->evt);
 		switch (curEvent->evt)
 		{
 		case END:
-			printf("setting end at 58\n");
+			//printf("setting end at 58\n");
 			curEvent = 0;		// stop seq by clering ptr
 			return;
 		case TRIGGER:
 			trigger = true;
 			++curEvent;			// and go to next one
-			printf("trigger set true\n");
+			//printf("trigger set true\n");
 			break;
 
 		default:
@@ -94,7 +94,7 @@ inline void TriggerSequencer::processClocks()
 		delay += curEvent->delay;
 	}
 
-	printf("leave clock %d\n", delay);
+	//printf("leave clock %d\n", delay);
 };
 
 
