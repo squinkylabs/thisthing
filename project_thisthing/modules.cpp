@@ -150,7 +150,7 @@ DModule * modules_bank1[16] = {
   
     //3D-II
     new DM_SGTriggerGenerator(),
-   // new DMZero(),
+   //new DMZero(),
     
     //4A-II
     new DMRandomSource1(Constants::DISTING_SAMPLE_RATE),
