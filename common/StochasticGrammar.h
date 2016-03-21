@@ -304,6 +304,7 @@ inline bool ProductionRule::_isValid(int index) const
 		// if we are terminating recursion, then by definition our duration is correct
 		if (e.code != sg_invalid)
 		{
+			// otherwise, make sure the entry has the right duration
 			int entryDuration =  ProductionRuleKeys::getDuration(e.code);
 			int ruleDuration = ProductionRuleKeys::getDuration(index);
 			if (entryDuration != ruleDuration)
@@ -338,16 +339,23 @@ inline bool ProductionRule::isGrammarValid(const ProductionRule * rules,  int nu
 	{
 		return false;
 	}
-	for (int i=0; i<numEntries; ++i)
+
+
+	bool foundTerminator = false;
+
+	for (int i=0; !foundTerminator; ++i)
 	{
 		const ProductionRuleEntry& e = r.entries[i];
 		if (e.probability == 0xff)
-			break;					// must have a 255 to end it	
+			foundTerminator = true;					// must have a 255 to end it	
 		GKEY newKey = e.code;
-		if (!isGrammarValid(rules, numRules, newKey))
+		if (newKey != sg_invalid)
 		{
-			printf("followed rules to bad one\n");
-			return false;
+			if (!isGrammarValid(rules, numRules, newKey))
+			{
+				printf("followed rules to bad one\n");
+				return false;
+			}
 		}
 	}
 	

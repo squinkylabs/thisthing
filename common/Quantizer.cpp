@@ -73,13 +73,30 @@ void StochasticGrammarDictionary::initRules()
 
 void StochasticGrammarDictionary::initRule0()
 {
+	
+
+	// break w2 into w,w prob 100
 	ProductionRule& r = rules0[sg_w2];
-
-	// break into w,w prob 100
-
 	r.entries[0].probability = 255;
-	r.entries[0].code = sg_ww;		
+	r.entries[0].code = sg_ww;	
+
+	// break w into h, h
+	 r = rules0[sg_w];
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_hh;
+
+	// break h into q,q
+	r = rules0[sg_h];
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_qq;
+
+	// stop on q
+	r = rules0[sg_q];
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_invalid;
+
 }
+
 
  int StochasticGrammarDictionary::getNumGrammars()
  {

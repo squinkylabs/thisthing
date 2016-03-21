@@ -435,17 +435,77 @@ void gdt0()
 		bool b = ProductionRule::isGrammarValid(rules, numRules, sg_w);
 		assert(!b);
 	}
+	{
+		// rule branches to nowhere
+		printf("gdt0d\n");
+
+		static ProductionRule rules[numRules]; 
+
+	// break w2 into w,w prob 100
+	ProductionRule& r = rules[sg_w2];
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_ww;
+	bool b = ProductionRule::isGrammarValid(rules, numRules, sg_w);
+		assert(!b);
+	}
 }
+
+
 void gdt1()
 {
+	printf("gdt1\n");
 	assert( StochasticGrammarDictionary::getNumGrammars() > 0);
 	for (int i=0; i< StochasticGrammarDictionary::getNumGrammars(); ++i)
 	{
+		printf("gdt1(%d)\n", i);
 		StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(i);
 		bool b = ProductionRule::isGrammarValid(g.rules, g.numRules, g.firstRule);
 		assert(b);
 	}
 }
+
+// test that we get something from dictionary
+static void gdt2()
+{
+	printf("gtg2\n");
+	//GKEY key = init1();
+	std::set<int> counts;
+
+
+	StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(0);
+	GenerativeTriggerGenerator gtg(g.rules, g.numRules, g.firstRule);
+
+	int ct = 0;
+	for (int i=0; i<10000; ++i)
+	{
+		bool b = gtg.clock();
+		if (b)
+		{
+		   printf("clocked at %d\n", ct);
+		   counts.insert(ct);
+		   ct = 0;
+		}
+		ct++;
+	}
+	//counts.insert(50);
+	assert(!counts.empty());
+	for (std::set<int>::iterator it=counts.begin(); it != counts.end(); ++it)
+	{
+		int c = *it;
+		printf("got count %d\n", c);
+
+
+		 if ((c % PPQ) != 0)
+		 {
+			 printf("PPQ=%d, c%PPQ=%d\n", PPQ, (c % PPQ));
+			 printf("2ppq = %d, 4ppq=%d\n", 2*PPQ, 4*PPQ);
+			 assert(false);
+		 }
+		//assert(false);		// finish me
+	}
+	
+}
+
 
 void gdm0()
 {
@@ -465,7 +525,7 @@ void gdm0()
 void GrammarTest()
 {
 	printf("skpping a bunch of grammr tests\n");
-#if 1
+#if 0
 	gtk();
 	gt0();
 	gt1();
@@ -483,10 +543,12 @@ void GrammarTest()
 
 	gtg0();
 	gtg1();
-#endif
 
+#endif
 	gdt0();
 	gdt1();
+
+	gdt2();
 
 	gdm0();
 }
