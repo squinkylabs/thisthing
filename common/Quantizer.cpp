@@ -71,6 +71,32 @@ void StochasticGrammarDictionary::initRules()
 	initRule0();
 }
 
+
+#if 0
+void StochasticGrammarDictionary::initRule0()
+{
+	{
+		// start with w2 durration
+		ProductionRule& r = rules0[sg_w2];
+
+		// break into w,w prob 100
+
+		r.entries[0].probability = 255;
+		r.entries[0].code = sg_ww;		
+	}
+
+	{
+		// now need rule for w hole
+		printf("in init1 making 100 for %d\n", sg_w);
+		 ProductionRule& r = rules0[sg_w];
+		 r.entries[0].probability = (unsigned char)255;
+		 r.entries[1].code = sg_invalid;		
+	}
+}
+#endif
+
+//try super simple rule
+#if 0
 void StochasticGrammarDictionary::initRule0()
 {
 	
@@ -80,22 +106,46 @@ void StochasticGrammarDictionary::initRule0()
 	r.entries[0].probability = 255;
 	r.entries[0].code = sg_ww;	
 
-	// break w into h, h
-	 r = rules0[sg_w];
-	r.entries[0].probability = 255;
-	r.entries[0].code = sg_hh;
-
-	// break h into q,q
-	r = rules0[sg_h];
-	r.entries[0].probability = 255;
-	r.entries[0].code = sg_qq;
-
-	// stop on q
-	r = rules0[sg_q];
+	r = rules0[sg_w];
 	r.entries[0].probability = 255;
 	r.entries[0].code = sg_invalid;
+}
+#endif
+
+#if 1 // tests ok, but doesn't seem to work
+void StochasticGrammarDictionary::initRule0()
+{
+	
+
+	// break w2 into w,w prob 100
+	{
+	ProductionRule& r = rules0[sg_w2];
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_ww;	
+	}
+
+	// break w into h, h
+	{
+	ProductionRule& r = rules0[sg_w];
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_hh;
+	}
+
+	// break h into q,q
+	{
+	ProductionRule&r = rules0[sg_h];
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_qq;
+	}
+	// stop on q
+	{
+	ProductionRule&r = rules0[sg_q];
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_invalid;
+	}
 
 }
+#endif
 
 
  int StochasticGrammarDictionary::getNumGrammars()

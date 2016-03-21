@@ -168,6 +168,7 @@ void gtk()
 
 static void ts0()
 {
+	printf("ts0\n");
 	TriggerSequencer::Event seq[] =
 	{
 		{ TriggerSequencer::END, 100 }
@@ -464,10 +465,10 @@ void gdt1()
 	}
 }
 
-// test that we get something from dictionary
+// test that we get something from dictionary 0
 static void gdt2()
 {
-	printf("gtg2\n");
+	printf("gdt2\n");
 	//GKEY key = init1();
 	std::set<int> counts;
 
@@ -476,7 +477,7 @@ static void gdt2()
 	GenerativeTriggerGenerator gtg(g.rules, g.numRules, g.firstRule);
 
 	int ct = 0;
-	for (int i=0; i<10000; ++i)
+	for (int i=0; i<100000; ++i)
 	{
 		bool b = gtg.clock();
 		if (b)
@@ -513,19 +514,35 @@ void gdm0()
 	DM_SGTriggerGenerator m;
 	DModule& dm = m;
 
+	const int xlo = DACVoltage::xcodeForMV(0);
+	const int xhi = DACVoltage::xcodeForMV(10 * 1000);
+	const int x1 = DACVoltage::xcodeForMV(1 * 1000);
 	int a, b;
-	for (int i=0; i< 100; ++i)
-		dm.go(false, 0, 0, ZState(), a, b);
+
+	bool gotLow = false;
+	bool gotHigh = false;
+	for (int i=0; i< 10000; ++i)
+	{
+		dm.go(false, xlo, 0, ZState(), a, b);
+		if (a > x1) gotHigh = true; 
+		else gotLow = true;
+
+		dm.go(false, xhi, 0, ZState(), a, b);
+		if (a > x1) gotHigh = true; 
+		else gotLow = true;
+	}
+	assert(gotLow);
+	assert(gotHigh);
 
 	
-	DModule * p = new DM_SGTriggerGenerator();
-	delete p;
+	//DModule * p = new DM_SGTriggerGenerator();
+	//delete p;
 }
 
 void GrammarTest()
 {
 	printf("skpping a bunch of grammr tests\n");
-#if 0
+#if 1
 	gtk();
 	gt0();
 	gt1();

@@ -341,20 +341,25 @@ inline bool ProductionRule::isGrammarValid(const ProductionRule * rules,  int nu
 	}
 
 
+	// now, make sure every entry goes to something real
 	bool foundTerminator = false;
-
 	for (int i=0; !foundTerminator; ++i)
 	{
 		const ProductionRuleEntry& e = r.entries[i];
 		if (e.probability == 0xff)
 			foundTerminator = true;					// must have a 255 to end it	
-		GKEY newKey = e.code;
-		if (newKey != sg_invalid)
+		GKEY _newKey = e.code;
+		if (_newKey != sg_invalid)
 		{
-			if (!isGrammarValid(rules, numRules, newKey))
+			GKEY outKeys[4];
+			ProductionRuleKeys::breakDown(_newKey, outKeys);
+			for (GKEY * p = outKeys; *p != sg_invalid; ++p)
 			{
-				printf("followed rules to bad one\n");
-				return false;
+				if (!isGrammarValid(rules, numRules, *p))
+				{
+					printf("followed rules to bad one\n");
+					return false;
+				}
 			}
 		}
 	}

@@ -26,9 +26,10 @@ public:
 		bool trig = false;
 		if (_clockIn.trigger())
 		{
-			bool trig = _generator->clock();
+			trig = _generator->clock();
 			if (trig)
 			{
+				//printf("module saw gen\n");
 				trig = true;
 			}
 		}
