@@ -347,7 +347,7 @@ static void ts4()
 		{
 			for (int k=0; k<4; ++k)
 			{
-				printf("test loop, i=%d, j=%d, k=%d\n", i, j, k);
+			//	printf("test loop, i=%d, j=%d, k=%d\n", i, j, k);
 				ts.clock();
 
 				bool expectEnd = (k==0) && (j==0) && !firstTime;
@@ -383,7 +383,7 @@ static void gtg0()
 
 	   if (yes && no)
 	   {
-		   printf("clocked at %d\n", i);
+		   //printf("clocked at %d\n", i);
 		   return;
 	   }
 	}
@@ -407,7 +407,7 @@ static void gtg1()
 		bool b = gtg.clock();
 		if (b)
 		{
-		   printf("clocked at %d\n", ct);
+		   //printf("clocked at %d\n", ct);
 		   counts.insert(ct);
 		   ct = 0;
 		}
@@ -522,7 +522,7 @@ static void gdt2()
 		bool b = gtg.clock();
 		if (b)
 		{
-		   printf("clocked at %d\n", ct);
+		   //printf("clocked at %d\n", ct);
 
 		   if (counts.find(ct) == counts.end())
 		   {

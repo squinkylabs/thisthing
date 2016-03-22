@@ -93,7 +93,7 @@ private:
 		TriggerSequencer::isValid(_data);
 		_seq->reset(_data);
 		assert(!_seq->getEnd());
-
+#if 0
 		printf("just generated trigger seq\n");
 		TriggerSequencer::Event * p;
 		for ( p = _data; p->evt != TriggerSequencer::END; ++p)
@@ -101,6 +101,7 @@ private:
 			printf("evt=%d, delay=%d\n", p->evt, p->delay);
 		}
 		printf("delay to end = %d\n", p->delay);
+#endif
 	}
 };
 #endif

@@ -321,7 +321,7 @@ inline bool ProductionRule::_isValid(int index) const
 #ifdef _MSC_VER
 inline bool ProductionRule::isGrammarValid(const ProductionRule * rules,  int numRules, GKEY firstRule)
 {
-	printf("is grammar valid, numRules = %d first = %d\n", numRules, firstRule);
+	//printf("is grammar valid, numRules = %d first = %d\n", numRules, firstRule);
 	if (firstRule < sg_first)
 	{
 		printf("first rule index (%d) bad\n", firstRule);
