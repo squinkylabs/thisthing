@@ -8,6 +8,7 @@
 
 #include "Random.h"
 #include <set>
+#include <map>
 
 static const int numRules = fullRuleTableSize;
 static Random r;
@@ -507,7 +508,9 @@ static void gdt2()
 {
 	printf("gdt2\n");
 	//GKEY key = init1();
-	std::set<int> counts;
+	//std::set<int> counts;
+
+	std::map<int, int> counts;		// key == num ck, val == num
 
 
 	StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(0);
@@ -520,16 +523,25 @@ static void gdt2()
 		if (b)
 		{
 		   printf("clocked at %d\n", ct);
-		   counts.insert(ct);
+
+		   if (counts.find(ct) == counts.end())
+		   {
+			   counts[ct] = 1;
+		   }
+		   else
+		   {
+			   ++counts[ct];
+		   }
+		  // counts.insert(ct);
 		   ct = 0;
 		}
 		ct++;
 	}
 	//counts.insert(50);
 	assert(!counts.empty());
-	for (std::set<int>::iterator it=counts.begin(); it != counts.end(); ++it)
+	for (std::map<int, int>::iterator it=counts.begin(); it != counts.end(); ++it)
 	{
-		int c = *it;
+		int c = it->first;
 		printf("got count %d\n", c);
 
 
@@ -540,10 +552,12 @@ static void gdt2()
 			 assert(false);
 		 }
 
-		 assert(c == PPQ);	// actually, this grammar should be all Q
-		//assert(false);		// finish me
+		 if (c != PPQ)	// expect all but one to be quarters
+		 {
+			 assert(c == 0);	// inital zero dealy
+			 assert(it->second == 1); // only once
+		 }
 	}
-	
 }
 
 
@@ -601,10 +615,10 @@ void GrammarTest()
 	gtg0();
 	gtg1();
 
-#endif
+
 	gdt0();
 	gdt1();
-
+#endif
 	gdt2();
 
 	gdm0();

@@ -69,7 +69,8 @@ public:
 		{
 			// when we finish playing the seq, generate a new random one
 			generate();
-			ret |= _seq->getEnd();
+			ret |= _seq->getTrigger();
+			//printf("this should be getTrigger!!!\n");
 		}
 		return ret;
 	}
