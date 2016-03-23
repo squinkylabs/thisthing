@@ -31,7 +31,7 @@ const GKEY sg_last  = 11;
 
 const int fullRuleTableSize = sg_last + 1;
 
-const int PPQ = 96;
+const int PPQ = 24;
 
 /* class ProductionRuleKeys
  * ollection of utility functions around rule keys
@@ -139,10 +139,16 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 		case sg_hh: ret = 2 * 2  * PPQ; 	break;
 		case sg_q: ret = 1  * PPQ; 	break;
 		case sg_qq: ret = 2  * PPQ; 	break;
-		case sg_e: ret =  PPQ / 2; 	break;
+		case sg_e: 
+			assert((PPQ%2) == 0);
+			ret =  PPQ / 2;
+			break;
 		case sg_ee: ret = PPQ; 	break;
 		case sg_e3e3e3: ret = PPQ ; break;
-		case sg_e3: ret = PPQ / 3; break; 
+		case sg_e3: 
+			assert(PPQ % 3 == 0);
+			ret = PPQ / 3;
+			break; 
 		default:
 #ifdef _MSC_VER
 			printf("can't get dur key %d\n", key);
