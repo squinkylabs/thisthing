@@ -9,7 +9,9 @@
 #include "OctaveScaleManager.h"
 
 
+#ifndef _MSC_VER
 #define printf (void *)
+#endif
 #include "ScaleQuantizer.h"
 #include "StochasticGrammar.h"
 
@@ -62,61 +64,22 @@ const char * OctaveScaleManager::getOctaveScale(int index)
 //////////////////////////////////////////////////////////////////
 
 static ProductionRule rules0[fullRuleTableSize];
-
+static ProductionRule rules1[fullRuleTableSize];
 
 bool StochasticGrammarDictionary::_didInitRules = false;
 
 void StochasticGrammarDictionary::initRules()
 {
 	initRule0();
+	initRule1();
 }
 
 
-#if 0
+
+
+// super dumb one - makes quarter notes
 void StochasticGrammarDictionary::initRule0()
 {
-	{
-		// start with w2 durration
-		ProductionRule& r = rules0[sg_w2];
-
-		// break into w,w prob 100
-
-		r.entries[0].probability = 255;
-		r.entries[0].code = sg_ww;		
-	}
-
-	{
-		// now need rule for w hole
-		printf("in init1 making 100 for %d\n", sg_w);
-		 ProductionRule& r = rules0[sg_w];
-		 r.entries[0].probability = (unsigned char)255;
-		 r.entries[1].code = sg_invalid;		
-	}
-}
-#endif
-
-//try super simple rule
-#if 0
-void StochasticGrammarDictionary::initRule0()
-{
-	
-
-	// break w2 into w,w prob 100
-	ProductionRule& r = rules0[sg_w2];
-	r.entries[0].probability = 255;
-	r.entries[0].code = sg_ww;	
-
-	r = rules0[sg_w];
-	r.entries[0].probability = 255;
-	r.entries[0].code = sg_invalid;
-}
-#endif
-
-#if 1 // tests ok, but doesn't seem to work
-void StochasticGrammarDictionary::initRule0()
-{
-	
-
 	// break w2 into w,w prob 100
 	{
 	ProductionRule& r = rules0[sg_w2];
@@ -143,14 +106,69 @@ void StochasticGrammarDictionary::initRule0()
 	r.entries[0].probability = 255;
 	r.entries[0].code = sg_invalid;
 	}
+}
+
+void StochasticGrammarDictionary::initRule1()
+{
+	
+	// break w2 into w,w prob 100
+	{
+		ProductionRule& r = rules1[sg_w2];
+		r.entries[0].probability = 255;
+		r.entries[0].code = sg_ww;	
+	}
+
+	// break w into h, h
+	{
+		ProductionRule& r = rules1[sg_w];
+		r.entries[0].probability = 255;
+		r.entries[0].code = sg_hh;
+	}
+
+	// break h into q,q, or h
+	{
+		ProductionRule&r = rules1[sg_h];
+		r.entries[0].probability = 180;
+		r.entries[0].code = sg_qq;
+
+		r.entries[1].probability = 255;
+		r.entries[1].code = sg_invalid;
+	}
+
+	// stop on q, or make e
+	{
+		
+		ProductionRule&r = rules1[sg_q];
+		r.entries[0].probability = 80;
+		r.entries[0].code = sg_ee;
+
+		r.entries[1].probability = 255;
+		r.entries[1].code = sg_invalid;
+	}
+
+	// stop on e, or make sx
+	{
+		
+		ProductionRule&r = rules1[sg_e];
+		r.entries[0].probability = 80;
+		r.entries[0].code = sg_sxsx;
+
+		r.entries[1].probability = 255;
+		r.entries[1].code = sg_invalid;
+	}
+	{
+
+		ProductionRule&r = rules1[sg_sx];
+		r.entries[0].probability = 255;
+		r.entries[0].code = sg_invalid;
+	}
 
 }
-#endif
 
 
  int StochasticGrammarDictionary::getNumGrammars()
  {
-	 return 1;
+	 return 2;
  }
 
 StochasticGrammarDictionary::Grammar StochasticGrammarDictionary::getGrammar(int index)
@@ -168,8 +186,10 @@ StochasticGrammarDictionary::Grammar StochasticGrammarDictionary::getGrammar(int
 	switch(index)
 	{
 	case 0:
-		ret.rules = rules0;
-		
+		ret.rules = rules0;	
+		break;
+	case 1:
+		ret.rules = rules1;	
 		break;
 	default:
 		assert(false);

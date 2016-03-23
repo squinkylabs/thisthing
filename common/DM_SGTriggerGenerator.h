@@ -16,7 +16,7 @@ public:
 	{
 	//	Nop();
 		// set up generator with first grammar
-		StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(0);
+		StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(1);
 		_generator = new GenerativeTriggerGenerator(g.rules, g.numRules, g.firstRule);
 	}
 	virtual void go(bool reset, int x, int y, const ZState& z, volatile int& a, volatile int&b)

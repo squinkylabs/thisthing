@@ -25,9 +25,11 @@ const GKEY sg_ee	= 9;
 const GKEY sg_e3e3e3 = 10;		// three trip eights
 const GKEY sg_e3 =  11;			//  trip eight
 
+const GKEY sg_sx = 12;
+const GKEY sg_sxsx = 13;
 
 const GKEY sg_first = 1;		// first valid one
-const GKEY sg_last  = 11;
+const GKEY sg_last  = 13;
 
 const int fullRuleTableSize = sg_last + 1;
 
@@ -62,6 +64,7 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 		case sg_q:
 		case sg_e:
 		case sg_e3:
+		case sg_sx:
 			*outKeys++ = key;
 			*outKeys++ = sg_invalid;
 			break;
@@ -78,6 +81,11 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 		case sg_qq: 
 			*outKeys++ = sg_q;
 			*outKeys++ = sg_q;
+			*outKeys++ = sg_invalid;
+			break;
+		case sg_sxsx: 
+			*outKeys++ = sg_sx;
+			*outKeys++ = sg_sx;
 			*outKeys++ = sg_invalid;
 			break;
 		case sg_ee: 
@@ -115,6 +123,9 @@ inline const char * ProductionRuleKeys::toString(GKEY key)
 
 		case sg_e3e3e3: ret = "3e,3e,3e"; break;
 		case sg_e3: ret = "3e"; break; 
+
+		case sg_sx: ret = "sx"; break;
+		case sg_sxsx: ret = "sx, sx"; break;
 	
 		default:
 			printf("can't print key %d\n", key);
@@ -144,6 +155,11 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 			ret =  PPQ / 2;
 			break;
 		case sg_ee: ret = PPQ; 	break;
+		case sg_sxsx: ret = PPQ / 2; break;
+		case sg_sx: 
+			assert((PPQ%4) == 0);
+			ret = PPQ / 4;
+			break;
 		case sg_e3e3e3: ret = PPQ ; break;
 		case sg_e3: 
 			assert(PPQ % 3 == 0);
@@ -282,7 +298,7 @@ inline bool ProductionRule::_isValid(int index) const
 	{
 		if (i >= numEntries)
 		{
-			printf("entries not terminated\n");
+			printf("entries not terminated index=%d 'i' is too big: %d\n", index, i);
 			return false;
 		}
 		const ProductionRuleEntry& e = entries[i];
@@ -315,7 +331,8 @@ inline bool ProductionRule::_isValid(int index) const
 			int ruleDuration = ProductionRuleKeys::getDuration(index);
 			if (entryDuration != ruleDuration)
 			{
-				printf("production rule duration mismatch (time not conserved) dur = %d entry %d\n", ruleDuration, entryDuration);
+				printf("production rule[%d] duration mismatch (time not conserved) dur = %d entryd %d\n",
+					index, ruleDuration, entryDuration);
 				return false;
 			}
 		}
@@ -394,6 +411,7 @@ private:
 	static bool _didInitRules;
 	static void initRules();
 	static void initRule0();
+	static void initRule1();
 };
 
 

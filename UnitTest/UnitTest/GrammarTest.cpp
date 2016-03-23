@@ -492,11 +492,11 @@ void gdt0()
 
 void gdt1()
 {
-	printf("gdt1\n");
+	printf("--gdt1--\n");
 	assert( StochasticGrammarDictionary::getNumGrammars() > 0);
 	for (int i=0; i< StochasticGrammarDictionary::getNumGrammars(); ++i)
 	{
-		printf("gdt1(%d)\n", i);
+		printf("-gdt1 test grammar %d\n", i);
 		StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(i);
 		bool b = ProductionRule::isGrammarValid(g.rules, g.numRules, g.firstRule);
 		assert(b);
@@ -617,8 +617,9 @@ void GrammarTest()
 
 
 	gdt0();
-	gdt1();
 #endif
+	gdt1();
+
 	gdt2();
 
 	gdm0();
