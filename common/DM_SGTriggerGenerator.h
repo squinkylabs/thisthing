@@ -7,7 +7,8 @@
 
 /*
  * x = clock input
- * a = trigger output
+ * a = trigger output a
+ * b = trigger output b
  */
 class  DM_SGTriggerGenerator : public DModule
 {
@@ -17,29 +18,32 @@ public:
 	//	Nop();
 		// set up generator with first grammar
 		StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(1);
-		_generator = new GenerativeTriggerGenerator(g.rules, g.numRules, g.firstRule);
+		_generatora = new GenerativeTriggerGenerator(_r, g.rules, g.numRules, g.firstRule);
+		_generatorb = new GenerativeTriggerGenerator(_r, g.rules, g.numRules, g.firstRule);
 	}
 	virtual void go(bool reset, int x, int y, const ZState& z, volatile int& a, volatile int&b)
 	{
 		_clockIn.go(x);
 
-		bool trig = false;
+		bool triga = false;
+		bool trigb = false;
 		if (_clockIn.trigger())
 		{
-			trig = _generator->clock();
-			if (trig)
-			{
-				//printf("module saw gen\n");
-				trig = true;
-			}
+			triga = _generatora->clock();
+			trigb = _generatorb->clock();
 		}
-		_trigOut.go(trig);
-		a = b = _trigOut.get();
+		_trigOuta.go(triga);
+		_trigOutb.go(trigb);
+		a = _trigOuta.get();
+		b = _trigOutb.get();
 	}
 private:
-	TriggerOutput _trigOut;
+	TriggerOutput _trigOuta;
+	TriggerOutput _trigOutb;
 	GateTrigger _clockIn;
-	GenerativeTriggerGenerator*  _generator;
+	GenerativeTriggerGenerator*  _generatora;
+	GenerativeTriggerGenerator*  _generatorb;
+	Random _r;
 
 };
 #endif

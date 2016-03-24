@@ -46,7 +46,8 @@ private:
 class GenerativeTriggerGenerator
 {
 public:
-	GenerativeTriggerGenerator(const ProductionRule * rules, int numRules,  GKEY initialState) :
+	GenerativeTriggerGenerator(Random& r, const ProductionRule * rules, int numRules,  GKEY initialState) :
+		_r(r),
 		_rules(rules),
 		_numRules(numRules),
 		_initKey(initialState)
@@ -78,7 +79,7 @@ private:
 	TriggerSequencer * _seq;
 	TriggerSequencer::Event _data[33];
 	const ProductionRule * _rules;
-	Random _r;
+	Random& _r;
 	const int _numRules;
 	const GKEY _initKey;
 	//

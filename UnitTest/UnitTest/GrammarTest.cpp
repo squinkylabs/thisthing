@@ -371,7 +371,8 @@ static void gtg0()
 {
 	printf("gtg0\n");
 	GKEY key = init1();
-	GenerativeTriggerGenerator gtg(rules, numRules, key);
+	Random r;
+	GenerativeTriggerGenerator gtg(r, rules, numRules, key);
 	bool yes = false;
 	bool no = false;
 	for (int i=0; i<100000; ++i)
@@ -399,7 +400,8 @@ static void gtg1()
 	GKEY key = init1();
 	std::set<int> counts;
 
-	GenerativeTriggerGenerator gtg(rules, numRules, key);
+	Random r;
+	GenerativeTriggerGenerator gtg(r, rules, numRules, key);
 
 	int ct = 0;
 	for (int i=0; i<10000; ++i)
@@ -511,10 +513,10 @@ static void gdt2()
 	//std::set<int> counts;
 
 	std::map<int, int> counts;		// key == num ck, val == num
-
+	Random r;
 
 	StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(0);
-	GenerativeTriggerGenerator gtg(g.rules, g.numRules, g.firstRule);
+	GenerativeTriggerGenerator gtg(r, g.rules, g.numRules, g.firstRule);
 
 	int ct = 0;
 	for (int i=0; i<1000; ++i)
