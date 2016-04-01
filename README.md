@@ -38,8 +38,8 @@ Microsoft Visual Studio 2010 (optional). The unit test suite comes with a visual
 ### Disting mk2 vs. mk1
 
 The MPLAB IDE project file is configured for the mk1 disting. If you wish to develop on the mk2, you will need to do two things:
-* change the CPU type from MX150F128B to MK170F256B.
-* change the preserve memory range from 0x1d01fe00/0x1d01ffff to 0x1d03fe00/0x1d03ffff  
+* Change the CPU type from MX150F128B to MK170F256B.
+* Change the preserve memory range from 0x1d01fe00/0x1d01ffff to 0x1d03fe00/0x1d03ffff  
 
 The CPU type may be set in the IDE from File/Project Properties, conf: . The Preserve Memory settings are in Conf: PICKit 3.
 ### Other notes
