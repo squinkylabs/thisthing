@@ -13,6 +13,7 @@
       <itemPath>../../common/DMMisc.h</itemPath>
       <itemPath>../../common/DMTest.h</itemPath>
       <itemPath>../../common/DM_SGTriggerGenerator.h</itemPath>
+      <itemPath>../PersistentInts.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"

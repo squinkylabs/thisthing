@@ -5,10 +5,14 @@
 extern int led_test;
 extern int led_mode;
 
+extern int getBankNumber();
+
+
 static void bt0()
 {
 	DMBankSelector bs(2);		// dual bank
-	global_bank_number = -1;
+	//global_bank_number = -1;
+	setBankNumber(-1);
 	led_test = -1;
 	led_mode = -2;
 
@@ -20,7 +24,7 @@ static void bt0()
 	
 	assert(a == 0);
 	assert(b == 0);
-	assert(global_bank_number == 0);
+	assert(getBankNumber() == 0);
 	assert(led_test == 1);
 	assert(led_mode == 1);
 
@@ -30,7 +34,7 @@ static void bt0()
 	
 	assert(a == 0);
 	assert(b == 0);
-	assert(global_bank_number == 1);
+	assert(getBankNumber() == 1);
 	assert(led_test == 2);
 
 }

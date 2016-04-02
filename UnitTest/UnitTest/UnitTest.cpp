@@ -33,7 +33,11 @@ extern void GrammarTest();
 int i_global;
 int led_test;
 int led_mode;
-int global_bank_number=10;
+
+
+static int _bank_number=10;
+int getBankNumber() { return _bank_number; }
+void setBankNumber(int x) { _bank_number = x; }
 
 extern "C" void Led_setTempSelectorOverride(int value, int mode)
 {
@@ -45,7 +49,7 @@ extern "C" void Led_setTempSelectorOverride(int value, int mode)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-#if 0
+#if 1
 	printf("starting unit tests\n");
 	ModuleTesterTest();
 	BankTests();

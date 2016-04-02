@@ -30,6 +30,7 @@
 #include "DMSwitch.h"
 #include "DMBankSelector.h"
 #include "DMScaleQuantizer.h"
+#include "PersistentInts.h"
 
 // externs
 extern "C" void assert_fail(int code);
@@ -52,7 +53,14 @@ typedef struct
 volatile TimeMetrics tm;
 static bool resetModulesFlag = false;
 
-int global_bank_number=0;
+//int global_bank_number=0;
+
+PersistentInts persistentInts;
+
+void setBankNumber(int bank)
+{
+    persistentInts.write(PersistentInts::bankOffset, bank);
+}
 
 
 
@@ -233,7 +241,8 @@ static inline void runModuleOnce()
             if (resetModulesFlag)
                 z.changed = false;
            
-            modules[global_bank_number][selector]->go(resetModulesFlag, calibratedInL, calibratedInR, z, rawOutL, rawOutR);
+            const int bank = persistentInts.get(PersistentInts::bankOffset);
+            modules[bank][selector]->go(resetModulesFlag, calibratedInL, calibratedInR, z, rawOutL, rawOutR);
             calibrateAndPutOutput(rawOutL, rawOutR);  // TODO: pass real values
             resetModulesFlag = false;
             // rawL = rawOutL;
