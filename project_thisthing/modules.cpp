@@ -38,6 +38,7 @@ extern "C" void Led_clock();
 extern "C" void Led_setSelector(int selector);
 extern "C" void getCalibratedInput(int * inLeft, int * inRight, int * inPot );
 extern "C" void calibrateAndPutOutput(int left, int right);
+extern "C" void initPersistence(void * calAddress);
 
 // forward declarations
 void processZ(ZState * outState, int zValue);
@@ -62,6 +63,11 @@ void setBankNumber(int bank)
     persistentInts.write(PersistentInts::bankOffset, bank);
 }
 
+
+void initPersistence(void * calAddress)
+{
+    persistentInts.init(calAddress);
+}
 
 
 

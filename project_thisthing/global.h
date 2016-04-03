@@ -97,20 +97,6 @@ typedef struct
 
 extern volatile dbgs _d;
 
-
-#if 0 // let's not put externs in this file shared with c and c++
-extern void runModules();
-
-/* functions in calib.c */
-extern int initCal();
-extern void getCalibratedInput(int * inLeft, int * inRight, int * inPot );
-extern void calibrateAndPutOutput(int left, int right);
-
-
-
-extern void assert_fail(int code);
-#endif
-
 #define xassert(condition, code) if (!condition) assert_fail(code);
 #define assert (void *)
 

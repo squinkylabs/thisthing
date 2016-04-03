@@ -222,7 +222,8 @@ void Led_showCalibration(int ok)
     Led_blank();
 }
 
-extern int initCal();
+extern void * initCal2();
+extern void initPersistence(void * calAddress);
 
 /*
  * Main program entry point.
@@ -254,8 +255,9 @@ int main(int argc, char** argv)
     PORTSetPinsDigitalIn(IOPORT_B, BIT_9);
     
     // set up calibration data
-    const int calOK = initCal(); 
-    Led_showCalibration(calOK);
+    void * calAddress = initCal2(); 
+    Led_showCalibration(calAddress != 0);
+    initPersistence(calAddress);
 
     // configure the ADC
     //

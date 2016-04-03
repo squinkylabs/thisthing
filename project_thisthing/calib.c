@@ -50,8 +50,8 @@ int isValid(int * p)
    
 }
 
-int * pp;
-int findRom()
+//nt * pp;
+void * findRom()
 {
     Nop();
     int * temp;
@@ -61,16 +61,16 @@ int findRom()
     if (isValid(temp))
     {
         cal_rom = temp;
-        return 1;
+        return (void *)CAL_ADDR_MKI;
     }
     
     //if not found, look for mk II
     temp = (int * )PA_TO_KVA0(CAL_ADDR_MKII);
-    pp = temp;
+  //  pp = temp;
     if (isValid(temp))
     {
         cal_rom = temp;
-        return 1;
+        return (void *)CAL_ADDR_MKII;
     }
     
     // If we don't find one, just use fake to we don't crash
@@ -165,9 +165,14 @@ void calSub(int index)
  * (1) : 525762, 522879 (errL 1474, -1412)
  * (5) : 2,622,301, 2,620,394 (( err = 861, -1049
  */
-int initCal()
+
+
+/* find rom, do all the calibration.
+ * reutrns physical address of cal rom 
+ */
+void * initCal2()
 {
-    const int ret = findRom();
+   void * ret = findRom();
     calSub(0);
     calSub(1);
     calPot();
