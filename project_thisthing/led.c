@@ -49,6 +49,7 @@ void Led_setOne(int index)
 
 // The current algorithm running. Will be displayed unless temporary override
 static int cur_selector=0;
+static int cur_bank = 0;
 
 // The current override value
 static int cur_override_request=-1; 
@@ -68,9 +69,14 @@ static int just_set_selector=0;
 // indicate which algorithm is running by putting the hex value in the leds
 // also sets system state
 
-void Led_setSelector(int selector)
+void Led_setSelectorAndBank(int selector, int bank)
 {
+    if (bank)
+    {
+    Nop();
+    }
     cur_selector = selector;
+    cur_bank = bank;
     use_override = 0;
     cur_override_request = 0;          // reset and show select
     just_set_selector = 1;
@@ -116,18 +122,38 @@ void Led_clock()
 }
 static void Led_lightSelector(int mode)
 {
+    int i;
     int selector = (use_override)  ? cur_override_request : cur_selector;
+    int bank = (use_override)  ? 0 : cur_bank;
     PORTACLR = apins;
     PORTBCLR = bpins;
  
     switch(mode)
     {
+        // regular A1, a2, a3, a4, b1...
         case 0:
         {
-            const int nib_hi = selector >> 2;
-            const int nib_lo = selector & 3;
-            Led_setOne(nib_lo);      // led 0..3 get least sign nibble
-            Led_setOne(nib_hi + 4);
+            if (bank == 0)
+            {
+                Nop();
+                const int nib_hi = selector >> 2;
+                const int nib_lo = selector & 3;
+                Led_setOne(nib_lo);      // led 0..3 get least sign nibble
+                Led_setOne(nib_hi + 4);
+            }
+            else
+            {
+                Nop();
+                 const int nib_hi = selector >> 2;
+                 const int nib_lo = selector & 3;
+                 for (i=0; i<4; ++i)
+                 {
+                     if (i != nib_lo) 
+                          Led_setOne(i);
+                      if (i != nib_hi) 
+                          Led_setOne(i+4);
+                 }
+            }
         }
             break;
         case 1:

@@ -66,7 +66,7 @@ extern void test_cpp();
 volatile dbgs _d;
 volatile int i_global;
 
-void Led_setSelector(int selector);
+void Led_setSelectorAndBank(int selector, int bank);
 void Modules_setNewSelector(int selector);
 
 /* very simple implementation of assert
@@ -166,7 +166,7 @@ void Led_startupSequence()
     // count up 0..15 
     for ( j=0; j<16; ++j )
     {
-        Led_setSelector(j);
+        Led_setSelectorAndBank(j, 0);
         delayLoop( 10000 * 2  );
     }
     Led_blank();

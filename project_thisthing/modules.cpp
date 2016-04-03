@@ -35,7 +35,7 @@
 // externs
 extern "C" void assert_fail(int code);
 extern "C" void Led_clock();
-extern "C" void Led_setSelector(int selector);
+extern "C" void Led_setSelectorAndBank(int selector, int bank);
 extern "C" void getCalibratedInput(int * inLeft, int * inRight, int * inPot );
 extern "C" void calibrateAndPutOutput(int left, int right);
 extern "C" void initPersistence(void * calAddress);
@@ -61,8 +61,22 @@ PersistentInts persistentInts;
 void setBankNumber(int bank)
 {
     persistentInts.write(PersistentInts::bankOffset, bank);
+    if (bank)
+    {
+        Nop();      // definitely setting it to 1
+    }
+    // Led_setSelectorAndBank(selector, bank);  // tell the display system about this
 }
 
+static int getBankNumber()
+{
+    const int ret = persistentInts.get(PersistentInts::bankOffset);
+    if (ret)
+    {
+        Nop();      // definitely reading 1
+    }
+    return ret;
+}
 
 void initPersistence(void * calAddress)
 {
@@ -247,7 +261,7 @@ static inline void runModuleOnce()
             if (resetModulesFlag)
                 z.changed = false;
            
-            const int bank = persistentInts.get(PersistentInts::bankOffset);
+            const int bank = getBankNumber();
             modules[bank][selector]->go(resetModulesFlag, calibratedInL, calibratedInR, z, rawOutL, rawOutR);
             calibrateAndPutOutput(rawOutL, rawOutR);  // TODO: pass real values
             resetModulesFlag = false;
@@ -360,11 +374,18 @@ void doReset()
     zstate = 0;
 }
 
+// called from main when he has new selector
 extern "C" void Modules_setNewSelector(int selector)
 {
-    Led_setSelector(selector);  // tell the display system about this
+    const int bank = getBankNumber();
+    if (bank)
+    {
+        Nop();
+    }
+    Led_setSelectorAndBank(selector, bank);  // tell the display system about this
     doReset();      // we got a new selector, so reset the modules
 }
+  
 
 
 
