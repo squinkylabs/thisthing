@@ -22,7 +22,7 @@
 class PersistentInts
 {
 public:
-    PersistentInts() : _physicalPageAddr(0)
+    PersistentInts() : _physicalPageAddr(0), _signature(0xaa55aa77)
     {
         // clear the cache
         for (int i=0; i< numEntries; ++i)
@@ -36,12 +36,24 @@ public:
     // pass in where the calibration data lives
     void init(void * baseAddressCalData)
     {
-        Nop();
         unsigned int bai = (unsigned int)baseAddressCalData;
         unsigned int calPageAddress = bai & 0xfffffc00;
         unsigned int persistPageAddress = calPageAddress - 0x400;
         _physicalPageAddr = (void *)persistPageAddress;
-        Nop();
+        
+        // now, check for programming signature
+        unsigned int addr = (unsigned int)_physicalPageAddr;
+        const int * p = (int * )PA_TO_KVA0(addr);
+        const int potentialSig = *p;
+        if (potentialSig != _signature)
+        {
+            return;
+        }
+        for (int i=0; i<numEntries; ++i)
+        {
+            p++;                                // point to the next entry
+            _cache[i] = *p; 
+        }
     }
     
     int get(int index) // read from persistent memory
@@ -63,8 +75,7 @@ public:
     }
 private:
     int _cache[numEntries];
-    
-    int _lastErr;
+    const int _signature; 
     void * _physicalPageAddr;
     
     void program()
@@ -82,24 +93,19 @@ Enter the end address: 0x1d01ffff for mkI, or 0x1d03ffff for mkII.
          * so I can try 1d01f800
          */ 
         
-        Nop();
         if (!_physicalPageAddr)
         {
             return;      // didn't init
         }
       
-        _lastErr = NVMErasePage(_physicalPageAddr);
-        const int marker = 0xaa55aa77;
-        _lastErr =  NVMWriteWord (_physicalPageAddr, marker);
+        NVMErasePage(_physicalPageAddr);
+        NVMWriteWord (_physicalPageAddr, _signature);
         for (int i=0; i<numEntries; ++i)
         {
             unsigned int addr = (unsigned int)_physicalPageAddr;
-            _lastErr = addr;
             addr += sizeof(unsigned int) * (1 + i);
-            _lastErr = addr;
             NVMWriteWord ((void *)addr, _cache[i]);
         }
-        Nop();
     }
 };
 

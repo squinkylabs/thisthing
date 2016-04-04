@@ -54,27 +54,16 @@ typedef struct
 volatile TimeMetrics tm;
 static bool resetModulesFlag = false;
 
-//int global_bank_number=0;
-
 PersistentInts persistentInts;
 
 void setBankNumber(int bank)
 {
     persistentInts.write(PersistentInts::bankOffset, bank);
-    if (bank)
-    {
-        Nop();      // definitely setting it to 1
-    }
-    // Led_setSelectorAndBank(selector, bank);  // tell the display system about this
 }
 
 static int getBankNumber()
 {
     const int ret = persistentInts.get(PersistentInts::bankOffset);
-    if (ret)
-    {
-        Nop();      // definitely reading 1
-    }
     return ret;
 }
 
@@ -281,7 +270,6 @@ extern "C" void runModules()
     _d.pot_changes = 0;
     while (1)
     {
-        Nop();
         tm.loops++;
         tm.elapsedSamples = time - tm.sampleCount0;
         IDLE();
