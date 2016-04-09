@@ -65,6 +65,7 @@ const char * OctaveScaleManager::getOctaveScale(int index)
 
 static ProductionRule rules0[fullRuleTableSize];
 static ProductionRule rules1[fullRuleTableSize];
+static ProductionRule rules2[fullRuleTableSize];
 
 bool StochasticGrammarDictionary::_didInitRules = false;
 
@@ -72,6 +73,7 @@ void StochasticGrammarDictionary::initRules()
 {
 	initRule0();
 	initRule1();
+	initRule2();
 }
 
 
@@ -165,10 +167,35 @@ void StochasticGrammarDictionary::initRule1()
 
 }
 
+void StochasticGrammarDictionary::initRule2()
+{
+	// break w2 into 7+9/8 prob 100
+	{
+	ProductionRule& r = rules2[sg_w2];
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_798;	
+	}
+
+	// stop at 7/8
+	{
+	ProductionRule& r = rules2[sg_78];
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_invalid;	
+	}
+
+	// stop at 9/8
+	{
+	ProductionRule& r = rules2[sg_98];
+	r.entries[0].probability = 255;
+	r.entries[0].code = sg_invalid;	
+	}
+
+}
+
 
  int StochasticGrammarDictionary::getNumGrammars()
  {
-	 return 2;
+	 return 3;
  }
 
 StochasticGrammarDictionary::Grammar StochasticGrammarDictionary::getGrammar(int index)
@@ -190,6 +217,9 @@ StochasticGrammarDictionary::Grammar StochasticGrammarDictionary::getGrammar(int
 		break;
 	case 1:
 		ret.rules = rules1;	
+		break;
+	case 2:
+		ret.rules = rules2;	
 		break;
 	default:
 		assert(false);

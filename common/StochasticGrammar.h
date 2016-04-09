@@ -8,6 +8,22 @@
 ************************************************/
 typedef unsigned char GKEY;
 
+/* Rules for keys - super imporant!
+ *
+ * There are two kinds of keys: terminal keys and non-terminal
+ *
+ * Terminal keys either directly generate themselves, or may be divided if there is a 
+ *  specific production rule to divide them. As an example, sg_q (quarter note) is a terminal key.
+ *  It will always generate itself unless a production rule divides it.
+ *
+ * On the other hand sg_w2 is a non-terminal representing all the time in two bars of 4/4.
+ *  sg_w2 will NEVER gerate itself. Lacking a specific rule, it will auto generate two whole notes
+ *
+ * programmer must be ware of the differnece in two places:
+ *		when making production rules for a specific grammar
+ *		when implementing ProductionRuleKeys::breakDown
+ */
+
 
 const GKEY sg_invalid = 0;		// either uninitialized rule, or return value that stops recursion.
 								// Note that this means table of production rules must have a dummy entry up front
@@ -28,8 +44,14 @@ const GKEY sg_e3 =  11;			//  trip eight
 const GKEY sg_sx = 12;
 const GKEY sg_sxsx = 13;
 
+// crazy stuff for syncopation
+const GKEY sg_78 = 14;		// the time duration of 7/8
+const GKEY sg_98 = 15;		// the time duration of 9/8
+const GKEY sg_798 = 16;		// 7/8 + 9/8 = 2w
+
+
 const GKEY sg_first = 1;		// first valid one
-const GKEY sg_last  = 13;
+const GKEY sg_last  = 16;
 
 const int fullRuleTableSize = sg_last + 1;
 
@@ -65,7 +87,14 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 		case sg_e:
 		case sg_e3:
 		case sg_sx:
+		case sg_78:
+		case sg_98:
 			*outKeys++ = key;
+			*outKeys++ = sg_invalid;
+			break;
+		case sg_798: 
+			*outKeys++ = sg_78;
+			*outKeys++ = sg_98;
 			*outKeys++ = sg_invalid;
 			break;
 		case sg_ww: 
@@ -126,6 +155,9 @@ inline const char * ProductionRuleKeys::toString(GKEY key)
 
 		case sg_sx: ret = "sx"; break;
 		case sg_sxsx: ret = "sx, sx"; break;
+		case sg_78: ret = "<7/8>"; break;
+		case sg_98: ret = "<9/8>"; break;
+		case sg_798: ret = "7+9/8"; break;
 	
 		default:
 			printf("can't print key %d\n", key);
@@ -143,6 +175,7 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 	assert((PPQ % 3) == 0);
 	switch(key)
 	{
+		case sg_798: 
 		case sg_w2: ret = 2 * 4 * PPQ; 	break;
 		case sg_ww: ret = 2 * 4 * PPQ; 	break;
 		case sg_w: ret =   4 * PPQ; 	break;
@@ -165,6 +198,9 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 			assert(PPQ % 3 == 0);
 			ret = PPQ / 3;
 			break; 
+		case sg_78: ret = 7 * (PPQ / 2); break;
+		case sg_98: ret = 9 * (PPQ / 2); break;
+
 		default:
 #ifdef _MSC_VER
 			printf("can't get dur key %d\n", key);
@@ -394,6 +430,10 @@ inline bool ProductionRule::isGrammarValid(const ProductionRule * rules,  int nu
 /* class StochasticGrammarDictionary
  *
  * just a collection of pre-made grammars
+ * 
+ * 0: simple test
+ * 1: mixed dur, with some trips
+ * 2: some syncopation, no trips
  */
 class StochasticGrammarDictionary
 {
@@ -412,6 +452,7 @@ private:
 	static void initRules();
 	static void initRule0();
 	static void initRule1();
+	static void initRule2();
 };
 
 

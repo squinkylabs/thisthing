@@ -505,13 +505,11 @@ void gdt1()
 	}
 }
 
-// test that we get something from dictionary 0
-static void gdt2()
+//looks up a grammar in the dictionary, makes a sequencer based on it,
+// then runs it. returns historgram of durations
+static std::map<int, int> runGrammarSeq(int grammarIndex)
 {
-	printf("gdt2\n");
-	//GKEY key = init1();
-	//std::set<int> counts;
-
+	
 	std::map<int, int> counts;		// key == num ck, val == num
 	Random r;
 
@@ -539,7 +537,18 @@ static void gdt2()
 		}
 		ct++;
 	}
-	//counts.insert(50);
+	return counts;
+}
+
+// test that we get something from grammar dictionary 0
+static void gdt2_0()
+{
+	printf("gdt2+0\n");
+
+
+	std::map<int, int> counts;		// key == num ck, val == num
+	counts = runGrammarSeq(0);
+	
 	assert(!counts.empty());
 	for (std::map<int, int>::iterator it=counts.begin(); it != counts.end(); ++it)
 	{
@@ -560,6 +569,37 @@ static void gdt2()
 			 assert(it->second == 1); // only once
 		 }
 	}
+}
+
+static void gdt2_1()
+{
+	printf("gdt2_1\n");
+
+
+	std::map<int, int> counts;		// key == num ck, val == num
+	counts = runGrammarSeq(1);
+	
+	assert(!counts.empty());
+}
+
+
+static void gdt2_2()
+{
+	printf("gdt2_2\n");
+
+
+	std::map<int, int> counts;		// key == num ck, val == num
+	counts = runGrammarSeq(2);
+	
+	assert(!counts.empty());
+}
+
+static void gdt2()
+{
+	assert( StochasticGrammarDictionary::getNumGrammars() == 3);
+	gdt2_0();
+	gdt2_1();
+	gdt2_2();
 }
 
 
@@ -596,7 +636,7 @@ void gdm0()
 
 void GrammarTest()
 {
-	printf("skpping a bunch of grammr tests\n");
+	
 #if 1
 	gtk();
 	gt0();
@@ -615,13 +655,11 @@ void GrammarTest()
 	ts4();
 
 	gtg0();
-	gtg1();
-
-
-	gdt0();
+#else
+	printf("skpping a bunch of grammr tests\n");
 #endif
+	
 	gdt1();
-
 	gdt2();
 
 	gdm0();
