@@ -513,11 +513,11 @@ static std::map<int, int> runGrammarSeq(int grammarIndex)
 	std::map<int, int> counts;		// key == num ck, val == num
 	Random r;
 
-	StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(0);
+	StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(grammarIndex);
 	GenerativeTriggerGenerator gtg(r, g.rules, g.numRules, g.firstRule);
 
 	int ct = 0;
-	for (int i=0; i<1000; ++i)
+	for (int i=0; i<10000; ++i)
 	{
 		bool b = gtg.clock();
 		if (b)
@@ -537,61 +537,98 @@ static std::map<int, int> runGrammarSeq(int grammarIndex)
 		}
 		ct++;
 	}
+	printf("duration histogram:\n");
+	for (std::map<int, int>::iterator it=counts.begin(); it != counts.end(); ++it)
+	{
+		printf("%d: %d\n", it->first, it->second);
+	}
 	return counts;
+}
+
+// it forbidden counts is empty, then all that are not expected are forbidden
+static void testGrammarSeq(int grammarIndex,
+	const std::set<int> expectedCounts, 
+	const std::set<int> forbiddenCounts)
+{
+	assert(!expectedCounts.empty());
+	std::map<int, int> counts = runGrammarSeq(grammarIndex);
+	typedef std::map<int, int>::const_iterator iterator;
+
+	// always 1 zero
+	iterator it = counts.find(0);
+	assert(it != counts.end());
+	assert(it->second == 1);
+
+	// makes sure all expected are count
+	std::set<int>::const_iterator eit;
+
+	for (eit = expectedCounts.begin(); eit !=expectedCounts.end(); ++eit)
+	{
+		it = counts.find( *eit);
+		assert(it != counts.end());
+	}
+
+	if (forbiddenCounts.empty())
+	{
+		// make sure that all counts are expected
+		for (it = counts.begin(); it != counts.end(); ++it)
+		{
+			int ct = it->first;
+			if (ct != 0)		// already dealt wiht this special case, above
+			{
+				eit = expectedCounts.find(ct);
+
+				if ( eit == expectedCounts.end())
+				{
+					printf("found a count that was not in the expected list: %d\n", ct);
+				}
+				assert( eit != expectedCounts.end());
+			}
+		}
+	}
+	else assert(false);	// finish me
 }
 
 // test that we get something from grammar dictionary 0
 static void gdt2_0()
 {
-	printf("gdt2+0\n");
+	printf("gdt2_0\n");
 
+	std::set<int> expected;
+	std::set<int> forbidden;
 
-	std::map<int, int> counts;		// key == num ck, val == num
-	counts = runGrammarSeq(0);
-	
-	assert(!counts.empty());
-	for (std::map<int, int>::iterator it=counts.begin(); it != counts.end(); ++it)
-	{
-		int c = it->first;
-		printf("got count %d\n", c);
+	expected.insert(PPQ);
 
-
-		 if ((c % PPQ) != 0)
-		 {
-			// printf("PPQ=%d, c%PPQ=%d\n", PPQ, (c % PPQ));
-			// printf("2ppq = %d, 4ppq=%d\n", 2*PPQ, 4*PPQ);
-			 assert(false);
-		 }
-
-		 if (c != PPQ)	// expect all but one to be quarters
-		 {
-			 assert(c == 0);	// inital zero dealy
-			 assert(it->second == 1); // only once
-		 }
-	}
+	testGrammarSeq(0, expected, forbidden);
 }
 
 static void gdt2_1()
 {
 	printf("gdt2_1\n");
 
+	std::set<int> expected;
+	std::set<int> forbidden;
 
-	std::map<int, int> counts;		// key == num ck, val == num
-	counts = runGrammarSeq(1);
-	
-	assert(!counts.empty());
+	expected.insert(PPQ);
+	expected.insert(PPQ / 2);
+	expected.insert(PPQ / 4);
+	expected.insert(PPQ * 2);
+
+	testGrammarSeq(1, expected, forbidden);
 }
 
 
 static void gdt2_2()
 {
-	printf("gdt2_2\n");
+	printf("gdt2_1\n");
 
+	std::set<int> expected;
+	std::set<int> forbidden;
 
-	std::map<int, int> counts;		// key == num ck, val == num
-	counts = runGrammarSeq(2);
-	
-	assert(!counts.empty());
+	expected.insert(ProductionRuleKeys::getDuration(sg_78));
+	expected.insert(ProductionRuleKeys::getDuration(sg_98));
+
+	testGrammarSeq(2, expected, forbidden);
 }
 
 static void gdt2()
