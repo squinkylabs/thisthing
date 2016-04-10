@@ -44,14 +44,24 @@ const GKEY sg_e3 =  11;			//  trip eight
 const GKEY sg_sx = 12;
 const GKEY sg_sxsx = 13;
 
-// crazy stuff for syncopation
+// crazy stuff for syncopation (unequal measure divisions)
 const GKEY sg_78 = 14;		// the time duration of 7/8
 const GKEY sg_98 = 15;		// the time duration of 9/8
 const GKEY sg_798 = 16;		// 7/8 + 9/8 = 2w
 
+// dotted notes
+const GKEY sg_dq = 17;		// dotted quarter
+const GKEY sg_dh = 18;		// dotted half
+const GKEY sg_de = 19;		// dotted eigth
+
+// odd groupings
+const GKEY sg_hdq = 20;		// half + dotted Q
+const GKEY sg_qhe = 21;		// q,h,e
+
+
 
 const GKEY sg_first = 1;		// first valid one
-const GKEY sg_last  = 16;
+const GKEY sg_last  = 21;
 
 const int fullRuleTableSize = sg_last + 1;
 
@@ -89,6 +99,11 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 		case sg_sx:
 		case sg_78:
 		case sg_98:
+		case sg_dq:
+		case sg_dh:
+		case sg_de:
+		//case sg_hdq:
+		//case sg_qhe:
 			*outKeys++ = key;
 			*outKeys++ = sg_invalid;
 			break;
@@ -128,6 +143,17 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 			*outKeys++ = sg_e3;
 			*outKeys++ = sg_invalid;
 			break;
+		case sg_hdq:
+			*outKeys++ = sg_h;
+			*outKeys++ = sg_dq;
+			*outKeys++ = sg_invalid;
+			break;
+		case sg_qhe:
+			*outKeys++ = sg_q;
+			*outKeys++ = sg_h;
+			*outKeys++ = sg_e;
+			*outKeys++ = sg_invalid;
+			break;			
 		default:
 			//printf("can't break down %d\n", key);
 			assert(false);
@@ -158,6 +184,14 @@ inline const char * ProductionRuleKeys::toString(GKEY key)
 		case sg_78: ret = "<7/8>"; break;
 		case sg_98: ret = "<9/8>"; break;
 		case sg_798: ret = "7+9/8"; break;
+
+		case sg_dq: ret = "q."; break;
+		case sg_dh: ret = "h."; break;
+		case sg_de: ret = "e."; break; 
+			
+		case sg_hdq: ret = "h,q."; break;
+		case sg_qhe: ret = "q,h,e"; break;
+
 	
 		default:
 			printf("can't print key %d\n", key);
@@ -201,6 +235,14 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 		case sg_78: ret = 7 * (PPQ / 2); break;
 		case sg_98: ret = 9 * (PPQ / 2); break;
 
+		case sg_dq: ret = 3 * PPQ / 2; break;
+		case sg_dh: ret = 3 * PPQ ; break;
+		case sg_de: ret = 3 * PPQ / 4; break;
+	
+		case sg_hdq: ret = 2*PPQ + 3 * PPQ / 2; break;
+		case sg_qhe: ret = PPQ * 3 + PPQ/2; break;
+
+
 		default:
 #ifdef _MSC_VER
 			printf("can't get dur key %d\n", key);
@@ -222,7 +264,16 @@ public:
 	ProductionRuleEntry() : probability(0), code(sg_invalid) {}
 	unsigned char probability;	// 1..256
 	GKEY code;			// what to do if this one fires
+
+	//bool operator == (const ProductionRuleEntry&);
 };
+
+inline bool operator == (const ProductionRuleEntry& a, const ProductionRuleEntry& b)
+{
+	return a.probability==b.probability && a.code==b.code;
+}
+
+
 
 
 /* class ProductionRule
@@ -246,6 +297,12 @@ public:
 	};
 
 	ProductionRule()  {}
+
+	void makeTerminal()
+	{
+		entries[0].code = sg_invalid;
+		entries[0].probability = 255;
+	}
 
 	/* the data */
 
@@ -328,6 +385,16 @@ inline bool ProductionRule::_isValid(int index) const
 		printf("rule not allowed in first slot\n");
 		return false;
 	}
+
+
+	if (entries[0] == ProductionRuleEntry())
+	{
+		printf("rule at index %d is ininitizlied. bad graph (%s)\n",
+			index,
+			ProductionRuleKeys::toString(index));
+		return false;
+	}
+
 	int last = -1;
 	bool foundTerminator = false;
 	for (int i=0;!foundTerminator; ++i)

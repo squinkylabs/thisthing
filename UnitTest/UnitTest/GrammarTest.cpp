@@ -565,6 +565,10 @@ static void testGrammarSeq(int grammarIndex,
 	for (eit = expectedCounts.begin(); eit !=expectedCounts.end(); ++eit)
 	{
 		it = counts.find( *eit);
+		if (it == counts.end())
+		{
+			printf("expected count %d, bug didn't find it\n", *eit);
+		}
 		assert(it != counts.end());
 	}
 
@@ -625,7 +629,10 @@ static void gdt2_2()
 	std::set<int> expected;
 	std::set<int> forbidden;
 
-	expected.insert(ProductionRuleKeys::getDuration(sg_78));
+	expected.insert(ProductionRuleKeys::getDuration(sg_e));
+	expected.insert(ProductionRuleKeys::getDuration(sg_q));
+	expected.insert(ProductionRuleKeys::getDuration(sg_h));
+	expected.insert(ProductionRuleKeys::getDuration(sg_dq));
 	expected.insert(ProductionRuleKeys::getDuration(sg_98));
 
 	testGrammarSeq(2, expected, forbidden);
