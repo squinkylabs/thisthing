@@ -39,29 +39,33 @@ const GKEY sg_ee	= 9;
 
 //
 const GKEY sg_e3e3e3 = 10;		// three trip eights
-const GKEY sg_e3 =  11;			//  trip eight
+const GKEY sg_e3	= 11;			//  trip eight
 
-const GKEY sg_sx = 12;
-const GKEY sg_sxsx = 13;
+const GKEY sg_sx	= 12;
+const GKEY sg_sxsx	= 13;
 
 // crazy stuff for syncopation (unequal measure divisions)
-const GKEY sg_78 = 14;		// the time duration of 7/8
-const GKEY sg_98 = 15;		// the time duration of 9/8
-const GKEY sg_798 = 16;		// 7/8 + 9/8 = 2w
+const GKEY sg_68	= 14;		// the time duration of 7/8
+const GKEY sg_78	= 15;		// the time duration of 7/8
+const GKEY sg_98	= 16;		// the time duration of 9/8
+const GKEY sg_798	= 17;		// 7/8 + 9/8 = 2w
 
 // dotted notes
-const GKEY sg_dq = 17;		// dotted quarter
-const GKEY sg_dh = 18;		// dotted half
-const GKEY sg_de = 19;		// dotted eigth
+const GKEY sg_dq	= 18;		// dotted quarter
+const GKEY sg_dh	= 19;		// dotted half
+const GKEY sg_de	= 20;		// dotted eigth
 
 // odd groupings
-const GKEY sg_hdq = 20;		// half + dotted Q
-const GKEY sg_qhe = 21;		// q,h,e
+const GKEY sg_hdq	= 21;		// half + dotted Q
+const GKEY sg_qhe	= 22;		// q,h,e
+const GKEY sg_hq	= 23;	// h,q
+const GKEY sg_qh	= 24;	// h,q
+
 
 
 
 const GKEY sg_first = 1;		// first valid one
-const GKEY sg_last  = 21;
+const GKEY sg_last  = 24;
 
 const int fullRuleTableSize = sg_last + 1;
 
@@ -97,6 +101,7 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 		case sg_e:
 		case sg_e3:
 		case sg_sx:
+		case sg_68:
 		case sg_78:
 		case sg_98:
 		case sg_dq:
@@ -148,6 +153,17 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 			*outKeys++ = sg_dq;
 			*outKeys++ = sg_invalid;
 			break;
+		case sg_hq:
+			*outKeys++ = sg_h;
+			*outKeys++ = sg_q;
+			*outKeys++ = sg_invalid;
+			break;
+		case sg_qh:
+			*outKeys++ = sg_q;
+			*outKeys++ = sg_h;
+			*outKeys++ = sg_invalid;
+			break;
+
 		case sg_qhe:
 			*outKeys++ = sg_q;
 			*outKeys++ = sg_h;
@@ -181,6 +197,7 @@ inline const char * ProductionRuleKeys::toString(GKEY key)
 
 		case sg_sx: ret = "sx"; break;
 		case sg_sxsx: ret = "sx, sx"; break;
+		case sg_68: ret = "<6/8>"; break;
 		case sg_78: ret = "<7/8>"; break;
 		case sg_98: ret = "<9/8>"; break;
 		case sg_798: ret = "7+9/8"; break;
@@ -191,6 +208,8 @@ inline const char * ProductionRuleKeys::toString(GKEY key)
 			
 		case sg_hdq: ret = "h,q."; break;
 		case sg_qhe: ret = "q,h,e"; break;
+		case sg_qh: ret = "q,h"; break;
+		case sg_hq: ret = "h,q"; break;
 
 	
 		default:
@@ -232,6 +251,7 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 			assert(PPQ % 3 == 0);
 			ret = PPQ / 3;
 			break; 
+		case sg_68: ret = 6 * (PPQ / 2); break;
 		case sg_78: ret = 7 * (PPQ / 2); break;
 		case sg_98: ret = 9 * (PPQ / 2); break;
 
@@ -241,6 +261,9 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 	
 		case sg_hdq: ret = 2*PPQ + 3 * PPQ / 2; break;
 		case sg_qhe: ret = PPQ * 3 + PPQ/2; break;
+
+		case sg_hq:
+		case sg_qh: ret = PPQ * 3; break;
 
 
 		default:
