@@ -633,7 +633,7 @@ static void gdt2_2()
 	expected.insert(ProductionRuleKeys::getDuration(sg_q));
 	expected.insert(ProductionRuleKeys::getDuration(sg_h));
 	expected.insert(ProductionRuleKeys::getDuration(sg_dq));
-	expected.insert(ProductionRuleKeys::getDuration(sg_98));
+	//expected.insert(ProductionRuleKeys::getDuration(sg_98));
 
 	testGrammarSeq(2, expected, forbidden);
 }

@@ -60,12 +60,14 @@ const GKEY sg_hdq	= 21;		// half + dotted Q
 const GKEY sg_qhe	= 22;		// q,h,e
 const GKEY sg_hq	= 23;	// h,q
 const GKEY sg_qh	= 24;	// h,q
+const GKEY sg_q78	= 25;		// q + 7x8
+const GKEY sg_qe68	= 26;		// q+e+6x8
 
 
 
 
 const GKEY sg_first = 1;		// first valid one
-const GKEY sg_last  = 24;
+const GKEY sg_last  = 26;
 
 const int fullRuleTableSize = sg_last + 1;
 
@@ -169,7 +171,18 @@ inline void ProductionRuleKeys::breakDown(GKEY key, GKEY * outKeys)
 			*outKeys++ = sg_h;
 			*outKeys++ = sg_e;
 			*outKeys++ = sg_invalid;
-			break;			
+			break;	
+		case sg_q78:
+			*outKeys++ = sg_q;
+			*outKeys++ = sg_78;
+			*outKeys++ = sg_invalid;
+			break;
+		case sg_qe68:
+			*outKeys++ = sg_q;
+			*outKeys++ = sg_e;
+			*outKeys++ = sg_68;
+			*outKeys++ = sg_invalid;
+			break;
 		default:
 			//printf("can't break down %d\n", key);
 			assert(false);
@@ -210,6 +223,8 @@ inline const char * ProductionRuleKeys::toString(GKEY key)
 		case sg_qhe: ret = "q,h,e"; break;
 		case sg_qh: ret = "q,h"; break;
 		case sg_hq: ret = "h,q"; break;
+		case sg_q78: ret = "q,<7/8>"; break;
+		case sg_qe68: ret = "q,e,<6/8>"; break;
 
 	
 		default:
@@ -253,7 +268,11 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 			break; 
 		case sg_68: ret = 6 * (PPQ / 2); break;
 		case sg_78: ret = 7 * (PPQ / 2); break;
-		case sg_98: ret = 9 * (PPQ / 2); break;
+
+		case sg_q78:
+		case sg_qe68:
+		case sg_98: 
+			ret = 9 * (PPQ / 2); break;
 
 		case sg_dq: ret = 3 * PPQ / 2; break;
 		case sg_dh: ret = 3 * PPQ ; break;
@@ -262,10 +281,12 @@ inline int ProductionRuleKeys::getDuration(GKEY key)
 		case sg_hdq: ret = 2*PPQ + 3 * PPQ / 2; break;
 		case sg_qhe: ret = PPQ * 3 + PPQ/2; break;
 
+
+
 		case sg_hq:
 		case sg_qh: ret = PPQ * 3; break;
 
-
+		
 		default:
 #ifdef _MSC_VER
 			printf("can't get dur key %d\n", key);

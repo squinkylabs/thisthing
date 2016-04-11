@@ -176,24 +176,36 @@ void StochasticGrammarDictionary::initRule2()
 	r.entries[0].code = sg_798;	
 	}
 
-	// stop at 7/8
-#if 0
-	{
-	ProductionRule& r = rules2[sg_78];
-	r.entries[0].probability = 255;
-	r.entries[0].code = sg_invalid;	
-	}
-#endif
+
 
 	// stop at 9/8
+#if 0
 	{
 	ProductionRule& r = rules2[sg_98];
 	r.entries[0].probability = 255;
 	r.entries[0].code = sg_invalid;	
 	}
+#else
 
-	//sg_hdq:
-	//	case sg_qhe:
+	// 9/8 -> different combos
+	{
+	ProductionRule& r = rules2[sg_98];
+	r.entries[0].probability = 128;
+	r.entries[0].code = sg_q78;	
+	r.entries[1].probability = 255;
+	r.entries[1].code = sg_qe68;	
+	}
+
+	// 6/8 ->
+	{
+	ProductionRule& r = rules2[sg_68];
+	r.entries[0].probability = 128;
+	r.entries[0].code = sg_hq;	
+	r.entries[1].probability = 255;
+	r.entries[1].code = sg_qh;	
+	}
+
+#endif
 
 	//78 -> different combos
 	{
@@ -204,23 +216,15 @@ void StochasticGrammarDictionary::initRule2()
 	r.entries[1].code = sg_hdq;	
 	}
 
-	{
-		ProductionRule& r = rules2[sg_hdq];
-		r.entries[0].code = sg_invalid;
-		r.entries[0].probability = 255;
-	}
-	{
-		ProductionRule& r = rules2[sg_qhe];
-		r.entries[0].code = sg_invalid;
-		r.entries[0].probability = 255;
-	}
+
 
 	// terminate on these
+	rules2[sg_hdq].makeTerminal();
+	rules2[sg_qhe].makeTerminal();
 	rules2[sg_q].makeTerminal();
 	rules2[sg_dq].makeTerminal();
 	rules2[sg_h].makeTerminal();
 	rules2[sg_e].makeTerminal();
-
 }
 
 
