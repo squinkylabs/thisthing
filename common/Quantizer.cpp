@@ -63,73 +63,70 @@ const char * OctaveScaleManager::getOctaveScale(int index)
 
 //////////////////////////////////////////////////////////////////
 
-static ProductionRule rules0[fullRuleTableSize];
-static ProductionRule rules1[fullRuleTableSize];
-static ProductionRule rules2[fullRuleTableSize];
+static ProductionRule _rules0[fullRuleTableSize];
+static ProductionRule _rules1[fullRuleTableSize];
+static ProductionRule _rules2[fullRuleTableSize];
 
 bool StochasticGrammarDictionary::_didInitRules = false;
 
 void StochasticGrammarDictionary::initRules()
 {
-	initRule0();
-	initRule1();
-	initRule2();
+	initRule0(_rules0);
+	initRule1(_rules1);
+	initRule2(_rules2);
 }
 
 
 
 
 // super dumb one - makes quarter notes
-void StochasticGrammarDictionary::initRule0()
+void StochasticGrammarDictionary::initRule0(ProductionRule * rules)
 {
 	// break w2 into w,w prob 100
 	{
-	ProductionRule& r = rules0[sg_w2];
+	ProductionRule& r = rules[sg_w2];
 	r.entries[0].probability = 255;
 	r.entries[0].code = sg_ww;	
 	}
 
 	// break w into h, h
 	{
-	ProductionRule& r = rules0[sg_w];
+	ProductionRule& r = rules[sg_w];
 	r.entries[0].probability = 255;
 	r.entries[0].code = sg_hh;
 	}
 
 	// break h into q,q
 	{
-	ProductionRule&r = rules0[sg_h];
+	ProductionRule&r = rules[sg_h];
 	r.entries[0].probability = 255;
 	r.entries[0].code = sg_qq;
 	}
 	// stop on q
-	{
-	ProductionRule&r = rules0[sg_q];
-	r.entries[0].probability = 255;
-	r.entries[0].code = sg_invalid;
-	}
+	rules[sg_q].makeTerminal();
+
 }
 
-void StochasticGrammarDictionary::initRule1()
+void StochasticGrammarDictionary::initRule1(ProductionRule * rules)
 {
 	
 	// break w2 into w,w prob 100
 	{
-		ProductionRule& r = rules1[sg_w2];
+		ProductionRule& r = rules[sg_w2];
 		r.entries[0].probability = 255;
 		r.entries[0].code = sg_ww;	
 	}
 
 	// break w into h, h
 	{
-		ProductionRule& r = rules1[sg_w];
+		ProductionRule& r = rules[sg_w];
 		r.entries[0].probability = 255;
 		r.entries[0].code = sg_hh;
 	}
 
 	// break h into q,q, or h
 	{
-		ProductionRule&r = rules1[sg_h];
+		ProductionRule&r = rules[sg_h];
 		r.entries[0].probability = 180;
 		r.entries[0].code = sg_qq;
 
@@ -140,7 +137,7 @@ void StochasticGrammarDictionary::initRule1()
 	// stop on q, or make e
 	{
 		
-		ProductionRule&r = rules1[sg_q];
+		ProductionRule&r = rules[sg_q];
 		r.entries[0].probability = 80;
 		r.entries[0].code = sg_ee;
 
@@ -151,27 +148,22 @@ void StochasticGrammarDictionary::initRule1()
 	// stop on e, or make sx
 	{
 		
-		ProductionRule&r = rules1[sg_e];
+		ProductionRule&r = rules[sg_e];
 		r.entries[0].probability = 80;
 		r.entries[0].code = sg_sxsx;
 
 		r.entries[1].probability = 255;
 		r.entries[1].code = sg_invalid;
 	}
-	{
 
-		ProductionRule&r = rules1[sg_sx];
-		r.entries[0].probability = 255;
-		r.entries[0].code = sg_invalid;
-	}
-
+	rules[sg_sx].makeTerminal();
 }
 
-void StochasticGrammarDictionary::initRule2()
+void StochasticGrammarDictionary::initRule2(ProductionRule * rules)
 {
 	// break w2 into 7+9/8 prob 100
 	{
-	ProductionRule& r = rules2[sg_w2];
+	ProductionRule& r = rules[sg_w2];
 	r.entries[0].probability = 255;
 	r.entries[0].code = sg_798;	
 	}
@@ -189,7 +181,7 @@ void StochasticGrammarDictionary::initRule2()
 
 	// 9/8 -> different combos
 	{
-	ProductionRule& r = rules2[sg_98];
+	ProductionRule& r = rules[sg_98];
 	r.entries[0].probability = 128;
 	r.entries[0].code = sg_q78;	
 	r.entries[1].probability = 255;
@@ -198,7 +190,7 @@ void StochasticGrammarDictionary::initRule2()
 
 	// 6/8 ->
 	{
-	ProductionRule& r = rules2[sg_68];
+	ProductionRule& r = rules[sg_68];
 	r.entries[0].probability = 128;
 	r.entries[0].code = sg_hq;	
 	r.entries[1].probability = 255;
@@ -209,7 +201,7 @@ void StochasticGrammarDictionary::initRule2()
 
 	//78 -> different combos
 	{
-	ProductionRule& r = rules2[sg_78];
+	ProductionRule& r = rules[sg_78];
 	r.entries[0].probability = 128;
 	r.entries[0].code = sg_qhe;	
 	r.entries[1].probability = 255;
@@ -219,12 +211,12 @@ void StochasticGrammarDictionary::initRule2()
 
 
 	// terminate on these
-	rules2[sg_hdq].makeTerminal();
-	rules2[sg_qhe].makeTerminal();
-	rules2[sg_q].makeTerminal();
-	rules2[sg_dq].makeTerminal();
-	rules2[sg_h].makeTerminal();
-	rules2[sg_e].makeTerminal();
+	rules[sg_hdq].makeTerminal();
+	rules[sg_qhe].makeTerminal();
+	rules[sg_q].makeTerminal();
+	rules[sg_dq].makeTerminal();
+	rules[sg_h].makeTerminal();
+	rules[sg_e].makeTerminal();
 }
 
 
@@ -248,13 +240,13 @@ StochasticGrammarDictionary::Grammar StochasticGrammarDictionary::getGrammar(int
 	switch(index)
 	{
 	case 0:
-		ret.rules = rules0;	
+		ret.rules = _rules0;	
 		break;
 	case 1:
-		ret.rules = rules1;	
+		ret.rules = _rules1;	
 		break;
 	case 2:
-		ret.rules = rules2;	
+		ret.rules = _rules2;	
 		break;
 	default:
 		assert(false);

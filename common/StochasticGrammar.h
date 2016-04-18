@@ -561,9 +561,9 @@ public:
 private:
 	static bool _didInitRules;
 	static void initRules();
-	static void initRule0();
-	static void initRule1();
-	static void initRule2();
+	static void initRule0(ProductionRule * rules);
+	static void initRule1(ProductionRule * rules);
+	static void initRule2(ProductionRule * rules);
 };
 
 
