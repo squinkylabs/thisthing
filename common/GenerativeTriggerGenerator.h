@@ -61,6 +61,14 @@ public:
 		delete _seq;
 	}
 
+
+	void setGrammar(const ProductionRule * rules, int numRules,  GKEY initialState)
+	{
+		_rules=rules;
+		_numRules=numRules;
+		_initKey=initialState;
+	}
+
 	// returns true if trigger generated
 	bool clock()
 	{
@@ -80,8 +88,8 @@ private:
 	TriggerSequencer::Event _data[33];
 	const ProductionRule * _rules;
 	Random& _r;
-	const int _numRules;
-	const GKEY _initKey;
+	int _numRules;
+	GKEY _initKey;
 	//
 	void generate()
 	{

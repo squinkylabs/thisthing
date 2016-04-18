@@ -4,6 +4,8 @@
 #ifndef INCLUDE_FIXEDPOINT
 #define INCLUDE_FIXEDPOINT
 
+#include <stdint.h>
+
 template <int precission>
 class FixedPoint
 {

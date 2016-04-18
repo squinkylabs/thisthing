@@ -1,6 +1,7 @@
 #ifndef DMSGTRIGGERGENERATOR
 #define DMSGTRIGGERGENERATOR
 
+#include "LinearInterp.h"
 #include "GenerativeTriggerGenerator.h"
 #include "TriggerOutput.h"
 #include "DModule.h"
@@ -13,7 +14,9 @@
 class  DM_SGTriggerGenerator : public DModule
 {
 public:
-	DM_SGTriggerGenerator() : _clockIn(false)
+	DM_SGTriggerGenerator() : 
+		_clockIn(false),
+		_interp(0, StochasticGrammarDictionary::getNumGrammars()-1)
 	{
 	//	Nop();
 		// set up generator with first grammar
@@ -23,6 +26,14 @@ public:
 	}
 	virtual void go(bool reset, int x, int y, const ZState& z, volatile int& a, volatile int&b)
 	{
+		if (z.changed)
+		{
+			int grammar = _interp.interp(z.value);
+			Led_setTempSelectorOverride(1 + grammar, 1);
+			StochasticGrammarDictionary::Grammar g = StochasticGrammarDictionary::getGrammar(grammar);
+			_generatora->setGrammar( g.rules, g.numRules, g.firstRule);
+			_generatorb->setGrammar( g.rules, g.numRules, g.firstRule);
+		}
 		_clockIn.go(x);
 
 		bool triga = false;
@@ -44,6 +55,8 @@ private:
 	GenerativeTriggerGenerator*  _generatora;
 	GenerativeTriggerGenerator*  _generatorb;
 	Random _r;
+
+	LinearInterp _interp;
 
 };
 #endif
