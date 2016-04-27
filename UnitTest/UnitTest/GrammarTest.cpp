@@ -624,7 +624,7 @@ static void gdt2_1()
 
 static void gdt2_2()
 {
-	printf("gdt2_1\n");
+	printf("gdt2_2\n");
 
 	std::set<int> expected;
 	std::set<int> forbidden;
@@ -638,12 +638,35 @@ static void gdt2_2()
 	testGrammarSeq(2, expected, forbidden);
 }
 
+
+static void gdt2_3()
+{
+	printf("gdt2_3\n");
+
+	std::set<int> expected;
+	std::set<int> forbidden;
+
+	// ones from grammar 1
+	expected.insert(PPQ);
+	expected.insert(PPQ / 2);
+	expected.insert(PPQ / 4);
+	expected.insert(PPQ * 2);
+
+	// and a trip
+	expected.insert(PPQ / 3);
+
+	testGrammarSeq(3, expected, forbidden);
+}
+
+
+
 static void gdt2()
 {
-	assert( StochasticGrammarDictionary::getNumGrammars() == 3);
+	assert( StochasticGrammarDictionary::getNumGrammars() == 4);
 	gdt2_0();
 	gdt2_1();
 	gdt2_2();
+	gdt2_3();
 }
 
 

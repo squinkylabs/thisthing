@@ -66,6 +66,7 @@ const char * OctaveScaleManager::getOctaveScale(int index)
 static ProductionRule _rules0[fullRuleTableSize];
 static ProductionRule _rules1[fullRuleTableSize];
 static ProductionRule _rules2[fullRuleTableSize];
+static ProductionRule _rules3[fullRuleTableSize];
 
 bool StochasticGrammarDictionary::_didInitRules = false;
 
@@ -74,6 +75,7 @@ void StochasticGrammarDictionary::initRules()
 	initRule0(_rules0);
 	initRule1(_rules1);
 	initRule2(_rules2);
+	initRule3(_rules3);
 }
 
 
@@ -168,17 +170,6 @@ void StochasticGrammarDictionary::initRule2(ProductionRule * rules)
 	r.entries[0].code = sg_798;	
 	}
 
-
-
-	// stop at 9/8
-#if 0
-	{
-	ProductionRule& r = rules2[sg_98];
-	r.entries[0].probability = 255;
-	r.entries[0].code = sg_invalid;	
-	}
-#else
-
 	// 9/8 -> different combos
 	{
 	ProductionRule& r = rules[sg_98];
@@ -197,7 +188,6 @@ void StochasticGrammarDictionary::initRule2(ProductionRule * rules)
 	r.entries[1].code = sg_qh;	
 	}
 
-#endif
 
 	//78 -> different combos
 	{
@@ -219,10 +209,70 @@ void StochasticGrammarDictionary::initRule2(ProductionRule * rules)
 	rules[sg_e].makeTerminal();
 }
 
+// 3 is like 1, but with some trips
+void StochasticGrammarDictionary::initRule3(ProductionRule * rules)
+{
+	
+	// break w2 into w,w prob 100
+	{
+		ProductionRule& r = rules[sg_w2];
+		r.entries[0].probability = 255;
+		r.entries[0].code = sg_ww;	
+	}
+
+	// break w into h, h
+	{
+		ProductionRule& r = rules[sg_w];
+		r.entries[0].probability = 255;
+		r.entries[0].code = sg_hh;
+	}
+
+	// break h into q,q, or h
+	{
+		ProductionRule&r = rules[sg_h];
+		r.entries[0].probability = 180;
+		r.entries[0].code = sg_qq;
+
+		r.entries[1].probability = 255;
+		r.entries[1].code = sg_invalid;
+	}
+
+	// stop on q, or make e, or make trips
+	{
+		
+		ProductionRule&r = rules[sg_q];
+		r.entries[0].probability = 80;		
+		r.entries[0].code = sg_ee;
+
+		r.entries[1].probability = 160;
+		r.entries[1].code = sg_e3e3e3;
+
+		r.entries[2].probability = 255;
+		r.entries[2].code = sg_invalid;
+	}
+
+	// expand trip 8ths
+	rules[ sg_e3].makeTerminal();
+
+
+	// stop on e, or make sx,
+	{
+		
+		ProductionRule&r = rules[sg_e];
+		r.entries[0].probability = 80;
+		r.entries[0].code = sg_sxsx;
+
+		r.entries[1].probability = 255;
+		r.entries[1].code = sg_invalid;
+	}
+
+	rules[sg_sx].makeTerminal();
+}
+
 
  int StochasticGrammarDictionary::getNumGrammars()
  {
-	 return 3;
+	 return 4;
  }
 
 StochasticGrammarDictionary::Grammar StochasticGrammarDictionary::getGrammar(int index)
@@ -247,6 +297,9 @@ StochasticGrammarDictionary::Grammar StochasticGrammarDictionary::getGrammar(int
 		break;
 	case 2:
 		ret.rules = _rules2;	
+		break;
+	case 3:
+		ret.rules = _rules3;	
 		break;
 	default:
 		assert(false);

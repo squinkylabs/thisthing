@@ -478,8 +478,8 @@ inline bool ProductionRule::_isValid(int index) const
 			int ruleDuration = ProductionRuleKeys::getDuration(index);
 			if (entryDuration != ruleDuration)
 			{
-				printf("production rule[%d] duration mismatch (time not conserved) dur = %d entryd %d\n",
-					index, ruleDuration, entryDuration);
+				printf("production rule[%d] (name %s) duration mismatch (time not conserved) rule dur = %d entry dur %d\n",
+					index,  ProductionRuleKeys::toString(index), ruleDuration, entryDuration);
 				return false;
 			}
 		}
@@ -564,6 +564,7 @@ private:
 	static void initRule0(ProductionRule * rules);
 	static void initRule1(ProductionRule * rules);
 	static void initRule2(ProductionRule * rules);
+	static void initRule3(ProductionRule * rules);
 };
 
 
